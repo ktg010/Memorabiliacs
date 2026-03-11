@@ -1,7 +1,34 @@
 import json
-
+from google.cloud import secretmanager, firestore
 import requests
 import streamlit as st
+import toml
+
+## -------------------------------------------------------------------------------------------------
+## Secrets Access --------------------------------------------------------------------------------
+## -------------------------------------------------------------------------------------------------
+
+def access_secret_version():
+    """
+    Access the payload for a secret version.
+    """
+    # Create the Secret Manager client.
+    client = secretmanager.SecretManagerServiceClient()
+
+    # Build the resource name of the secret version.
+    name = "projects/memorabiliacs-ec1bd/secrets/Streamlit_secrets/versions/latest"
+
+    # Access the secret version.
+    response = client.access_secret_version(request={"name": name})
+
+    # Decode the payload.
+    # Note: The secret value is returned as a bytes object.
+    payload = response.payload.data.decode("UTF-8")
+    payload_dict = toml.loads(payload)
+    return payload_dict
+
+st.secrets = access_secret_version()
+
 
 ## -------------------------------------------------------------------------------------------------
 ## Firebase Auth API -------------------------------------------------------------------------------
@@ -178,3 +205,61 @@ def delete_account(password:str, db) -> None:
 
     except Exception as error:
         print(error)
+
+#setup templates for login stuff
+def generate_login_template(db):
+    col1, col2, col3 = st.columns([1, 2, 1])
+
+    # Authentication form layout
+    do_you_have_an_account = col2.selectbox(
+        label='Do you have an account?',
+        options=('Yes', 'No', 'I forgot my password')
+    )
+    auth_notification = col2.empty()
+
+    #toggle between login, create account, and reset password forms based on selectbox answer
+    if (do_you_have_an_account == 'Yes'):
+        fields = {'Form name':'Login', 'Username':'Username', 'Password':'Password',
+                        'Login':'Login'}
+
+        login_form = st.form(key="Login", clear_on_submit=True)
+        login_form.subheader('Login' if 'Form name' not in fields else fields['Form name'])
+        email = login_form.text_input('Username' if 'Username' not in fields
+                                                    else fields['Username'], autocomplete='off')
+        password = login_form.text_input('Password' if 'Password' not in fields
+                                                        else fields['Password'], type='password',
+                                                        autocomplete='off')
+        if login_form.form_submit_button('Login' if 'Login' not in fields
+                                                    else fields['Login']):
+            with auth_notification, st.spinner('Signing in'):
+                sign_in(email, password, db)
+
+    elif (do_you_have_an_account == 'No'):
+        fields = {'Form name':'Create Account', 'Username':'Username', 'Password':'Password',
+                        'Create Account':'Create Account'}
+        create_account_form = st.form(key="Create Account", clear_on_submit=True)
+        create_account_form.subheader('Create Account' if 'Form name' not in fields else fields['Form name'])
+        email = create_account_form.text_input('Username' if 'Username' not in fields
+                                                    else fields['Username'], autocomplete='off')
+        password = create_account_form.text_input('Password' if 'Password' not in fields
+                                                        else fields['Password'], type='password',
+                                                        autocomplete='off')
+        if create_account_form.form_submit_button('Create Account' if 'Create Account' not in fields
+                                                    else fields['Create Account']):
+            with auth_notification, st.spinner('Creating account'):
+                create_account(email, password)
+    elif (do_you_have_an_account == 'I forgot my password'):
+        fields = {'Form name':'Reset Password', 'Username':'Username',
+                        'Send Password Reset Email':'Send Password Reset Email'}
+        reset_password_form = st.form(key="Reset Password", clear_on_submit=True)
+        reset_password_form.subheader('Reset Password' if 'Form name' not in fields else fields['Form name'])
+        email = reset_password_form.text_input('Username' if 'Username' not in fields
+                                                    else fields['Username'], autocomplete='off')
+        if reset_password_form.form_submit_button('Send Password Reset Email' if
+                        'Send Password Reset Email' not in fields
+                                                    else fields['Send Password Reset Email']):
+            with auth_notification, st.spinner('Sending password reset link'):
+                reset_password(email)
+    if 'auth_success' in st.session_state:
+        auth_notification.success(st.session_state.auth_success)
+        del st.session_state.auth_success

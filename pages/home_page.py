@@ -1,6 +1,6 @@
 import streamlit as st
 from google.cloud import firestore
-import global_functions as gfuncs
+import BackendMethods.global_functions as gfuncs
 import BackendMethods.auth_functions as authFuncs
 import BackendMethods.backendfuncs as backEnd
 
@@ -48,19 +48,19 @@ else:
 
         # Edit dialog to change the name of the collection
         @st.dialog("Edit") 
-        def editCollection(coll):
+        def edit_collection(coll):
             with st.container(horizontal=True, horizontal_alignment="center"):
                 st.subheader(f"Rename {coll.id.split('_')[0]}?", text_alignment="center")
                 coll_rename = st.text_input(" ")
                 if st.button ("Rename", key=f"rename_{coll.id.split('_')[0]}", width="content"):
-                    if backEnd.renameCollection(coll, coll_rename, db):
+                    if backEnd.rename_collection(coll, coll_rename, db):
                         st.error("Collection name already exist")
                     else: 
                         st.rerun()
 
         # Add collection dialog for adding a new collection to the db
         @st.dialog("Add")
-        def addCollection():
+        def add_collection():
             name = st.text_input("Name the Collection")
             collType = st.text_input("Give Collection Type") # will be dropdown
             if st.button("Add", key="makeColl") and name is not None and collType is not None:
@@ -71,7 +71,7 @@ else:
 
         # Remove collection dialog to remove a collection from the db
         @st.dialog("Remove") 
-        def removeCollection(coll):
+        def remove_collection(coll):
             with st.container(horizontal=True, horizontal_alignment="center"):
                 st.subheader(f"Are you sure you want to remove \"{coll.split('_')[0]}\"?", text_alignment="center")
                 if st.button("Yes", key=f"confirmRemove", width="content"):
@@ -95,10 +95,10 @@ else:
                             st.switch_page(collection_page)
 
                         if st.button("Edit", key=f"edit_{collInfo[0]}"):
-                            editCollection(doc)
+                            edit_collection(doc)
 
                         if st.button("Remove", key=f"remove_{collInfo[0]}", width="content"):
-                            removeCollection(doc.id)
+                            remove_collection(doc.id)
 
                         st.space("medium")
                     st.space("small")
@@ -107,5 +107,5 @@ else:
     with st.container(horizontal=True, horizontal_alignment="right"):
         # add collection button
         if st.button("Add Collection"):
-            addCollection()
+            add_collection()
     

@@ -3,55 +3,26 @@ import streamlit as st
 import tmdbsimple as tmdb
 import rebrick
 import json
-from fastapi import FastAPI, Query, Path, HTTPException
+from fastapi import FastAPI, Query, Path
 from requests_futures.sessions import FuturesSession
 import requests
-import toml
 from concurrent.futures import as_completed
 from BackendMethods.auth_functions import create_account, sign_in, reset_password
 from algoliasearch.search.client import SearchClientSync
 from algoliasearch.search.models.search_params_object import SearchParamsObject
-from google.cloud import secretmanager, firestore
+from google.cloud import firestore
 import io
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+from pyzbar import pyzbar
 
-try:
-	from pyzbar import pyzbar
-
-	PYZBAR_AVAILABLE = True
-except Exception:
-	PYZBAR_AVAILABLE = False
-
-def access_secret_version():
-    """
-    Access the payload for a secret version.
-    """
-    # Create the Secret Manager client.
-    client = secretmanager.SecretManagerServiceClient()
-
-    # Build the resource name of the secret version.
-    name = "projects/memorabiliacs-ec1bd/secrets/Streamlit_secrets/versions/latest"
-
-    # Access the secret version.
-    response = client.access_secret_version(request={"name": name})
-
-    # Decode the payload.
-    # Note: The secret value is returned as a bytes object.
-    payload = response.payload.data.decode("UTF-8")
-    payload_dict = toml.loads(payload)
-    return payload_dict
-
-st.secrets = access_secret_version()
 BASE_API_URL = "https://apitcg.com/api"
-APITCG_API_KEY = st.secrets["APITCG_API_KEY"]  # change later
+APITCG_API_KEY = st.secrets["APITCG_API_KEY"]
 
 app = FastAPI()
 
 CURR_COLL = ""
 
-# urls in format of 'https://apitcg.com/api/$GAME/cards?$ATTRIBUTE='
-
-#Faster version of get_cards using asynchronous gets and future responses
+# Faster version of get_cards using asynchronous gets and future responses
 @app.get("/{game}/cards")
 def get_cards2(
     game: str = Path(..., description="Game type: one-piece, pokemon, yugioh, etc."),
@@ -186,11 +157,11 @@ def generate_collection(collection_name: str, db):
 
 # created new document in db
 def create_collection(collection_name: str, collection_type: str, db):
-    """Generate a collection of items from the database based on the collection name.
+    """Create a collection of items in the database with the specified name and type.
 
-    collection_name: Name of the collection to retrieve
+    collection_name: Name of the collection to create
+    collection_type: Type of the collection (e.g., "Pokemon", "Movies", etc.)
     db: Firestore database instance
-    Returns a list of items (data dictionaries) referenced in the specified collection
     """
     user_id = st.session_state.user_info['localId']
 
@@ -205,7 +176,7 @@ def create_collection(collection_name: str, collection_type: str, db):
     db.collection('Users').document(user_id).collection('Collections').document(fullName).set({"Info":[]})
 
 # renames a collection
-def renameCollection(collection_name:str, new_collection:str, db):
+def rename_collection(collection_name:str, new_collection:str, db):
     """Renames a collection, by use of creating a new collection and moving the data
     
     collection_name: name of original collection
@@ -242,7 +213,6 @@ def add_reference_search(db, user_id, item_doc_id, actual_item_id):
     pokemon_ref = db.collection("Pokemon").document(actual_item_id)
     db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).set({item_doc_id: pokemon_ref}, merge=True)
 
-
 def delete_reference(db, user_id, item_doc_id):
     delete = db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL)
     delete.update({item_doc_id: firestore.DELETE_FIELD})
@@ -268,64 +238,6 @@ def checkForCollName(collection_name:str, db) -> bool:
 def setCollection(collection:str):
     global CURR_COLL
     CURR_COLL = collection
-
-#setup templates for login stuff
-def generate_login_template(db):
-    col1, col2, col3 = st.columns([1, 2, 1])
-
-    # Authentication form layout
-    do_you_have_an_account = col2.selectbox(
-        label='Do you have an account?',
-        options=('Yes', 'No', 'I forgot my password')
-    )
-    auth_notification = col2.empty()
-
-
-    if (do_you_have_an_account == 'Yes'):
-        fields = {'Form name':'Login', 'Username':'Username', 'Password':'Password',
-                        'Login':'Login'}
-
-        login_form = st.form(key="Login", clear_on_submit=True)
-        login_form.subheader('Login' if 'Form name' not in fields else fields['Form name'])
-        email = login_form.text_input('Username' if 'Username' not in fields
-                                                    else fields['Username'], autocomplete='off')
-        password = login_form.text_input('Password' if 'Password' not in fields
-                                                        else fields['Password'], type='password',
-                                                        autocomplete='off')
-        if login_form.form_submit_button('Login' if 'Login' not in fields
-                                                    else fields['Login']):
-            with auth_notification, st.spinner('Signing in'):
-                sign_in(email, password, db)
-
-    elif (do_you_have_an_account == 'No'):
-        fields = {'Form name':'Create Account', 'Username':'Username', 'Password':'Password',
-                        'Create Account':'Create Account'}
-        create_account_form = st.form(key="Create Account", clear_on_submit=True)
-        create_account_form.subheader('Create Account' if 'Form name' not in fields else fields['Form name'])
-        email = create_account_form.text_input('Username' if 'Username' not in fields
-                                                    else fields['Username'], autocomplete='off')
-        password = create_account_form.text_input('Password' if 'Password' not in fields
-                                                        else fields['Password'], type='password',
-                                                        autocomplete='off')
-        if create_account_form.form_submit_button('Create Account' if 'Create Account' not in fields
-                                                    else fields['Create Account']):
-            with auth_notification, st.spinner('Creating account'):
-                create_account(email, password)
-    elif (do_you_have_an_account == 'I forgot my password'):
-        fields = {'Form name':'Reset Password', 'Username':'Username',
-                        'Send Password Reset Email':'Send Password Reset Email'}
-        reset_password_form = st.form(key="Reset Password", clear_on_submit=True)
-        reset_password_form.subheader('Reset Password' if 'Form name' not in fields else fields['Form name'])
-        email = reset_password_form.text_input('Username' if 'Username' not in fields
-                                                    else fields['Username'], autocomplete='off')
-        if reset_password_form.form_submit_button('Send Password Reset Email' if
-                        'Send Password Reset Email' not in fields
-                                                    else fields['Send Password Reset Email']):
-            with auth_notification, st.spinner('Sending password reset link'):
-                reset_password(email)
-    if 'auth_success' in st.session_state:
-        auth_notification.success(st.session_state.auth_success)
-        del st.session_state.auth_success
 
 REBRICK_API_KEY = st.secrets["REBRICK_API_KEY"]
 
@@ -370,7 +282,7 @@ def search_sets_rebrickable(query, max_results: int = 10):
         return []
 
     items = []
-    # this was from a unneccesarry check but it works so keeping it
+    
     if isinstance(data, dict):
         items = data.get('results') 
 
@@ -457,8 +369,7 @@ def test_upc_api(upc_code: str):
     return results
 
 def _decode_barcodes(image: Image.Image) -> list[dict[str, str]]:
-	if not PYZBAR_AVAILABLE:
-		return []
+
 
 	decoded = pyzbar.decode(image)
 	results: list[dict[str, str]] = []

@@ -6,13 +6,14 @@ import json
 import os
 
 import streamlit as st
-import global_functions as gfuncs
+import BackendMethods.global_functions as gfuncs
 from google.cloud import firestore
 from BackendMethods.auth_functions import (
     create_account,
     delete_account,
     reset_password,
     sign_in,
+    generate_login_template,
     sign_out,
 )
 from BackendMethods.backendfuncs import (
@@ -20,7 +21,6 @@ from BackendMethods.backendfuncs import (
     search_internetarchive,
     generate_collection,
     search_movies,
-    generate_login_template,
     access_secret_version,
 )
 st.secrets = access_secret_version()

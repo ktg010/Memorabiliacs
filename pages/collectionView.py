@@ -1,6 +1,6 @@
 import streamlit as st
 from google.cloud import firestore
-import global_functions as gfuncs
+import BackendMethods.global_functions as gfuncs
 import BackendMethods.auth_functions as authFuncs
 import BackendMethods.backendfuncs as backEnd
 
