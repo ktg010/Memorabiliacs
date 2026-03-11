@@ -8,21 +8,9 @@ import os
 import streamlit as st
 import BackendMethods.global_functions as gfuncs
 from google.cloud import firestore
-from BackendMethods.auth_functions import (
-    create_account,
-    delete_account,
-    reset_password,
-    sign_in,
-    generate_login_template,
-    sign_out,
-)
-from BackendMethods.backendfuncs import (
-    get_cards2,
-    search_internetarchive,
-    generate_collection,
-    search_movies,
-    access_secret_version,
-)
+from BackendMethods.auth_functions import *
+
+
 st.secrets = access_secret_version()
 
 st.set_page_config(layout="wide")
