@@ -164,6 +164,39 @@ def generate_collection(collection_name: str, db):
     else:
         return []
 
+def get_collection_types(db):
+    """Gets all possible collection types stored in the database
+    
+    db: Firestore database
+    Returns a list of types, begining with Custom
+    """
+    res = []
+    types = db.collections()
+    for doc in types:
+        if doc.id != "Users":
+            if doc.id == "Custom":
+                res.insert(0, doc.id)
+            else:
+                    res.append(doc.id)
+    return res
+
+
+def type_fields(coll_type:str, db):
+    """Gets all the fields in a type
+    
+    coll_type: Type (name of collection document)
+    db: Firestore database
+    Returns a dictionary of field names and booleans
+    """
+    res = {}
+
+    typeRef = db.collection(coll_type)
+    for doc in typeRef.stream():
+        fields = doc.to_dict()
+        for key in fields.keys():
+            res[key] = True
+    return res
+
 
 def create_collection(collection_name: str, collection_type: str, db):
     """Create a collection of items in the database with the specified name and type.
@@ -171,6 +204,7 @@ def create_collection(collection_name: str, collection_type: str, db):
     collection_name: Name of the collection to create
     collection_type: Type of the collection (e.g., "Pokemon", "Movies", etc.)
     db: Firestore database instance
+    Returns true if collection already exits, else sets collection
     """
     user_id = st.session_state.user_info['localId']
 
@@ -182,7 +216,25 @@ def create_collection(collection_name: str, collection_type: str, db):
         return True
     
     # created new collection
-    db.collection('Users').document(user_id).collection('Collections').document(fullName).set({"Info":[]})
+    baseInfo = {
+        # list of items per collection
+        "items": {},
+
+        # collection settings
+        "settings": {
+            # sets what fields are viewed via item type
+            "views" : type_fields(collection_type, db),
+            # sets preview image 
+            "image" : "url to display image",
+            # sets a background image when viewing collection
+            "background" : "url to background image",
+            # ? way to re-order collections on main page ?
+            "order" : "figure out later, way to sort/filter/order on main page",
+            # hidden on main page
+            "hidden" : False
+        }
+    }
+    db.collection('Users').document(user_id).collection('Collections').document(fullName).set(baseInfo)
 
 
 def rename_collection(collection_name:str, new_collection:str, db):

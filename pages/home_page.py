@@ -25,7 +25,7 @@ else:
     collection_page = "pages/collectionView.py"
     user_id = st.session_state.user_info["localId"]
     user_data_dict = db.collection("Users").document(user_id).get().to_dict()
-    collections = list(db.collection("Users").document(user_id).collections())
+    collections = db.collection("Users").document(user_id).collection("Collections")
     
     # Updates user configs
     gfuncs.update_config_val(conf_file, "base", user_data_dict["base"])
@@ -62,10 +62,7 @@ else:
         @st.dialog("Add")
         def add_collection():
             name = st.text_input("Name the Collection")
-            # 
-            testList = ["test1", "test2", "test3"]
-            # 
-            collType = st.selectbox("Type", testList)
+            collType = st.selectbox("Type", backEnd.get_collection_types(db))
             if st.button("Add", key="makeColl") and name is not None and collType is not None:
                 if backEnd.create_collection(name, collType, db):
                     st.error("Collection name already exist")
@@ -86,25 +83,24 @@ else:
                     st.rerun()
 
         # iterate through collections
-        for coll in collections:
-            for doc in list(coll.stream()):
-                collInfo = doc.id.split('_')
-                if not collInfo[0] == "DefaultCollection":
-                    with st.container(width="content", horizontal_alignment="center"):
-                        st.subheader(f"{collInfo[0]}", text_alignment="center")
+        for doc in collections.stream():
+            collInfo = doc.id.split('_')
+            if not collInfo[0] == "DefaultCollection":
+                with st.container(width="content", horizontal_alignment="center"):
+                    st.subheader(f"{collInfo[0]}", text_alignment="center")
 
-                        if st.button("View Collection", key=f"{collInfo[0]}_link"):
-                            backEnd.set_collection(doc.id)
-                            st.switch_page(collection_page)
+                    if st.button("View Collection", key=f"{collInfo[0]}_link"):
+                        backEnd.set_collection(doc.id)
+                        st.switch_page(collection_page)
 
-                        if st.button("Edit", key=f"edit_{collInfo[0]}"):
-                            edit_collection(doc)
+                    if st.button("Edit", key=f"edit_{collInfo[0]}"):
+                        edit_collection(doc)
 
-                        if st.button("Remove", key=f"remove_{collInfo[0]}", width="content"):
-                            remove_collection(doc.id)
+                    if st.button("Remove", key=f"remove_{collInfo[0]}", width="content"):
+                        remove_collection(doc.id)
 
-                        st.space("medium")
-                    st.space("small")
+                    st.space("medium")
+                st.space("small")
 
     # Container in bottom right for add button
     with st.container(horizontal=True, horizontal_alignment="right"):
