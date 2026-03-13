@@ -61,7 +61,7 @@ else:
     theme_memorbiliac = {"base" : "dark", 
                       "backgroundColor" : "#636363",
                       "textColor" : "#00ff22",
-                      "font" : "sans-serif",
+                      "font" : "'Comic Sans MS':https://fonts.cdnfonts.com/css/sans-comic-sans",
                       "theme" : "Memorabiliac"}
     theme_paper = {"base" : "light", 
                       "backgroundColor" : "#ffe598",
