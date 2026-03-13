@@ -66,7 +66,7 @@ else:
     theme_paper = {"base" : "light", 
                       "backgroundColor" : "#ffe598",
                       "textColor" : "#000000",
-                      "font" : "serif",
+                      "font" : "Caveat:https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap",
                       "theme" : "Paper"}
     theme_logan = {"base" : "light", 
                       "backgroundColor" : "#b1a8a8",
