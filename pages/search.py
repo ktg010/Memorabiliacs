@@ -3,6 +3,7 @@ from google.cloud import firestore
 import BackendMethods.global_functions as gfuncs
 import BackendMethods.auth_functions as authFuncs
 import BackendMethods.backendfuncs as backEnd
+from BackendMethods.translations import _
 
 st.session_state["last_code"] = ""
 
@@ -23,15 +24,15 @@ except Exception as e:
 else:
     gfuncs.page_initialization()
 # This is straight from kieran's ui in apitesting, placeholder
-    st.subheader("Search for Collectables!", text_alignment="center")
+    st.subheader(_("Search for Collectables!"), text_alignment="center")
     # DEGUB:{st.session_state.user_info}
     st.space("large")
     col_left, col_right = st.columns([3, 2])
 
     # Search type selector (left column)
     search_type = col_left.selectbox(
-        "What would you like to search for?",
-        options=("Vinyl & CDs", "Movies", "Pokemon Cards", "UPC", "Lego Sets", "Lego Minifigs"),
+        _("What would you like to search for?"),
+        options=(_("Vinyl & CDs"), _("Movies"), _("Pokemon Cards"), _("UPC"), _("Lego Sets"), _("Lego Minifigs")),
     )
 
     # Collection selector (right column) - list user's collections except DefaultCollection
@@ -43,7 +44,7 @@ else:
         collections = []
 
     if not collections:
-        collections = ["(No collections)"]
+        collections = [_("(No collections)")]
 
     # Persist selection in session state
     default_index = 0
@@ -53,7 +54,7 @@ else:
         except Exception:
             default_index = 0
 
-    selected_collection = col_right.selectbox("Add items to collection:", options=display_collections, index=default_index, key="selected_collection")
+    selected_collection = col_right.selectbox(_("Add items to collection:"), options=display_collections, index=default_index, key="selected_collection")
 
     # Set backend current collection for add actions
     if selected_collection and selected_collection != "(No collections)":
@@ -67,18 +68,18 @@ else:
         except Exception:
             backEnd.CURR_COLL = ""
 
-    if search_type == "UPC":
-        input_mode = st.radio("Input source", options=["Upload", "Camera"], horizontal=True)
-        enhanced = st.toggle("Enhanced decode (slower)", value=False)
+    if search_type == _("UPC"):
+        input_mode = st.radio(_("Input source"), options=[_("Upload"), _("Camera")], horizontal=True)
+        enhanced = st.toggle(_("Enhanced decode (slower)"), value=False)
         uploaded = None
 
-        if input_mode == "Camera":
-            uploaded = st.camera_input("Scan barcode")
+        if input_mode == _("Camera"):
+            uploaded = st.camera_input(_("Scan barcode"))
         else:
-            uploaded = st.file_uploader("Upload barcode image", type=["png", "jpg", "jpeg"])
+            uploaded = st.file_uploader(_("Upload barcode image"), type=["png", "jpg", "jpeg"])
 
         if not backEnd.PYZBAR_AVAILABLE:
-            st.error("Barcode decoding is unavailable. Install 'pyzbar' and the system 'zbar' library.")
+            st.error(_("Barcode decoding is unavailable. Install 'pyzbar' and the system 'zbar' library."))
             st.stop()
 
         decoded: list[dict[str, str]] = []
@@ -89,14 +90,14 @@ else:
                 if enhanced and not decoded:
                     decoded = backEnd._decode_with_enhancements(image)
             except Exception as exc:
-                st.error(f"Failed to read image: {exc}")
+                st.error(f"{_('Failed to read image:')} {exc}")
 
         if decoded:
             supported_codes = backEnd._extract_supported_codes(decoded)
             if supported_codes:
-                st.success("Supported code(s) detected")
+                st.success(_("Supported code(s) detected"))
                 options = [f"{item['code']} ({item['label']})" for item in supported_codes]
-                selected = st.selectbox("Detected codes", options=options)
+                selected = st.selectbox(_("Detected codes"), options=options)
                 st.session_state["last_code"] = selected.split(" ")[0]
             else:
                 st.warning("Barcode detected, but no UPC/EAN/ISBN code found.")

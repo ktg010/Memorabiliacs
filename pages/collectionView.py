@@ -3,6 +3,7 @@ from google.cloud import firestore
 import BackendMethods.global_functions as gfuncs
 import BackendMethods.auth_functions as authFuncs
 import BackendMethods.backendfuncs as backEnd
+from BackendMethods.translations import _
 
 # Connects to db
 try:
@@ -27,7 +28,7 @@ else:
     st.space("small")
 
     # view selection radio buttons
-    view_mode = st.radio("Display mode", ["grid", "column"], horizontal=True)
+    view_mode = st.radio(_("Display mode"), [_("grid"), _("column")], horizontal=True)
 
     
         # iterate through collections and collect item info
@@ -41,7 +42,7 @@ else:
             items.append(info)
 
     # display either grid or column view
-    if view_mode == "grid":
+    if view_mode == _("grid"):
         with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
             cols = st.columns(3, width="stretch")  # grid view
             for idx, info in enumerate(items):
@@ -72,7 +73,7 @@ else:
     
     with st.container(horizontal=True, horizontal_alignment="right", vertical_alignment="bottom"):
         # Text box for input
-        item_id = st.text_input("Enter Item ID")
+        item_id = st.text_input(_("Enter Item ID"))
         new_string = ""
         for i in range(len(item_id)):
             if item_id[i] == "-":
@@ -80,7 +81,7 @@ else:
             else:
                 new_string+=item_id[i]
         # Add to collection button. Must input Id for now
-        if st.button("Add To Collection"):
+        if st.button(_("Add To Collection")):
             backEnd.add_reference_collectionView(db, user_id, new_string, item_id)
-        if st.button("Remove From Collection"):
+        if st.button(_("Remove From Collection")):
             backEnd.delete_reference(db, user_id, new_string)

@@ -3,6 +3,7 @@ import BackendMethods.global_functions as gfuncs
 from google.cloud import firestore
 from BackendMethods.auth_functions import *
 from BackendMethods.backendfuncs import *
+from BackendMethods.translations import _, set_language
 
 try:
     newdb = firestore.Client.from_service_account_info(st.secrets["firebase"])
@@ -27,18 +28,31 @@ else:
     # does not need a link to settings and we instead want to logout from settings
     with st.container(horizontal=True, vertical_alignment="top"):
         with st.container(horizontal_alignment="left", vertical_alignment="top"):
-            if st.button("Home"):
+            if st.button(_("Home")):
                 st.switch_page("pages/home_page.py")
         with st.container(horizontal_alignment="right", vertical_alignment="top"):
-            if st.button("Logout"):
+            if st.button(_("Logout")):
                 setCollection("")
                 sign_out()
                 st.switch_page("pages/login.py")
 
 
-    st.title("Settings", text_alignment="center")
+    st.title(_("Settings"), text_alignment="center")
 
     st.set_page_config(layout="wide")
+
+    # Language selector
+    with st.container(horizontal_alignment="left", vertical_alignment="top"):
+        language_options = {"English": "en", "Español": "es"}
+        current_lang = st.session_state.get('language', 'en')
+        current_lang_display = "English" if current_lang == 'en' else "Español"
+        selected_lang = st.selectbox(_("Select Language:"), options=list(language_options.keys()), index=list(language_options.keys()).index(current_lang_display))
+        if selected_lang != current_lang_display:
+            lang_code = language_options[selected_lang]
+            set_language(lang_code)
+            # Save to database
+            newdb.collection("Users").document(user_id).set({"language": lang_code}, merge=True)
+            st.rerun()
 
     # Grabs settings from database
     # Also grabs current configuration data from config file
@@ -94,9 +108,9 @@ else:
 
     # Select box for themes and a button to save theme choice
     with st.container(horizontal_alignment="left", vertical_alignment="top"):
-        color_theme = st.selectbox("Select color scheme: ", theme_list, index = theme_list.index(current_theme))
+        color_theme = st.selectbox(_("Select color scheme:"), theme_list, index = theme_list.index(current_theme))
         with st.container(horizontal_alignment="right", vertical_alignment="top"):
-            if st.button("Save Theme Choice"):
+            if st.button(_("Save Theme Choice")):
                 gfuncs.update_settings(conf_file, theme_dict[color_theme])
                 newdb.collection("Users").document(user_id).set(theme_dict[color_theme], merge=True)
                 st.rerun()
@@ -104,17 +118,17 @@ else:
 
     # Popover button for advanced settings with editing available for 
     # Background color, text color, and font
-    with st.popover("Advanced Settings"):
+    with st.popover(_("Advanced Settings")):
         with st.container(horizontal_alignment="left", vertical_alignment="top"):
-            background_color_choice = st.color_picker("Select the background color: ", current_background_color)
-            text_color_choice = st.color_picker("Select the text color: ", current_text_color)
-            font_choice = st.selectbox("Select the font: ", ("serif", "sans-serif"), index=0 if current_font == "serif" else 1)
+            background_color_choice = st.color_picker(_("Select the background color:"), current_background_color)
+            text_color_choice = st.color_picker(_("Select the text color:"), current_text_color)
+            font_choice = st.selectbox(_("Select the font:"), ("serif", "sans-serif"), index=0 if current_font == "serif" else 1)
             base_choice = gfuncs.base_theme_threshold(text_color_choice)
 
         # Save button both writes to config file to show changes, 
         # and writes changes to database for consistency between states
         with st.container(horizontal_alignment="right", vertical_alignment="bottom"):
-            if st.button("Save Changes"):
+            if st.button(_("Save Changes")):
                 gfuncs.update_config_val(conf_file, "base", "dark" if base_choice=="dark" else "light")
                 gfuncs.update_config_val(conf_file, "backgroundColor", background_color_choice)
                 gfuncs.update_config_val(conf_file, "textColor", text_color_choice)

@@ -9,6 +9,7 @@ import streamlit as st
 import BackendMethods.global_functions as gfuncs
 from google.cloud import firestore
 from BackendMethods.auth_functions import *
+from BackendMethods.translations import _
 
 
 st.secrets = access_secret_version()
@@ -22,7 +23,7 @@ except Exception as e:
     st.error(f"Failed to initialize Firestore: {e}")
     st.stop()
 
-st.title("Welcome to Memorabiliacs!", text_alignment="center")
+st.title(_("Welcome to Memorabiliacs!"), text_alignment="center")
 
 if 'user_info' not in st.session_state:
     generate_login_template(db)

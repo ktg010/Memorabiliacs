@@ -3,6 +3,7 @@ from google.cloud import firestore
 import BackendMethods.global_functions as gfuncs
 import BackendMethods.auth_functions as authFuncs
 import BackendMethods.backendfuncs as backEnd
+from BackendMethods.translations import _
 
 # Connects to db
 try:
@@ -27,6 +28,11 @@ else:
     user_data_dict = db.collection("Users").document(user_id).get().to_dict()
     collections = list(db.collection("Users").document(user_id).collections())
     
+    # Set language from database
+    from BackendMethods.translations import set_language
+    user_lang = user_data_dict.get('language', 'en')
+    set_language(user_lang)
+    
     # Updates user configs
     gfuncs.update_config_val(conf_file, "base", user_data_dict["base"])
     gfuncs.update_config_val(conf_file, "backgroundColor", user_data_dict["backgroundColor"])
@@ -39,7 +45,7 @@ else:
     ## Main Page Setup ---------------------------------------------------------------------------------
     ## -------------------------------------------------------------------------------------------------
     st.space("small")
-    st.subheader(f"Your Collections\n Hello {st.session_state.user_info['email']}", text_alignment="center")
+    st.subheader(f"{_('Your Collections')}\n {_('Hello')}, {st.session_state.user_info['email']}", text_alignment="center")
     # DEGUB:{st.session_state.user_info}
     st.space("small")
 
@@ -47,39 +53,39 @@ else:
     with st.container(horizontal=True, horizontal_alignment="center"):
 
         # Edit dialog to change the name of the collection
-        @st.dialog("Edit") 
+        @st.dialog(_("Edit")) 
         def edit_collection(coll):
             with st.container(horizontal=True, horizontal_alignment="center"):
-                st.subheader(f"Rename {coll.id.split('_')[0]}?", text_alignment="center")
+                st.subheader(f"{_('Rename')} {coll.id.split('_')[0]}?", text_alignment="center")
                 coll_rename = st.text_input(" ")
-                if st.button ("Rename", key=f"rename_{coll.id.split('_')[0]}", width="content"):
+                if st.button (_("Rename"), key=f"rename_{coll.id.split('_')[0]}", width="content"):
                     if backEnd.rename_collection(coll, coll_rename, db):
                         st.error("Collection name already exist")
                     else: 
                         st.rerun()
 
         # Add collection dialog for adding a new collection to the db
-        @st.dialog("Add")
+        @st.dialog(_("Add"))
         def add_collection():
-            name = st.text_input("Name the Collection")
-            collType = st.text_input("Give Collection Type") # will be dropdown
-            if st.button("Add", key="makeColl") and name is not None and collType is not None:
+            name = st.text_input(_("Name the Collection"))
+            collType = st.text_input(_("Give Collection Type")) # will be dropdown
+            if st.button(_("Add"), key="makeColl") and name is not None and collType is not None:
                 if backEnd.create_collection(name, collType, db):
                     st.error("Collection name already exist")
                 else:
                     st.rerun()
 
         # Remove collection dialog to remove a collection from the db
-        @st.dialog("Remove") 
+        @st.dialog(_("Remove")) 
         def remove_collection(coll):
             with st.container(horizontal=True, horizontal_alignment="center"):
-                st.subheader(f"Are you sure you want to remove \"{coll.split('_')[0]}\"?", text_alignment="center")
-                if st.button("Yes", key=f"confirmRemove", width="content"):
+                st.subheader(f"{_('Are you sure you want to remove')} \"{coll.split('_')[0]}\"?", text_alignment="center")
+                if st.button(_("Yes"), key=f"confirmRemove", width="content"):
                     ref = db.collection("Users").document(user_id).collection("Collections").document(coll)
                     ref.delete()
                     st.rerun()
                 
-                if st.button("No", key=f"cancelRemove", width="content"):
+                if st.button(_("No"), key=f"cancelRemove", width="content"):
                     st.rerun()
 
         # iterate through collections
@@ -90,14 +96,14 @@ else:
                     with st.container(width="content", horizontal_alignment="center"):
                         st.subheader(f"{collInfo[0]}", text_alignment="center")
 
-                        if st.button("View Collection", key=f"{collInfo[0]}_link"):
+                        if st.button(_("View Collection"), key=f"{collInfo[0]}_link"):
                             backEnd.setCollection(doc.id)
                             st.switch_page(collection_page)
 
-                        if st.button("Edit", key=f"edit_{collInfo[0]}"):
+                        if st.button(_("Edit"), key=f"edit_{collInfo[0]}"):
                             edit_collection(doc)
 
-                        if st.button("Remove", key=f"remove_{collInfo[0]}", width="content"):
+                        if st.button(_("Remove"), key=f"remove_{collInfo[0]}", width="content"):
                             remove_collection(doc.id)
 
                         st.space("medium")
@@ -106,6 +112,6 @@ else:
     # Container in bottom right for add button
     with st.container(horizontal=True, horizontal_alignment="right"):
         # add collection button
-        if st.button("Add Collection"):
+        if st.button(_("Add Collection")):
             add_collection()
     

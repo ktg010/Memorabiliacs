@@ -1,5 +1,6 @@
 import streamlit as st
 import BackendMethods.auth_functions as authFuncs
+from BackendMethods.translations import _
 
 login_color_flag = 0
 
@@ -39,16 +40,16 @@ def read_config_val(conf:str, var:str) -> str:
 # To be used at the start of any page
 def page_initialization():
     st.set_page_config(layout="wide")
-    st.title("Memorabiliacs", text_alignment="center")
+    st.title(_("Memorabiliacs"), text_alignment="center")
     with st.container(horizontal=True, vertical_alignment="top"):
         with st.container(horizontal_alignment="left", vertical_alignment="top"):
-            if st.button("Home"):
+            if st.button(_("Home")):
                 st.switch_page("pages/home_page.py")
         with st.container(horizontal_alignment="center", vertical_alignment="top"):
-            if st.button("Search"):
+            if st.button(_("Search")):
                 st.switch_page("pages/search.py")
         with st.container(horizontal_alignment="right", vertical_alignment="top"):
-            if st.button("Settings"):
+            if st.button(_("Settings")):
                 st.switch_page("pages/settings.py")
         
 
