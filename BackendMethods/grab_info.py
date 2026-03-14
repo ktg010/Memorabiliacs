@@ -1,37 +1,28 @@
 import json
 from pathlib import Path
+from google.cloud import firestore
+from google.cloud import firestore
+import streamlit as st
 
-data_dir = Path(r"C:\Users\andre\OneDrive\Desktop\Memorabiliacs\BackendMethods\Pokemon_Cards")  # ← change this
-
-pokemon_set = []  # use a set to auto-deduplicate
-
-print("Starting")
-
-for json_file in data_dir.glob("*.json"):
-    # print("Opening File")
-    with open(json_file, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    # print("Reading File")
-    for card in data:
-        if "nationalPokedexNumbers" in card:
-            card_id = card["id"]
-            # card_name = card["name"]
-            pokemon_set.append(card_id)
-    # print("File Read")
-print("list made")
-
-# Convert to sorted list if you want consistency
-pokemon_list = sorted(pokemon_set)
+try:
+    db = firestore.Client.from_service_account_info(st.secrets["firebase"])
+except Exception as e:
+    st.error(f"Failed to initialize Firestore: {e}")
+    st.stop()   
 
 
-def chunk_pokemon(pokemon_list, chunk_size=995):
-    return [
-        pokemon_list[i:i + chunk_size]
-        for i in range(0, len(pokemon_list), chunk_size)
-    ]
+def main():
+    print("Grabbing info")
+    
+# Folder containing the pokemon card JSON files
 
-List = chunk_pokemon(pokemon_list, 995)
 
-print(List[0])
+# Firestore client
+db = firestore.Client()
 
-# print(List[0].index("bw11-22"))
+print("Starting upload...")
+
+
+
+
+

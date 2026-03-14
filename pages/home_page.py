@@ -3,6 +3,7 @@ from google.cloud import firestore
 import BackendMethods.global_functions as gfuncs
 import BackendMethods.auth_functions as authFuncs
 import BackendMethods.backendfuncs as backEnd
+from BackendMethods import grab_info
 
 # Connects to db
 try:
@@ -107,6 +108,4 @@ else:
         # add collection button
         if st.button("Add Collection"):
             add_collection()
-
-
-    
+            # backEnd.upload_pokemon_data(db)

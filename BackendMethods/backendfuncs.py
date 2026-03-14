@@ -14,6 +14,8 @@ from google.cloud import firestore
 import io
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 from pyzbar import pyzbar
+import json
+from pathlib import Path
 
 BASE_API_URL = "https://apitcg.com/api"
 APITCG_API_KEY = st.secrets["APITCG_API_KEY"]
@@ -549,3 +551,55 @@ def _extract_supported_codes(decoded: list[dict[str, str]]) -> list[dict[str, st
 def _load_image(uploaded_file: st.runtime.uploaded_file_manager.UploadedFile) -> Image.Image:
 	data = uploaded_file.getvalue()
 	return Image.open(io.BytesIO(data)).convert("RGB")
+
+
+# Function to upload all pokemon cards to database
+# I have this placed into the homepage 'add_collection' button for the sole purpose of running the code
+# In order to use this for other items, create a template (you can use professor gpt), download
+# the files from the github or wherever the information is and specify it, and run the code.
+def upload_pokemon_data(db):
+    # Specify the location of the data to upload
+    data_dir = Path(r"C:\Users\andre\Desktop\Memorabiliacs\BackendMethods\Pokemon_Cards")
+
+    # Create a template so that all cards contain all fields and fill the blanks with N/A
+    CARD_TEMPLATE = {
+        "name": "N/A",
+        "supertype": "N/A",
+        "subtypes": "N/A",
+        "level": "N/A",
+        "hp": "N/A",
+        "types": "N/A",
+        "evolvesFrom": "N/A",
+        "abilities": "N/A",
+        "attacks": "N/A",
+        "weaknesses": "N/A",
+        "retreatCost": "N/A",
+        "convertedRetreatCost": "N/A",
+        "number": "N/A",
+        "artist": "N/A",
+        "rarity": "N/A",
+        "flavorText": "N/A",
+        "nationalPokedexNumbers": "N/A",
+        "legalities": "N/A",
+        "images": "N/A"
+    }
+
+    # Runs through the json file of data to analyze all cards ad fill out the template
+    for json_file in data_dir.rglob("*.json"):
+        print(f"Reading {json_file.name}")
+
+        with open(json_file, "r", encoding="utf-8") as f:
+            cards = json.load(f)
+
+        for card in cards:
+
+            card_id = card.get("id")
+            if not card_id:
+                continue
+
+            # Fill missing fields
+            card_map = {k: card.get(k, "N/A") for k in CARD_TEMPLATE}
+
+            doc_ref = db.collection("Pokemon").document(card_id)
+
+            doc_ref.set(card_map)

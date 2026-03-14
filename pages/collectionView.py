@@ -84,3 +84,4 @@ else:
             backEnd.add_reference_collectionView(db, user_id, new_string, item_id)
         if st.button("Remove From Collection"):
             backEnd.delete_reference(db, user_id, new_string)
+            
