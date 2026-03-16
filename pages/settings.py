@@ -84,9 +84,9 @@ else:
                       "font" : "'Comic Sans MS':https://fonts.cdnfonts.com/css/sans-comic-sans",
                       "theme" : "Memorabiliac"}
     theme_paper = {"base" : "light", 
-                      "backgroundColor" : "#ffe598",
-                      "textColor" : "#000000",
-                      "font" : "Caveat:https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap",
+                      "backgroundColor" : "#f1e7c8",
+                      "textColor" : "#242424",
+                      "font" : "'Patrick Hand':https://fonts.cdnfonts.com/css/patrick-hand",
                       "theme" : "Paper"}
     theme_logan = {"base" : "light", 
                       "backgroundColor" : "#b1a8a8",
