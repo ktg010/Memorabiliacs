@@ -188,7 +188,7 @@ def get_collection_types(db):
             if doc.id == "Custom":
                 res.insert(0, doc.id)
             else:
-                    res.append(doc.id)
+                res.append(doc.id)
     return res
 
 
@@ -309,6 +309,33 @@ def check_for_coll_name(collection_name:str, db) -> bool:
             if collName[0] == collection_name:
                 return True
     return False
+
+
+def collection_views(collection_name:str, db):
+    """Gets the collection type views
+
+    collection_name: name of the collection
+    db: Firebase database
+    Returns list map(dict) of views
+    """
+    user_id = st.session_state.user_info['localId']
+
+    collection_ref = db.collection("Users").document(user_id).collection("Collections").document(collection_name)
+
+    return collection_ref.get().to_dict()["settings"]["views"]
+
+
+def update_collection_views(collection_name:str, views, db):
+    """Updates the type views for the collection
+
+    collection_name: name of collection
+    views: dictonary of fields and booleans per item type
+    db: Firebase database 
+    """
+    user_id = st.session_state.user_info['localId']
+
+    collection_ref = db.collection("Users").document(user_id).collection("Collections").document(collection_name)
+    collection_ref.update({"settings.views": views})
 
 
 def search_minifigs_rebrickable(query, max_results: int = 10):

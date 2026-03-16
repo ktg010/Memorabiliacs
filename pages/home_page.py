@@ -52,16 +52,22 @@ else:
         def edit_collection(coll):
             itemSettings, rename = st.columns([3,1])
             with itemSettings:
-                st.subheader("Other settings")
+                hidden = st.checkbox("Hide Collection")
+                fields = doc.to_dict()["settings"]
+                # TODO
+                # Add things for other setting when we figure out 
+                # how to do it
+                doc.reference.update({"settings.hidden" : hidden})
             with rename:
                 st.subheader(f"Rename {coll.id.split('_')[0]}?", text_alignment="center")
                 coll_rename = st.text_input(" ")
-                if st.button ("Rename", key=f"rename_{coll.id.split('_')[0]}", width="content"):
-                    if backEnd.rename_collection(coll, coll_rename, db):
-                        st.error("Collection name already exist")
-                    else: 
+            with st.container(horizontal=True, horizontal_alignment="right"):
+                if st.button("Save"):
+                    if coll_rename != "":
+                        if backEnd.rename_collection(coll, coll_rename, db):
+                            st.error("Collection name already exist")
+                    else:
                         st.rerun()
-
 
         # Add collection dialog for adding a new collection to the db
         @st.dialog("Add")
