@@ -14,6 +14,8 @@ from google.cloud import firestore
 import io
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 from pyzbar import pyzbar
+import json
+from pathlib import Path as FilePath
 
 BASE_API_URL = "https://apitcg.com/api"
 APITCG_API_KEY = st.secrets["APITCG_API_KEY"]
@@ -174,6 +176,20 @@ def generate_collection(collection_name: str, db):
         return items_refs["items"]
     else:
         return []
+    
+@st.cache_data(ttl=3600)
+def get_collection_items(collection_name: str):
+    """Fetch and process all items in a collection - cached to avoid repeated DB reads"""
+    db = firestore.Client.from_service_account_info(st.secrets["firebase"])
+    collectionData = generate_collection(collection_name, db)
+    items = []
+    for id in collectionData:
+        item = collectionData[id]
+        doc = item['ref']
+        info = doc.get().to_dict()
+        items.append(info)
+    
+    return items
 
 
 @st.cache_data(ttl=3600)
@@ -297,13 +313,27 @@ def rename_collection(collection_name:str, new_collection:str, db):
 
 # ______________________________
 def add_reference_collectionView(db, user_id, item_doc_id, actual_item_id):
-    pokemon_ref = db.collection("Pokemon").document(actual_item_id)
-    db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).set({item_doc_id: pokemon_ref}, merge=True)
+    coll_type = CURR_COLL.split("_")[1]
+    item_ref = db.collection(coll_type).document(actual_item_id)
+
+    db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).update({
+    f"items.{item_doc_id}": {
+        "notes": "Your notes here",
+        "ref": item_ref   
+        }
+    })
     st.rerun()
     
 def add_reference_search(db, user_id, item_doc_id, actual_item_id):
-    pokemon_ref = db.collection("Pokemon").document(actual_item_id)
-    db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).set({item_doc_id: pokemon_ref}, merge=True)
+    coll_type = CURR_COLL.split("_")[1]
+    item_ref = db.collection(coll_type).document(actual_item_id)
+
+    db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).update({
+    f"items.{item_doc_id}": {
+        "notes": "Your notes here",
+        "ref": item_ref   
+        }
+    })
 
 def delete_reference(db, user_id, item_doc_id):
     delete = db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL)
@@ -450,11 +480,11 @@ def search_algolia(query: str, index_name: str, max_results: int = 10):
             results = []
             for hit in hits:
                 results.append({
-                    "id": getattr(hit, 'id', getattr(hit, 'id', None)),
+                    "id": getattr(hit, 'object_id', getattr(hit, 'object_id', None)),
                     "name": getattr(hit, 'name', None),
-                    "image": getattr(hit, 'image', None),
+                    "images": getattr(hit, 'images', None),
                     "flavorText": getattr(hit, 'flavorText', None),
-                    "HP": getattr(hit, 'HP', getattr(hit, 'hp', None))
+                    "hp": getattr(hit, 'hp', getattr(hit, 'hp', None))
                 })
             return results
         else:
@@ -595,3 +625,55 @@ def _extract_supported_codes(decoded: list[dict[str, str]]) -> list[dict[str, st
 def _load_image(uploaded_file: st.runtime.uploaded_file_manager.UploadedFile) -> Image.Image:
 	data = uploaded_file.getvalue()
 	return Image.open(io.BytesIO(data)).convert("RGB")
+
+
+# Function to upload all pokemon cards to database
+# I have this placed into the homepage 'add_collection' button for the sole purpose of running the code
+# In order to use this for other items, create a template (you can use professor gpt), download
+# the files from the github or wherever the information is and specify it, and run the code.
+def upload_pokemon_data(db):
+    # Specify the location of the data to upload
+    data_dir = Path(r"C:\Users\andre\Desktop\Memorabiliacs\BackendMethods\Pokemon_Cards")
+
+    # Create a template so that all cards contain all fields and fill the blanks with N/A
+    CARD_TEMPLATE = {
+        "name": "N/A",
+        "supertype": "N/A",
+        "subtypes": "N/A",
+        "level": "N/A",
+        "hp": "N/A",
+        "types": "N/A",
+        "evolvesFrom": "N/A",
+        "abilities": "N/A",
+        "attacks": "N/A",
+        "weaknesses": "N/A",
+        "retreatCost": "N/A",
+        "convertedRetreatCost": "N/A",
+        "number": "N/A",
+        "artist": "N/A",
+        "rarity": "N/A",
+        "flavorText": "N/A",
+        "nationalPokedexNumbers": "N/A",
+        "legalities": "N/A",
+        "images": "N/A"
+    }
+
+    # Runs through the json file of data to analyze all cards ad fill out the template
+    for json_file in data_dir.rglob("*.json"):
+        print(f"Reading {json_file.name}")
+
+        with open(json_file, "r", encoding="utf-8") as f:
+            cards = json.load(f)
+
+        for card in cards:
+
+            card_id = card.get("id")
+            if not card_id:
+                continue
+
+            # Fill missing fields
+            card_map = {k: card.get(k, "N/A") for k in CARD_TEMPLATE}
+
+            doc_ref = db.collection("Pokemon").document(card_id)
+
+            doc_ref.set(card_map)
