@@ -22,7 +22,7 @@ except Exception as e:
 ## -------------------------------------------------------------------------------------------------
 else:
     gfuncs.page_initialization()
-# This is straight from kieran's ui in apitesting, placeholder
+    # This is straight from kieran's ui in apitesting, placeholder
     st.subheader("Search for Collectables!", text_alignment="center")
     # DEGUB:{st.session_state.user_info}
     st.space("large")

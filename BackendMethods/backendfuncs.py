@@ -34,6 +34,7 @@ def set_collection(collection:str):
     global CURR_COLL
     CURR_COLL = collection
 
+
 def coll_visability(collection_name: str, db):
     """Checks if the collection is visable for main page
     
@@ -45,6 +46,7 @@ def coll_visability(collection_name: str, db):
     collection_ref = db.collection('Users').document(user_id).collection('Collections').document(collection_name)
     contents = collection_ref.get().to_dict()
     return not contents["settings"]["hidden"]
+
 
 # Faster version of get_cards using asynchronous gets and future responses
 @app.get("/{game}/cards")
@@ -177,36 +179,18 @@ def generate_collection(collection_name: str, db):
     else:
         return []
     
+
 @st.cache_data(ttl=3600)
 def get_collection_items(collection_name: str):
     """Fetch and process all items in a collection - cached to avoid repeated DB reads"""
     db = firestore.Client.from_service_account_info(st.secrets["firebase"])
     collectionData = generate_collection(collection_name, db)
-    items = []
+    items = {}
     for id in collectionData:
         item = collectionData[id]
         doc = item['ref']
         info = doc.get().to_dict()
-        items.append(info)
-    
-    return items
-
-
-@st.cache_data(ttl=3600)
-def get_collection_items(collection_name: str):
-    """Fetch and process all items in a collection - cached to avoid repeated DB reads"""
-    db = firestore.Client.from_service_account_info(st.secrets["firebase"])
-    collectionData = generate_collection(collection_name, db)
-    items = []
-
-    for id, ref in collectionData.items():
-        if id == "Info":
-            continue
-        doc = ref.get()
-        if doc.exists:
-            info = doc.to_dict()
-            items.append(info)
-
+        items[id] = info
     return items
 
 
@@ -311,7 +295,7 @@ def rename_collection(collection_name:str, new_collection:str, db):
 
     collection_ref_OLD.delete()
 
-# ______________________________
+
 def add_reference_collectionView(db, user_id, item_doc_id, actual_item_id):
     coll_type = CURR_COLL.split("_")[1]
     item_ref = db.collection(coll_type).document(actual_item_id)
@@ -324,6 +308,7 @@ def add_reference_collectionView(db, user_id, item_doc_id, actual_item_id):
     })
     st.rerun()
     
+
 def add_reference_search(db, user_id, item_doc_id, actual_item_id):
     coll_type = CURR_COLL.split("_")[1]
     item_ref = db.collection(coll_type).document(actual_item_id)
@@ -335,11 +320,13 @@ def add_reference_search(db, user_id, item_doc_id, actual_item_id):
         }
     })
 
+
 def delete_reference(db, user_id, item_doc_id):
+    # TODO
+    # fix
     delete = db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL)
-    delete.update({item_doc_id: firestore.DELETE_FIELD})
+    delete.update({"items" : {item_doc_id: firestore.DELETE_FIELD}})
     st.rerun()
-# ______________________________
 
 
 def check_for_coll_name(collection_name:str, db) -> bool:

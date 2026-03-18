@@ -18,6 +18,12 @@ if 'user_info' not in st.session_state:
 ## Logged in ---------------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------
 else:
+    gfuncs.page_initialization()
+
+    user_id = st.session_state.user_info["localId"]
+    collectionData = backEnd.generate_collection(backEnd.CURR_COLL, db)
+    items = backEnd.get_collection_items(backEnd.CURR_COLL)  # Use cached function
+
     @st.dialog("Collection Views")
     def viewCollSettings():
         with st.container(horizontal_alignment="center"):
@@ -32,13 +38,19 @@ else:
                     newViews[view] = not st.session_state[view]
                 backEnd.update_collection_views(backEnd.CURR_COLL, newViews, db)
                 st.rerun()
-
-    gfuncs.page_initialization()
-
-    user_id = st.session_state.user_info["localId"]
-    collectionData = backEnd.generate_collection(backEnd.CURR_COLL, db)
     
-    items = backEnd.get_collection_items(backEnd.CURR_COLL)  # Use cached function
+    @st.dialog("Item Info")
+    def viewItem(item):
+        views = backEnd.collection_views(backEnd.CURR_COLL, db)
+        with st.container(horizontal_alignment="center"):
+            for key in items[item].keys():
+                if key not in ("name", "image"):
+                    if views[key]:
+                        st.write(f"{key}: {items[item][key]}")
+            if st.button("Remove From Collection"):
+                print(item)
+                # backEnd.delete_reference(db, user_id, item)
+
     st.space("small")
     st.subheader(backEnd.CURR_COLL.split("_")[0], text_alignment="center")
     if st.button("", icon=":material/settings:", type="tertiary"):
@@ -48,78 +60,31 @@ else:
     # view selection radio buttons
     view_mode = st.radio("Display mode", ["grid", "column"], horizontal=True)
 
-
-    # iterate through collections and collect item info
-    items = []
-    for id, ref in collectionData.items():
-        if id == "Info":
-            continue
-        doc = ref.get()
-        if doc.exists:
-            info = doc.to_dict()
-            items.append(info)
-
     # display either grid or column view
     if view_mode == "grid":
         with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
             cols = st.columns(3, width="stretch")  # grid view
-            for idx, info in enumerate(items):
-                col = cols[idx % 3]
+            for i, key in enumerate(items.keys()):
+                col = cols[i % 3]
                 with col.container(horizontal_alignment="center"):
-                    st.subheader(f"{info.get('name','')}", text_alignment="center")
-                    st.image(info.get('image',''), width="content")
-                    for key, val in info.items():
-                        if key not in ("name", "image"):
-                            st.write(f"{key}: {val}")
+                    st.subheader(f"{items[key]["name"]}", text_alignment="center")
+                    st.image(items[key]["images"]['small'], width=200)
+                    if st.button("View More", key=f"{items[key]["name"]}_view"):
+                        viewItem(key)
                     st.space("medium")
     else:
         with st.container(horizontal=False, horizontal_alignment="center", width="stretch"):
             cols = st.columns([0.2,0.8,0.2], width="stretch")  # column view (default)
-            for info in items:
+            for i, key in enumerate(items.keys()):
                 with cols[1].container(width="stretch", horizontal_alignment="center"):
-                    st.subheader(f"{info.get('name','')}", text_alignment="center")
-                    st.image(info.get('image',''), width=300)
-                    for key, val in info.items():
-                        if key not in ("name", "image"):
-                            st.markdown(f"<p style='text-align: center;'>{key}: {val}</p>", unsafe_allow_html=True)
+                    st.subheader(f"{items[key]["name"]}", text_alignment="center")
+                    st.image(items[key]["images"]['small'], width=200)
+                    if st.button("View More", key=f"{items[key]["name"]}_view"):
+                        viewItem(key)
                     st.space("medium")
-                st.space("small")
-
 
 
     # Container in bottom right for add button
-    
-      
-    # display either grid or column view
-    if view_mode == "grid":
-        with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
-            cols = st.columns(3, width="stretch")  # grid view
-            for idx, info in enumerate(items):
-                col = cols[idx % 3]
-                with col.container(horizontal_alignment="center"):
-                    st.subheader(f"{info.get('name','')}", text_alignment="center")
-                    st.image(info["images"]['small'], width=200)
-                    for key, val in info.items():
-                        if key not in ("name", "image"):
-                            st.write(f"{key}: {val}")
-                    st.space("medium")
-    else:
-        with st.container(horizontal=False, horizontal_alignment="center", width="stretch"):
-            cols = st.columns([0.2,0.8,0.2], width="stretch")  # column view (default)
-            for info in items:
-                with cols[1].container(width="stretch", horizontal_alignment="center"):
-                    st.subheader(f"{info.get('name','')}", text_alignment="center")
-                    st.image(info.get('image',''), width=300)
-                    for key, val in info.items():
-                        if key not in ("name", "image"):
-                            st.markdown(f"<p style='text-align: center;'>{key}: {val}</p>", unsafe_allow_html=True)
-                    st.space("medium")
-                st.space("small")
-
-
-
-    # Container in bottom right for add button
-    
     with st.container(horizontal=True, horizontal_alignment="right", vertical_alignment="bottom"):
         # Text box for input
         item_id = st.text_input("Enter Item ID")
@@ -132,6 +97,5 @@ else:
         # Add to collection button. Must input Id for now
         if st.button("Add To Collection"):
             backEnd.add_reference_collectionView(db, user_id, new_string, item_id)
-        if st.button("Remove From Collection"):
-            backEnd.delete_reference(db, user_id, new_string)
+        
             
