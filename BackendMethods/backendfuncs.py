@@ -226,15 +226,18 @@ def rename_collection(collection_name:str, new_collection:str, db):
 def add_reference_collectionView(db, user_id, item_doc_id, actual_item_id):
     pokemon_ref = db.collection("Pokemon").document(actual_item_id)
     db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).set({item_doc_id: pokemon_ref}, merge=True)
+    get_collection_items.clear(CURR_COLL)
     st.rerun()
     
 def add_reference_search(db, user_id, item_doc_id, actual_item_id):
     pokemon_ref = db.collection("Pokemon").document(actual_item_id)
     db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).set({item_doc_id: pokemon_ref}, merge=True)
+    get_collection_items.clear(CURR_COLL)
 
 def delete_reference(db, user_id, item_doc_id):
     delete = db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL)
     delete.update({item_doc_id: firestore.DELETE_FIELD})
+    get_collection_items.clear(CURR_COLL)
     st.rerun()
 
 def checkForCollName(collection_name:str, db) -> bool:
