@@ -1,0 +1,277 @@
+# French translations for Memorabiliacs.
+# Copyright (C) 2026
+# This file is distributed under the same license as the Memorabiliacs package.
+# Kieran Gilpin <kgilpin2022@gmail.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Memorabiliacs 1.0\n"
+"Report-Msgid-Bugs-To: kgilpin2022@gmail.com\n"
+"POT-Creation-Date: 2026-03-13 12:00+0000\n"
+"PO-Revision-Date: 2026-03-13 12:00+0000\n"
+"Last-Translator: Kieran Gilpin \n"
+"Language-Team: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: fr\n"
+
+#: pages/login.py:20
+msgid "Welcome to Memorabiliacs!"
+msgstr "Bienvenue sur Memorabiliacs !"
+
+#: BackendMethods/auth_functions.py:215
+msgid "Do you have an account?"
+msgstr "Avez-vous un compte ?"
+
+#: BackendMethods/auth_functions.py:217
+msgid "Yes"
+msgstr "Oui"
+
+#: BackendMethods/auth_functions.py:218
+msgid "No"
+msgstr "Non"
+
+#: BackendMethods/auth_functions.py:219
+msgid "I forgot my password"
+msgstr "J'ai oublié mon mot de passe"
+
+#: BackendMethods/auth_functions.py:222
+msgid "Login"
+msgstr "Connexion"
+
+#: BackendMethods/auth_functions.py:223
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#: BackendMethods/auth_functions.py:224
+msgid "Password"
+msgstr "Mot de passe"
+
+#: BackendMethods/auth_functions.py:230
+msgid "Create Account"
+msgstr "Créer un compte"
+
+#: BackendMethods/auth_functions.py:238
+msgid "Reset Password"
+msgstr "Réinitialiser le mot de passe"
+
+#: BackendMethods/auth_functions.py:244
+msgid "Send Password Reset Email"
+msgstr "Envoyer l'e-mail de réinitialisation du mot de passe"
+
+#: pages/home_page.py:32
+msgid "Your Collections"
+msgstr "Vos Collections"
+
+#: pages/home_page.py:48
+msgid "Hello"
+msgstr "Bonjour"
+
+#: pages/home_page.py:38
+msgid "Edit"
+msgstr "Modifier"
+
+#: pages/home_page.py:42
+msgid "Rename"
+msgstr "Renommer"
+
+#: pages/home_page.py:46
+msgid "Add"
+msgstr "Ajouter"
+
+#: pages/home_page.py:49
+msgid "Name the Collection"
+msgstr "Nommer la Collection"
+
+#: pages/home_page.py:50
+msgid "Give Collection Type"
+msgstr "Donner le Type de Collection"
+
+#: pages/home_page.py:56
+msgid "Remove"
+msgstr "Supprimer"
+
+#: pages/home_page.py:60
+msgid "Are you sure you want to remove"
+msgstr "Êtes-vous sûr de vouloir supprimer"
+
+#: pages/home_page.py:62
+msgid "Yes"
+msgstr "Oui"
+
+#: pages/home_page.py:67
+msgid "No"
+msgstr "Non"
+
+#: pages/home_page.py:74
+msgid "View Collection"
+msgstr "Voir la Collection"
+
+#: pages/home_page.py:115
+msgid "Add Collection"
+msgstr "Ajouter une Collection"
+
+#: pages/settings.py:29
+msgid "Home"
+msgstr "Accueil"
+
+#: pages/settings.py:33
+msgid "Logout"
+msgstr "Déconnexion"
+
+#: pages/settings.py:37
+msgid "Settings"
+msgstr "Paramètres"
+
+#: pages/settings.py:111
+msgid "Select color scheme:"
+msgstr "Sélectionner le schéma de couleurs :"
+
+#: pages/settings.py:78
+msgid "Save Theme Choice"
+msgstr "Enregistrer le Choix de Thème"
+
+#: pages/settings.py:82
+msgid "Advanced Settings"
+msgstr "Paramètres Avancés"
+
+#: pages/settings.py:123
+msgid "Select the background color:"
+msgstr "Sélectionner la couleur d'arrière-plan :"
+
+#: pages/settings.py:124
+msgid "Select the text color:"
+msgstr "Sélectionner la couleur du texte :"
+
+#: pages/settings.py:125
+msgid "Select the font:"
+msgstr "Sélectionner la police :"
+
+#: pages/settings.py:88
+msgid "serif"
+msgstr "serif"
+
+#: pages/settings.py:89
+msgid "sans-serif"
+msgstr "sans-serif"
+
+#: pages/settings.py:91
+msgid "Save Changes"
+msgstr "Enregistrer les Modifications"
+
+#: pages/search.py:23
+msgid "Search for Collectables!"
+msgstr "Rechercher des Objets de Collection !"
+
+#: pages/search.py:28
+msgid "What would you like to search for?"
+msgstr "Que souhaitez-vous rechercher ?"
+
+#: pages/search.py:30
+msgid "Vinyl & CDs"
+msgstr "Vinyles & CDs"
+
+#: pages/search.py:31
+msgid "Movies"
+msgstr "Films"
+
+#: pages/search.py:32
+msgid "Pokemon Cards"
+msgstr "Cartes Pokémon"
+
+#: pages/search.py:33
+msgid "UPC"
+msgstr "UPC"
+
+#: pages/search.py:34
+msgid "Lego Sets"
+msgstr "Ensembles Lego"
+
+#: pages/search.py:35
+msgid "Lego Minifigs"
+msgstr "Minifigs Lego"
+
+#: pages/search.py:42
+msgid "Add items to collection:"
+msgstr "Ajouter des éléments à la collection :"
+
+#: pages/search.py:44
+msgid "(No collections)"
+msgstr "(Aucune collection)"
+
+#: pages/search.py:58
+msgid "Input source"
+msgstr "Source d'entrée"
+
+#: pages/search.py:59
+msgid "Upload"
+msgstr "Télécharger"
+
+#: pages/search.py:60
+msgid "Camera"
+msgstr "Caméra"
+
+#: pages/search.py:61
+msgid "Enhanced decode (slower)"
+msgstr "Décodage amélioré (plus lent)"
+
+#: pages/search.py:65
+msgid "Scan barcode"
+msgstr "Scanner le code-barres"
+
+#: pages/search.py:67
+msgid "Upload barcode image"
+msgstr "Télécharger l'image du code-barres"
+
+#: pages/search.py:70
+msgid "Barcode decoding is unavailable. Install 'pyzbar' and the system 'zbar' library."
+msgstr "Le décodage des codes-barres n'est pas disponible. Installez 'pyzbar' et la bibliothèque système 'zbar'."
+
+#: pages/search.py:76
+msgid "Failed to read image:"
+msgstr "Échec de la lecture de l'image :"
+
+#: pages/search.py:80
+msgid "Supported code(s) detected"
+msgstr "Code(s) pris en charge détecté(s)"
+
+#: pages/search.py:82
+msgid "Detected codes"
+msgstr "Codes détectés"
+
+#: pages/collectionView.py:25
+msgid "Display mode"
+msgstr "Mode d'affichage"
+
+#: pages/collectionView.py:26
+msgid "grid"
+msgstr "grille"
+
+#: pages/collectionView.py:27
+msgid "column"
+msgstr "colonne"
+
+#: pages/collectionView.py:75
+msgid "Enter Item ID"
+msgstr "Entrer l'ID de l'élément"
+
+#: pages/collectionView.py:83
+msgid "Add To Collection"
+msgstr "Ajouter à la Collection"
+
+#: pages/collectionView.py:85
+msgid "Remove From Collection"
+msgstr "Supprimer de la Collection"
+
+#: BackendMethods/global_functions.py:35
+msgid "Memorabiliacs"
+msgstr "Memorabiliacs"
+
+#: BackendMethods/global_functions.py:39
+msgid "Search"
+msgstr "Rechercher"
+
+#: pages/settings.py:40
+msgid "Select Language:"
+msgstr "Sélectionner la Langue :"

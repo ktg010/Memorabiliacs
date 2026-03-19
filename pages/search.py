@@ -3,6 +3,8 @@ from google.cloud import firestore
 import BackendMethods.global_functions as gfuncs
 import BackendMethods.auth_functions as authFuncs
 import BackendMethods.backendfuncs as backEnd
+from BackendMethods.translations import _
+import st_yled
 
 st.session_state["last_code"] = ""
 
@@ -21,17 +23,20 @@ except Exception as e:
 ## Logged in ---------------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------
 else:
-    gfuncs.page_initialization()
-    # This is straight from kieran's ui in apitesting, placeholder
-    st.subheader("Search for Collectables!", text_alignment="center")
+    #st_yled.init(CURR_THEME)
+    st_yled.init()
+    user_data_dict = db.collection("Users").document(user_id).get().to_dict()
+    gfuncs.page_initialization(user_data_dict)
+# This is straight from kieran's ui in apitesting, placeholder
+    st_yled.subheader(_("Search for Collectables!"), text_alignment="center")
     # DEGUB:{st.session_state.user_info}
     st.space("large")
     col_left, col_right = st.columns([3, 2])
 
     # Search type selector (left column)
     search_type = col_left.selectbox(
-        "What would you like to search for?",
-        options=("Vinyl & CDs", "Movies", "Pokemon Cards", "UPC", "Lego Sets", "Lego Minifigs"),
+        _("What would you like to search for?"),
+        options=(_("Vinyl & CDs"), _("Movies"), _("Pokemon Cards"), _("UPC"), _("Lego Sets"), _("Lego Minifigs")),
     )
 
     # Collection selector (right column) - list user's collections except DefaultCollection
@@ -43,7 +48,7 @@ else:
         collections = []
 
     if not collections:
-        collections = ["(No collections)"]
+        collections = [_("(No collections)")]
 
     # Persist selection in session state
     default_index = 0
@@ -53,7 +58,7 @@ else:
         except Exception:
             default_index = 0
 
-    selected_collection = col_right.selectbox("Add items to collection:", options=display_collections, index=default_index, key="selected_collection")
+    selected_collection = col_right.selectbox(_("Add items to collection:"), options=display_collections, index=default_index, key="selected_collection")
 
     # Set backend current collection for add actions
     if selected_collection and selected_collection != "(No collections)":
@@ -67,18 +72,18 @@ else:
         except Exception:
             backEnd.CURR_COLL = ""
 
-    if search_type == "UPC":
-        input_mode = st.radio("Input source", options=["Upload", "Camera"], horizontal=True)
-        enhanced = st.toggle("Enhanced decode (slower)", value=False)
+    if search_type == _("UPC"):
+        input_mode = st_yled.radio(_("Input source"), options=[_("Upload"), _("Camera")], horizontal=True)
+        enhanced = st_yled.toggle(_("Enhanced decode (slower)"), value=False)
         uploaded = None
 
-        if input_mode == "Camera":
-            uploaded = st.camera_input("Scan barcode")
+        if input_mode == _("Camera"):
+            uploaded = st.camera_input(_("Scan barcode"))
         else:
-            uploaded = st.file_uploader("Upload barcode image", type=["png", "jpg", "jpeg"])
+            uploaded = st.file_uploader(_("Upload barcode image"), type=["png", "jpg", "jpeg"])
 
         if not backEnd.PYZBAR_AVAILABLE:
-            st.error("Barcode decoding is unavailable. Install 'pyzbar' and the system 'zbar' library.")
+            st_yled.error(_("Barcode decoding is unavailable. Install 'pyzbar' and the system 'zbar' library."))
             st.stop()
 
         decoded: list[dict[str, str]] = []
@@ -89,34 +94,34 @@ else:
                 if enhanced and not decoded:
                     decoded = backEnd._decode_with_enhancements(image)
             except Exception as exc:
-                st.error(f"Failed to read image: {exc}")
+                st_yled.error(f"{_('Failed to read image:')} {exc}")
 
         if decoded:
             supported_codes = backEnd._extract_supported_codes(decoded)
             if supported_codes:
-                st.success("Supported code(s) detected")
+                st_yled.success(_("Supported code(s) detected"))
                 options = [f"{item['code']} ({item['label']})" for item in supported_codes]
-                selected = st.selectbox("Detected codes", options=options)
+                selected = st_yled.selectbox(_("Detected codes"), options=options)
                 st.session_state["last_code"] = selected.split(" ")[0]
             else:
-                st.warning("Barcode detected, but no UPC/EAN/ISBN code found.")
+                st_yled.warning("Barcode detected, but no UPC/EAN/ISBN code found.")
         elif uploaded is not None:
-            st.warning("No barcode detected. Try a clearer image with the code centered.")
+            st_yled.warning("No barcode detected. Try a clearer image with the code centered.")
 
         st.divider()
-        upc_query = st.text_input("Enter UPC code", value=st.session_state.get("last_code", ""))
+        upc_query = st_yled.text_input("Enter UPC code", value=st.session_state.get("last_code", ""))
         if upc_query:
             normalized = backEnd._normalize_payload(upc_query)
             if len(normalized) == 10 and normalized[:-1].isdigit() and normalized[-1] in "Xx":
                 code = normalized[:-1] + "X"
                 label = backEnd._classify_code(code, "ISBN10")
-                st.success(f"{label} ready for use: {code}")
+                st_yled.success(f"{label} ready for use: {code}")
             elif normalized.isdigit() and len(normalized) in {8, 12, 13}:
                 label = backEnd._classify_code(normalized, "")
-                st.success(f"{label} ready for use: {normalized}")
+                st_yled.success(f"{label} ready for use: {normalized}")
             else:
                 st.info("Enter a valid UPC (8/12), EAN (8/13), or ISBN (10/13).")
-            if st.button("Search UPC"):
+            if st_yled.button("Search UPC"):
                 with st.spinner("Searching UPC..."):
                     try:
                         st.markdown("UPC search results:")
@@ -134,11 +139,11 @@ else:
                             st.write(f"Item ean: {upc_result['ean']}")
 
                     except Exception as e:
-                        st.error(f"UPC search failed: {e}")
+                        st_yled.error(f"UPC search failed: {e}")
     elif search_type == "Pokemon Cards":
-        with st.form(key="algolia_search_form", clear_on_submit=False):
-            pokemon_query = st.text_input("Search for a Pokemon card")
-            pokemon_search_submitted = st.form_submit_button("Search Pokemon")
+        with st_yled.form(key="algolia_search_form", clear_on_submit=False):
+            pokemon_query = st_yled.text_input("Search for a Pokemon card")
+            pokemon_search_submitted = st_yled.form_submit_button("Search Pokemon")
 
         if pokemon_search_submitted:
             with st.spinner("Searching Pokemon (Algolia)..."):
@@ -168,8 +173,7 @@ else:
                         def add_pokemon_button(item_id, Cardname):
                             proper_id = str(item_id).replace("-", "_")
                             backEnd.add_reference_search(proper_id, item_id, db)
-                            st.success(f"Added '{Cardname}' to your {backEnd.CURR_COLL.split('_')[0]} collection!")
-                        print(f"pokemon restults = {pokemon_results}")
+                            st_yled.success(f"Added '{Cardname}' to your {backEnd.CURR_COLL.split('_')[0]} collection!")
                         if item.get("images"):
                             st.image(item["images"]['small'], width=200)
                         name = item.get('name', item.get('title', 'No name'))
@@ -182,14 +186,14 @@ else:
                             st.write(f"*{item['flavorText']}*")
                         item_id = item["id"]
                         item_name = item['name'] if 'name' in item else item['title'] if 'title' in item else "No name"
-                        st.button(f"Add to {backEnd.CURR_COLL.split('_')[0]} Collection", key=f"add_{item_id}", on_click=add_pokemon_button, kwargs={"item_id": item_id, "Cardname": item_name})
+                        st_yled.button(f"Add to {backEnd.CURR_COLL.split('_')[0]} Collection", key=f"add_{item['id']}", on_click=add_pokemon_button, kwargs={"item_id": item_id, "Cardname": item_name})
 
 
 
     elif search_type == "Lego Sets":
-        with st.form(key="lego_search_form", clear_on_submit=False):
-            lego_query = st.text_input("Search for a Lego set")
-            lego_search_submitted = st.form_submit_button("Search Lego")
+        with st_yled.form(key="lego_search_form", clear_on_submit=False):
+            lego_query = st_yled.text_input("Search for a Lego set")
+            lego_search_submitted = st_yled.form_submit_button("Search Lego")
 
         if lego_search_submitted:
             with st.spinner("Searching for Lego sets..."):
@@ -219,9 +223,9 @@ else:
                             st.write(f"Part Count: {item['num_parts']}")
                             
     elif search_type == "Lego Minifigs":
-        with st.form(key="lego_minifig_search_form", clear_on_submit=False):
-            minifig_query = st.text_input("Search for a Lego minifigure")
-            minifig_search_submitted = st.form_submit_button("Search Lego Minifigs")
+        with st_yled.form(key="lego_minifig_search_form", clear_on_submit=False):
+            minifig_query = st_yled.text_input("Search for a Lego minifigure")
+            minifig_search_submitted = st_yled.form_submit_button("Search Lego Minifigs")
 
         if minifig_search_submitted:
             with st.spinner("Searching for Lego minifigs..."):

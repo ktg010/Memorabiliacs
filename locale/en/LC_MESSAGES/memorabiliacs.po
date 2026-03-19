@@ -1,0 +1,322 @@
+# English translations for Memorabiliacs.
+# Copyright (C) 2026
+# This file is distributed under the same license as the Memorabiliacs package.
+# Kieran Gilpin <kgilpin2022@gmail.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Memorabiliacs 1.0\n"
+"Report-Msgid-Bugs-To: kgilpin2022@gmail.com\n"
+"POT-Creation-Date: 2026-03-13 12:00+0000\n"
+"PO-Revision-Date: 2026-03-13 12:00+0000\n"
+"Last-Translator: Kieran Gilpin \n"
+"Language-Team: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+
+#: pages/login.py:26
+msgid "Welcome to Memorabiliacs!"
+msgstr "Welcome to Memorabiliacs!"
+
+#: BackendMethods/auth_functions.py:216
+msgid "Do you have an account?"
+msgstr "Do you have an account?"
+
+#: BackendMethods/auth_functions.py:217
+msgid "Yes"
+msgstr "Yes"
+
+#: BackendMethods/auth_functions.py:218
+msgid "No"
+msgstr "No"
+
+#: BackendMethods/auth_functions.py:219
+msgid "I forgot my password"
+msgstr "I forgot my password"
+
+#: BackendMethods/auth_functions.py:222
+msgid "Login"
+msgstr "Login"
+
+#: BackendMethods/auth_functions.py:223
+msgid "Username"
+msgstr "Username"
+
+#: BackendMethods/auth_functions.py:224
+msgid "Password"
+msgstr "Password"
+
+#: BackendMethods/auth_functions.py:230
+msgid "Create Account"
+msgstr "Create Account"
+
+#: BackendMethods/auth_functions.py:238
+msgid "Reset Password"
+msgstr "Reset Password"
+
+#: BackendMethods/auth_functions.py:244
+msgid "Send Password Reset Email"
+msgstr "Send Password Reset Email"
+
+#: pages/home_page.py:48
+msgid "Your Collections"
+msgstr "Your Collections"
+
+#: pages/home_page.py:48
+msgid "Hello"
+msgstr "Hello"
+
+#: pages/home_page.py:56
+msgid "Edit"
+msgstr "Edit"
+
+#: pages/home_page.py:60
+msgid "Rename"
+msgstr "Rename"
+
+#: pages/home_page.py:46
+msgid "Add"
+msgstr "Add"
+
+#: pages/home_page.py:49
+msgid "Name the Collection"
+msgstr "Name the Collection"
+
+#: pages/home_page.py:50
+msgid "Give Collection Type"
+msgstr "Give Collection Type"
+
+#: pages/home_page.py:70
+msgid "Remove"
+msgstr "Remove"
+
+#: pages/home_page.py:72
+msgid "Are you sure you want to remove"
+msgstr "Are you sure you want to remove"
+
+#: pages/home_page.py:74
+msgid "Yes"
+msgstr "Yes"
+
+#: pages/home_page.py:79
+msgid "No"
+msgstr "No"
+
+#: pages/home_page.py:86
+msgid "View Collection"
+msgstr "View Collection"
+
+#: pages/home_page.py:115
+msgid "Add Collection"
+msgstr "Add Collection"
+
+#: pages/settings.py:31
+msgid "Home"
+msgstr "Home"
+
+#: pages/settings.py:35
+msgid "Logout"
+msgstr "Logout"
+
+#: pages/settings.py:39
+msgid "Settings"
+msgstr "Settings"
+
+#: pages/settings.py:111
+msgid "Select color scheme:"
+msgstr "Select color scheme:"
+
+#: pages/settings.py:80
+msgid "Save Theme Choice"
+msgstr "Save Theme Choice"
+
+#: pages/settings.py:84
+msgid "Advanced Settings"
+msgstr "Advanced Settings"
+
+#: pages/settings.py:123
+msgid "Select the background color:"
+msgstr "Select the background color:"
+
+#: pages/settings.py:124
+msgid "Select the text color:"
+msgstr "Select the text color:"
+
+#: pages/settings.py:125
+msgid "Select the font:"
+msgstr "Select the font:"
+
+#: pages/settings.py:90
+msgid "serif"
+msgstr "serif"
+
+#: pages/settings.py:91
+msgid "sans-serif"
+msgstr "sans-serif"
+
+#: pages/settings.py:93
+msgid "Save Changes"
+msgstr "Save Changes"
+
+#: pages/settings.py:42
+msgid "Select Language:"
+msgstr "Select Language:"
+
+#: pages/search.py:23
+msgid "Search for Collectables!"
+msgstr "Search for Collectables!"
+
+#: pages/search.py:28
+msgid "What would you like to search for?"
+msgstr "What would you like to search for?"
+
+#: pages/search.py:30
+msgid "Vinyl & CDs"
+msgstr "Vinyl & CDs"
+
+#: pages/search.py:31
+msgid "Movies"
+msgstr "Movies"
+
+#: pages/search.py:32
+msgid "Pokemon Cards"
+msgstr "Pokemon Cards"
+
+#: pages/search.py:33
+msgid "UPC"
+msgstr "UPC"
+
+#: pages/search.py:34
+msgid "Lego Sets"
+msgstr "Lego Sets"
+
+#: pages/search.py:35
+msgid "Lego Minifigs"
+msgstr "Lego Minifigs"
+
+#: pages/search.py:42
+msgid "Add items to collection:"
+msgstr "Add items to collection:"
+
+#: pages/search.py:44
+msgid "(No collections)"
+msgstr "(No collections)"
+
+#: pages/search.py:58
+msgid "Input source"
+msgstr "Input source"
+
+#: pages/search.py:59
+msgid "Upload"
+msgstr "Upload"
+
+#: pages/search.py:60
+msgid "Camera"
+msgstr "Camera"
+
+#: pages/search.py:61
+msgid "Enhanced decode (slower)"
+msgstr "Enhanced decode (slower)"
+
+#: pages/search.py:65
+msgid "Scan barcode"
+msgstr "Scan barcode"
+
+#: pages/search.py:67
+msgid "Upload barcode image"
+msgstr "Upload barcode image"
+
+#: pages/search.py:70
+msgid "Barcode decoding is unavailable. Install 'pyzbar' and the system 'zbar' library."
+msgstr "Barcode decoding is unavailable. Install 'pyzbar' and the system 'zbar' library."
+
+#: pages/search.py:76
+msgid "Failed to read image:"
+msgstr "Failed to read image:"
+
+#: pages/search.py:80
+msgid "Supported code(s) detected"
+msgstr "Supported code(s) detected"
+
+#: pages/search.py:82
+msgid "Detected codes"
+msgstr "Detected codes"
+msgstr "(No collections)"
+
+#: pages/search.py:58
+msgid "Input source"
+msgstr "Input source"
+
+#: pages/search.py:59
+msgid "Upload"
+msgstr "Upload"
+
+#: pages/search.py:60
+msgid "Camera"
+msgstr "Camera"
+
+#: pages/search.py:61
+msgid "Enhanced decode (slower)"
+msgstr "Enhanced decode (slower)"
+
+#: pages/search.py:65
+msgid "Scan barcode"
+msgstr "Scan barcode"
+
+#: pages/search.py:67
+msgid "Upload barcode image"
+msgstr "Upload barcode image"
+
+#: pages/search.py:70
+msgid "Barcode decoding is unavailable. Install 'pyzbar' and the system 'zbar' library."
+msgstr "Barcode decoding is unavailable. Install 'pyzbar' and the system 'zbar' library."
+
+#: pages/search.py:76
+msgid "Failed to read image:"
+msgstr "Failed to read image:"
+
+#: pages/search.py:80
+msgid "Supported code(s) detected"
+msgstr "Supported code(s) detected"
+
+#: pages/search.py:82
+msgid "Detected codes"
+msgstr "Detected codes"
+
+#: pages/collectionView.py:25
+msgid "Display mode"
+msgstr "Display mode"
+
+#: pages/collectionView.py:26
+msgid "grid"
+msgstr "grid"
+
+#: pages/collectionView.py:27
+msgid "column"
+msgstr "column"
+
+#: pages/collectionView.py:75
+msgid "Enter Item ID"
+msgstr "Enter Item ID"
+
+#: pages/collectionView.py:83
+msgid "Add To Collection"
+msgstr "Add To Collection"
+
+#: pages/collectionView.py:85
+msgid "Remove From Collection"
+msgstr "Remove From Collection"
+
+#: pages/settings.py:40
+msgid "Select Language:"
+msgstr "Select Language:"
+
+#: BackendMethods/global_functions.py:35
+msgid "Memorabiliacs"
+msgstr "Memorabiliacs"
+
+#: BackendMethods/global_functions.py:39
+msgid "Search"
+msgstr "Search"

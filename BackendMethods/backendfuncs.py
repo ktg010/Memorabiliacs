@@ -48,6 +48,8 @@ def coll_visability(collection_name: str, db):
     return not contents["settings"]["hidden"]
 
 
+CURR_THEME = ".streamlit/st-styled.css"
+
 # Faster version of get_cards using asynchronous gets and future responses
 @app.get("/{game}/cards")
 def get_cards2(
@@ -395,6 +397,11 @@ def update_collection_views(collection_name:str, views, db):
     collection_ref = db.collection("Users").document(user_id).collection("Collections").document(collection_name)
     collection_ref.update({"settings.views": views})
 
+def setTheme(theme:str):
+    global CURR_THEME
+    CURR_THEME = theme
+
+REBRICK_API_KEY = st.secrets["REBRICK_API_KEY"]
 
 def search_minifigs_rebrickable(query, max_results: int = 10):
     """Search Rebrickable for minifigs matching `query` (query can be part of any attribute present in the json, such as name or minifig_id).
