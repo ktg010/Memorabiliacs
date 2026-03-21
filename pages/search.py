@@ -71,8 +71,6 @@ else:
             backEnd.set_collection("")
         except Exception:
             backEnd.CURR_COLL = ""
-    print(collections)
-    print(backEnd.CURR_COLL)
     if search_type == "Custom":
         input_mode = st_yled.radio(_("Input source"), options=[_("Upload"), _("Camera")], horizontal=True)
         enhanced = st_yled.toggle(_("Enhanced decode (slower)"), value=False)

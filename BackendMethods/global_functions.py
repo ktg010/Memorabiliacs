@@ -4,12 +4,24 @@ import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 import st_yled
 from time import sleep
+import os
 
 conf_file = ".streamlit/config.toml"
 collection_page = "pages/collectionView.py"
 
 #st_yled.init(css_path=backEnd.CURR_THEME)
 removeCheck = False
+
+thumbnails_path = os.path.join(os.path.dirname(__file__), 'thumbnails')
+
+THUMNAIL_URLS = {
+    "Pokemon": os.path.join(thumbnails_path, "pikachu.jpeg"),
+    "Digimon": os.path.join(thumbnails_path, "agumon.jpeg"),
+    "Dragonball": os.path.join(thumbnails_path, "goku.jpeg"),
+    "Movies": os.path.join(thumbnails_path, "movies.jpeg"),
+    "OnePiece": os.path.join(thumbnails_path, "luffy.jpeg"),
+    "Custom": os.path.join(thumbnails_path, "barcode.jpeg")
+}
 
 # Opens file and writes new value for specified variable
 def update_config_val(conf:str, var:str, new:str) -> None:

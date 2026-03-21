@@ -123,17 +123,17 @@ else:
             if backEnd.coll_visability(doc['id'], db):
                 with st.container(width="content", horizontal_alignment="center"):
                     with st.container(horizontal=True):
-                        st.subheader(f"{collInfo[0]}", text_alignment="center")
+                        #st.subheader(f"{collInfo[0]}", text_alignment="center")
                         if gfuncs.removeCheck:
                             if st.checkbox(" ", key=f"remove_{collInfo[0]}", width="content"):
                                 removedCollections.append(doc['id'])
-
-                    if st.button(_("View Collection"), key=f"{collInfo[0]}_link"):
-                        backEnd.set_collection(doc['id'])
-                        st.switch_page(gfuncs.collection_page)
-
-                    if st.button(_("Edit"), key=f"edit_{collInfo[0]}"):
-                        edit_collection(doc)
+                    with st_yled.image_card_one(title=f"{collInfo[0]}", image_path=gfuncs.THUMNAIL_URLS[collInfo[1]], text=f"**Type: {collInfo[1]}**", background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), width=250, height=350, border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
+                        if st_yled.button(_("View Collection"), key=f"{collInfo[0]}_link", width="stretch", border_width=5):
+                            backEnd.set_collection(doc['id'])
+                            st.switch_page(gfuncs.collection_page)
+                        st_yled.space("small")
+                        if st_yled.button(_("Edit"), key=f"edit_{collInfo[0]}", width="stretch", border_width=5):
+                            edit_collection(doc)
 
 
                     st.space("medium")
