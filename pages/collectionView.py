@@ -78,8 +78,8 @@ else:
                         st.image(items[key]["images"]['small'], width=200)
                     else:
                         # image = items[key]["image"][:-7]
-                        # print(image)
-                        st.image(items[key]["image"], width=200)
+                        st.image(items[key]["image"])
+                        # st.image(image)
 
                     if st_yled.button("View More", key=f"{items[key]["name"]}_view"):
                         viewItem(key)
