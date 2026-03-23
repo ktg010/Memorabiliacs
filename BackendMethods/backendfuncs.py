@@ -236,10 +236,7 @@ def get_collection_items(collection_name: str):
     collectionData = generate_collection(collection_name, db)
     items = {}
     for id in collectionData:
-        items[id] = {id:{'ref' : (collectionData[id].get('ref')).path, 'notes' : collectionData[id].get('notes')}}
-        # item = collectionData[id]
-        # doc = item['ref']
-        # items[id] = {str(doc):item['notes']}
+        items[id] = {'info' : (collectionData[id].get('ref')).get().to_dict(), 'notes' : collectionData[id].get('notes')}
     return items
 
 
