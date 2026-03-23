@@ -134,7 +134,7 @@ else:
                 #setTheme(css_dict[color_theme])
                 gfuncs.update_settings(conf_file, theme_dict[color_theme])
                 newdb.collection("Users").document(user_id).set(theme_dict[color_theme], merge=True)
-                gfuncs.apply_css_theme(color_theme)
+                #gfuncs.apply_css_theme(color_theme)
                 get_user_data.clear(user_id)
                 sleep(0.25)
                 st.rerun()

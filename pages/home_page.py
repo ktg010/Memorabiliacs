@@ -35,6 +35,22 @@ else:
     # st_yled.init(css_path=backEnd.CURR_THEME)
     st_yled.init()
 
+    image = 'https://pbs.twimg.com/media/F9pQLNmXYAAKAn4.jpg'
+
+    css = f'''
+    <style>
+        .stApp {{
+            background-image: linear-gradient(to top, {gfuncs.read_config_val(gfuncs.conf_file, "textColor")}, transparent),
+            url({image});
+            background-size: cover;
+
+        }}
+        .stApp > header {{
+            background-color: transparent;
+        }}
+    </style>
+    '''
+    st.markdown(css, unsafe_allow_html=True)
     # Set language from database
     from BackendMethods.translations import set_language
     user_lang = user_data_dict.get('language', 'en')

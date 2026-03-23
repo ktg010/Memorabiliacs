@@ -80,6 +80,8 @@ def db_settings_to_config(user_data_dict:dict):
 # Sets the page width, title, and buttons for home, search, settings
 # To be used at the start of any page
 def page_initialization(user_data_dict:dict):
+    
+    
     st.set_page_config(layout="wide")
     st_yled.init()
     st_yled.title(_("Memorabiliacs"), text_alignment="center")
