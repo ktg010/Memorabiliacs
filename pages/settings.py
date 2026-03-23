@@ -5,6 +5,7 @@ from BackendMethods.auth_functions import *
 from BackendMethods.backendfuncs import *
 from BackendMethods.translations import _, set_language
 import st_yled
+from time import sleep
 
 try:
     newdb = get_firestore_client()
@@ -77,9 +78,9 @@ else:
     # (Currently hardcoded)
     theme_list = ["Original", "Memorabiliac", "Paper", "Logan", "Cooper", "Custom"]
     theme_original = {"base" : "dark", 
-                      "backgroundColor" : "#cacaca",
-                      "textColor" : "#4caeff",
-                      "font" : "'Noto Serif':https://fonts.cdnfonts.com/css/noto-serif",
+                      "backgroundColor" : "#1a1a1a",
+                      "textColor" : "#dddddd",
+                      "font" : "Roboto:https://fonts.cdnfonts.com/css/roboto",
                       "theme" : "Original"}
     theme_memorabiliac = {"base" : "dark", 
                       "backgroundColor" : "#636363",
@@ -94,12 +95,12 @@ else:
     theme_logan = {"base" : "light", 
                       "backgroundColor" : "#b1a8a8",
                       "textColor" : "#1733f7",
-                      "font" : "'Noto Serif':https://fonts.cdnfonts.com/css/noto-serif",
+                      "font" : "Roboto:https://fonts.cdnfonts.com/css/roboto",
                       "theme" : "Logan"}
     theme_cooper = {"base" : "dark", 
                       "backgroundColor" : "#76767b",
                       "textColor" : "#ff9600",
-                      "font" : "'Noto Serif':https://fonts.cdnfonts.com/css/noto-serif",
+                      "font" : "Roboto:https://fonts.cdnfonts.com/css/roboto",
                       "theme" : "Cooper"}
     theme_custom = {"base" : current_base,
                     "backgroundColor" : current_background_color,
@@ -135,6 +136,7 @@ else:
                 newdb.collection("Users").document(user_id).set(theme_dict[color_theme], merge=True)
                 gfuncs.apply_css_theme(color_theme)
                 get_user_data.clear(user_id)
+                sleep(0.25)
                 st.rerun()
                 
 
@@ -165,5 +167,6 @@ else:
                                                                 "theme" : "Custom"},
                                                                 merge=True)
                 get_user_data.clear(user_id)
+                sleep(0.25)
                 st.rerun()
 

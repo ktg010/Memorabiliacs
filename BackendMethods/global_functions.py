@@ -20,7 +20,8 @@ THUMNAIL_URLS = {
     "Dragonball": os.path.join(thumbnails_path, "goku.jpeg"),
     "Movies": os.path.join(thumbnails_path, "movies.jpeg"),
     "OnePiece": os.path.join(thumbnails_path, "luffy.jpeg"),
-    "Custom": os.path.join(thumbnails_path, "barcode.jpeg")
+    "Custom": os.path.join(thumbnails_path, "barcode.jpeg"),
+    "Music": os.path.join(thumbnails_path, "vinyl.jpeg")
 }
 
 # Opens file and writes new value for specified variable

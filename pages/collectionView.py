@@ -92,8 +92,13 @@ else:
                         st.image(curr_dict.get('image'), width=200)
                     else:
                         # image = items[key]["image"][:-7]
+<<<<<<< HEAD
                         # print(image)
                         st.image(curr_dict.get('image'), width=200)
+=======
+                        st.image(items[key]["image"])
+                        # st.image(image)
+>>>>>>> 9264cdf2cac96e2c9853ca15c189ed1f0cad8887
 
                     info = st.text_input("Notes", value = current[key].get('notes'), key = f"notes_{key}")
                     

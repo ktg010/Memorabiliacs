@@ -62,13 +62,14 @@ else:
             itemSettings, rename = st.columns([3,1])
             with itemSettings:
                 hidden = st.checkbox(_("Hide Collection"))
-                fields = doc.to_dict()["settings"]
+                fields = coll["settings"]
                 # TODO
                 # Add things for other setting when we figure out 
                 # how to do it
-                doc.reference.update({"settings.hidden" : hidden})
+                ref = db.collection("Users").document(user_id).collection("Collections").document(coll["id"])
+                ref.update({"settings.hidden" : hidden})
             with rename:
-                st_yled.subheader(f"{_('Rename')} {coll.id.split('_')[0]}?", text_alignment="center")
+                st_yled.subheader(f"{_('Rename')} {coll["id"].split('_')[0]}?", text_alignment="center")
                 coll_rename = st.text_input(" ")
             with st.container(horizontal=True, horizontal_alignment="right"):
                 if st_yled.button(_("Save")):

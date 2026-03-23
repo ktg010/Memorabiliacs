@@ -121,10 +121,11 @@ def sign_in(email: str, password: str, db) -> None:
                         'email': email,
                         'username': result_list[0],
                         'base' : 'dark',
-                        'backgroundColor' : '#cacaca',
-                        'textColor' : '#4caeff',
+                        'backgroundColor' : "#1a1a1a",
+                        'textColor' : "#dddddd",
                         'font' : 'sans-serif',
-                        'theme' : 'Original'
+                        'theme' : 'Original',
+                        'language' : 'en'
                     }
                     user_ref.set(data)
                     user_ref.collection('Collections').document('DefaultCollection').set({'name': 'Default'})
