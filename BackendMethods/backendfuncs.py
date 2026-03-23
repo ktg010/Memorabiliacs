@@ -236,12 +236,15 @@ def get_collection_items(collection_name: str):
     collectionData = generate_collection(collection_name, db)
     items = {}
     for id in collectionData:
-        item = collectionData[id]
-        doc = item['ref']
-        info = doc.get().to_dict()
-        items[id] = info
+        items[id] = {id:{'ref' : (collectionData[id].get('ref')).path, 'notes' : collectionData[id].get('notes')}}
+        # item = collectionData[id]
+        # doc = item['ref']
+        # items[id] = {str(doc):item['notes']}
     return items
 
+
+def update_notes(db, user_id, item_id, new_notes):
+    db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).update({f"items.{item_id}.notes": new_notes})
 
 def create_collection(collection_name: str, collection_type: str, db):
     """Create a collection of items in the database with the specified name and type.

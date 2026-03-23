@@ -26,7 +26,22 @@ else:
     user_data_dict = backEnd.get_user_data(user_id)
     gfuncs.page_initialization(user_data_dict)
 
-    items = backEnd.get_collection_items(backEnd.CURR_COLL)  # Use cached function
+    collectionData = backEnd.get_collection_items(backEnd.CURR_COLL)  # Use cached function
+    items = []
+    coll_type = backEnd.CURR_COLL.split("_")[1]
+    print(f"collectionData = {collectionData}")
+    for id in collectionData:
+        curr_item = collectionData[id]
+        items.append(curr_item)
+    print(f"items = {items}")
+    
+    for current in items:
+        print(f"current = {current}")
+        for j in current:    
+            curr_ref = current.get(j).get('ref')
+            print(f"refernce = {curr_ref}")
+            curr_dict = db.document(curr_ref).get().to_dict()
+            print(f"dictionary = {curr_dict}")
 
     @st.dialog("Collection Views")
     def viewCollSettings():
@@ -47,10 +62,9 @@ else:
     def viewItem(item):
         views = backEnd.collection_views(backEnd.CURR_COLL, db)
         field_text = ""
-        with st_yled.badge_card_one(title=items[item]["name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", 
-                                    background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
+        with st_yled.badge_card_one(title=items[item]["name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
             for key in items[item].keys():
-                if key not in ("name", "image", "rarity"):
+                if key not in ("name", "image", "rarity", "id"):
                     if views[key]:
                         st.write(f"**{key}**: **{items[item][key]}**")
             if st_yled.button(_("Remove From Collection")):
@@ -69,36 +83,48 @@ else:
     if view_mode == _("grid"):
         with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
             cols = st.columns(3, width="stretch")  # grid view
-            for i, key in enumerate(items.keys()):
+            for i, key in enumerate(current.keys()):
                 col = cols[i % 3]
                 with col.container(horizontal_alignment="center"):
-                    st_yled.subheader(f"{items[key]["name"]}", text_alignment="center")
+                    st_yled.subheader(f"{curr_dict.get('name')}", text_alignment="center")
 
                     if backEnd.CURR_COLL.split("_")[1] == "Pokemon":
-                        st.image(items[key]["images"]['small'], width=200)
+                        st.image(curr_dict.get('image'), width=200)
                     else:
                         # image = items[key]["image"][:-7]
                         # print(image)
-                        st.image(items[key]["image"], width=200)
+                        st.image(curr_dict.get('image'), width=200)
 
-                    if st_yled.button("View More", key=f"{items[key]["name"]}_view"):
+                    info = st.text_input("Notes", value = current[key].get('notes'), key = f"notes_{key}")
+                    
+                    if info != current[key].get('notes'):
+                        backEnd.update_notes(db, user_id, key, info)
+                        st.success("Updated!")
+                        
+                    if st_yled.button("View More", key=f"{curr_dict.get('name')}_view"):
                         viewItem(key)
                     st.space("medium")
     else:
         with st.container(horizontal=False, horizontal_alignment="center", width="stretch"):
             cols = st.columns([0.2,0.8,0.2], width="stretch")  # column view (default)
-            for i, key in enumerate(items.keys()):
+            for i, key in enumerate(current.keys()):    
                 with cols[1].container(width="stretch", horizontal_alignment="center"):
-                    st_yled.subheader(f"{items[key]["name"]}", text_alignment="center")
+                    st_yled.subheader(f"{curr_dict[key]["name"]}", text_alignment="center")
 
                     if backEnd.CURR_COLL.split("_")[1] == "Pokemon":
-                        st.image(items[key]["images"]['small'], width=200)
+                        st.image(curr_dict.get('image'), width=200)
                     else:
                         # image = items[key]["image"][:-7]
                         # print(image)
-                        st.image(items[key]["image"], width=200)
-                        
-                    if st.button("View More", key=f"{items[key]["name"]}_view"):
+                        st.image(curr_dict.get('image'), width=200)
+                    
+                    info = st.text_input("Notes", value = current[key].get('notes'), key = f"notes_{key}")
+                    
+                    if info != current[key].get('notes'):
+                        backEnd.update_notes(db, user_id, key, info)
+                        st.success("Updated!")
+                    
+                    if st.button("View More", key=f"{curr_dict.get('name')}_view"):
                         viewItem(key)
                     st.space("medium")
 

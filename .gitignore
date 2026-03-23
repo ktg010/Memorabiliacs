@@ -7,5 +7,5 @@ BackendMethods/__pycache__
 __pycache__/global_functions.cpython-313.pyc
 
 BackendMethods/Pokemon_Cards
-.streamlit/config.toml
+# .streamlit/config.toml
 BackendMethods/Pokemon_Cards
