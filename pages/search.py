@@ -27,16 +27,19 @@ else:
     st_yled.init()
     user_data_dict = backEnd.get_user_data(user_id)
     gfuncs.page_initialization(user_data_dict)
-# This is straight from kieran's ui in apitesting, placeholder
     st_yled.subheader(_("Search for Collectables!"), text_alignment="center")
-    # DEGUB:{st.session_state.user_info}
     st.space("large")
     col_left, col_right = st.columns([3, 2])
+
+    collection = st.query_params
+    all_types = backEnd.get_collection_types()
+    collSearch = None if (collection == {}) else all_types.index(collection["type"])
 
     # Search type selector (left column)
     search_type = col_left.selectbox(
         _("What would you like to search for?"),
-        options=(backEnd.get_collection_types()),
+        options=all_types,
+        index=collSearch
     )
 
     # Collection selector (right column) - list user's collections except DefaultCollection
@@ -51,13 +54,12 @@ else:
         collections = [_("(No collections)")]
 
     # Persist selection in session state
-    default_index = 0
-    if hasattr(backEnd, 'CURR_COLL') and backEnd.CURR_COLL:
-        try:
-            default_index = collections.index(backEnd.CURR_COLL+"_"+search_type)
-        except Exception:
-            default_index = 0
-
+    default_index = None if (collection == {}) else display_collections.index(collection["name"])
+    # if hasattr(backEnd, 'CURR_COLL') and backEnd.CURR_COLL:
+    #     try:
+    #         default_index = collections.index(backEnd.CURR_COLL+"_"+search_type)
+    #     except Exception:
+    #         default_index = 0
     selected_collection = col_right.selectbox(_("Add items to collection:"), options=display_collections, index=default_index, key="selected_collection")
 
     # Set backend current collection for add actions
@@ -418,7 +420,7 @@ else:
                 for idx, item in enumerate(onepiece_results):
                     with cols[idx % 2]:
                         if item["image"]:
-                            st.image(item["image"], width=300)
+                            st.image(gfuncs.get_image_from_URL(item["image"]), width=300)
                         with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), 
                                                card_shadow=True, badge_text=_("One Piece Card"), badge_color="primary", text=f"\n**ID: {item.get('id', '')}**",
                                                height="content", width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):

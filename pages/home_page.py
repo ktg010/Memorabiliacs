@@ -25,6 +25,7 @@ else:
     user_id = st.session_state.user_info["localId"]
     user_data_dict = backEnd.get_user_data(user_id)
     collections_docs = backEnd.get_user_collections(user_id)
+    backEnd.set_collection("")
     fullCollections = []
     removedCollections = []
     
@@ -69,7 +70,7 @@ else:
         # Edit dialog to change the name of the collection
         @st.dialog(_("Edit")) 
         def edit_collection(coll):
-            itemSettings, rename = st.columns([3,1])
+            itemSettings, rename = st.columns([3,2])
             with itemSettings:
                 hidden = st.checkbox(_("Hide Collection"))
                 fields = coll["settings"]

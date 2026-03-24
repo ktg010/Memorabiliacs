@@ -27,6 +27,7 @@ THUMNAIL_URLS = {
     "Music": os.path.join(thumbnails_path, "vinyl.jpeg")
 }
 
+
 # Opens file and writes new value for specified variable
 def update_config_val(conf:str, var:str, new:str) -> None:
     with open(conf, "r") as f:
@@ -41,11 +42,13 @@ def update_config_val(conf:str, var:str, new:str) -> None:
     with open(conf, "w") as f:
         f.writelines(config_lines)
 
+
 # A check to not adjust "theme" in config file (should be in database)
 def update_settings(conf:str, diction:dict) -> None:
     for setting in diction:
         if setting != "theme":
             update_config_val(conf, setting, diction[setting])
+
 
 # Opens config file and reads the value of a specified variable
 def read_config_val(conf:str, var:str) -> str:
@@ -57,6 +60,7 @@ def read_config_val(conf:str, var:str) -> str:
                 result_list = line.split('"')
 
     return result_list[1]
+
 
 # Updates config data to match database data
 def db_settings_to_config(user_data_dict:dict):
@@ -92,6 +96,7 @@ def page_initialization(user_data_dict:dict):
     with st.container(horizontal=True, vertical_alignment="top"):
         with st.container(horizontal_alignment="left", vertical_alignment="top"):
             if st_yled.button(_("Home"), key="home_button"):
+                backEnd.set_collection("")
                 st.switch_page("pages/home_page.py")
         with st.container(horizontal_alignment="center", vertical_alignment="top"):
             if st_yled.button(_("Search"), key="search_button"):
@@ -107,6 +112,7 @@ def base_theme_threshold(hex_num:str) -> str:
     b = int(hex_num[5:], 16)
     brightness = ((r*299)+(g*587)+(b*114))/1000
     return "dark" if brightness >= 128 else "light"
+
 
 def apply_css_theme(theme):
     st_yled.init()
@@ -141,6 +147,7 @@ def collection_input_sanitation(coll_name:str):
         return not valid
 
     return valid
+
 
 # Ensures url is of proper types
 def get_image_from_URL(url:str):

@@ -116,15 +116,22 @@ else:
     # Container in bottom right for add button
     with st.container(horizontal=True, horizontal_alignment="right", vertical_alignment="bottom"):
         # Text box for input
-        item_id = st_yled.text_input(_("Enter Item ID"))
-        new_string = ""
-        for i in range(len(item_id)):
-            if item_id[i] == "-":
-                 new_string+="_"
-            else:
-                new_string+=item_id[i]
+        # item_id = st_yled.text_input(_("Enter Item ID"))
+        # new_string = ""
+        # for i in range(len(item_id)):
+        #     if item_id[i] == "-":
+        #          new_string+="_"
+        #     else:
+        #         new_string+=item_id[i]
         # Add to collection button. Must input Id for now
-        if st_yled.button(_("Add To Collection"), key="add_to_collection"):
-            backEnd.add_reference_collectionView(new_string, item_id, db)
-        
+        # if st_yled.button(_("Add To Collection"), key="add_to_collection"):
+        #     backEnd.add_reference_collectionView(new_string, item_id, db)
+        collection = {
+            "name" : backEnd.CURR_COLL.split("_")[0],
+            "type" : backEnd.CURR_COLL.split("_")[1]
+        }
+
+        # TODO
+        #  Translate string 
+        st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
             
