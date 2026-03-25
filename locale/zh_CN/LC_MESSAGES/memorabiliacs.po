@@ -20,67 +20,79 @@ msgstr ""
 msgid "Welcome to Memorabiliacs!"
 msgstr "欢迎来到 Memorabiliacs！"
 
-#: BackendMethods/auth_functions.py:215
+#: BackendMethods/auth_functions.py:218
 msgid "Do you have an account?"
 msgstr "您有账户吗？"
 
-#: BackendMethods/auth_functions.py:217
+#: BackendMethods/auth_functions.py:219
+#: BackendMethods/auth_functions.py:224
+#: pages/home_page.py:119
 msgid "Yes"
 msgstr "是"
 
-#: BackendMethods/auth_functions.py:218
+#: BackendMethods/auth_functions.py:219
+#: BackendMethods/auth_functions.py:240
+#: pages/home_page.py:127
 msgid "No"
 msgstr "否"
 
 #: BackendMethods/auth_functions.py:219
+#: BackendMethods/auth_functions.py:254
 msgid "I forgot my password"
 msgstr "我忘记了密码"
 
-#: BackendMethods/auth_functions.py:222
+#: BackendMethods/auth_functions.py:229
+#: BackendMethods/auth_functions.py:235
 msgid "Login"
 msgstr "登录"
 
-#: BackendMethods/auth_functions.py:223
+#: BackendMethods/auth_functions.py:230
+#: BackendMethods/auth_functions.py:245
+#: BackendMethods/auth_functions.py:259
 msgid "Username"
 msgstr "用户名"
 
-#: BackendMethods/auth_functions.py:224
+#: BackendMethods/auth_functions.py:232
+#: BackendMethods/auth_functions.py:247
 msgid "Password"
 msgstr "密码"
 
-#: BackendMethods/auth_functions.py:230
+#: BackendMethods/auth_functions.py:244
+#: BackendMethods/auth_functions.py:250
 msgid "Create Account"
 msgstr "创建账户"
 
-#: BackendMethods/auth_functions.py:238
+#: BackendMethods/auth_functions.py:258
 msgid "Reset Password"
 msgstr "重置密码"
 
-#: BackendMethods/auth_functions.py:244
+#: BackendMethods/auth_functions.py:261
 msgid "Send Password Reset Email"
 msgstr "发送密码重置电子邮件"
 
-#: pages/home_page.py:48
+#: pages/home_page.py:63
 msgid "Your Collections"
 msgstr "您的收藏"
 
-#: pages/home_page.py:48
+#: pages/home_page.py:63
 msgid "Hello"
 msgstr "您好"
 
-#: pages/home_page.py:60
+#: pages/home_page.py:147
+#: pages/home_page.py:71
 msgid "Edit"
 msgstr "编辑"
 
-#: pages/home_page.py:42
+#: pages/home_page.py:83
 msgid "Rename"
 msgstr "重命名"
 
-#: pages/home_page.py:85
+#: pages/home_page.py:101
+#: pages/home_page.py:97
 msgid "Add"
 msgstr "添加"
 
-#: pages/home_page.py:49
+#: pages/home_page.py:99
 msgid "Name the Collection"
 msgstr "命名收藏"
 
@@ -88,63 +100,58 @@ msgstr "命名收藏"
 msgid "Give Collection Type"
 msgstr "给出收藏类型"
 
-#: pages/home_page.py:56
+#: pages/home_page.py:112
+#: pages/home_page.py:159
 msgid "Remove"
 msgstr "移除"
 
-#: pages/home_page.py:60
+#: pages/home_page.py:115
 msgid "Are you sure you want to remove"
 msgstr "您确定要移除"
 
-#: pages/home_page.py:62
-msgid "Yes"
-msgstr "是"
-
-#: pages/home_page.py:67
-msgid "No"
-msgstr "否"
-
-#: pages/home_page.py:74
+#: pages/home_page.py:143
 msgid "View Collection"
 msgstr "查看收藏"
 
-#: pages/home_page.py:145
+#: pages/home_page.py:156
 msgid "Add Collection"
 msgstr "添加收藏"
 
-#: pages/settings.py:35
+#: BackendMethods/global_functions.py:98
+#: pages/settings.py:36
 msgid "Home"
 msgstr "首页"
 
-#: pages/settings.py:38
+#: pages/settings.py:39
 msgid "Logout"
 msgstr "登出"
 
-#: pages/settings.py:44
+#: BackendMethods/global_functions.py:105
+#: pages/settings.py:45
 msgid "Settings"
 msgstr "设置"
 
-#: pages/settings.py:130
+#: pages/settings.py:131
 msgid "Select color scheme:"
 msgstr "选择颜色方案："
 
-#: pages/settings.py:132
+#: pages/settings.py:133
 msgid "Save Theme Choice"
 msgstr "保存主题选择"
 
-#: pages/settings.py:144
+#: pages/settings.py:146
 msgid "Advanced Settings"
 msgstr "高级设置"
 
-#: pages/settings.py:146
+#: pages/settings.py:148
 msgid "Select the background color:"
 msgstr "选择背景颜色："
 
-#: pages/settings.py:147
+#: pages/settings.py:149
 msgid "Select the text color:"
 msgstr "选择文本颜色："
 
-#: pages/settings.py:148
+#: pages/settings.py:150
 msgid "Select the font:"
 msgstr "选择字体："
 
@@ -156,15 +163,15 @@ msgstr "serif"
 msgid "sans-serif"
 msgstr "sans-serif"
 
-#: pages/settings.py:156
+#: pages/settings.py:158
 msgid "Save Changes"
 msgstr "保存更改"
 
-#: pages/search.py:31
+#: pages/search.py:30
 msgid "Search for Collectables!"
 msgstr "搜索收藏品！"
 
-#: pages/search.py:38
+#: pages/search.py:40
 msgid "What would you like to search for?"
 msgstr "您想搜索什么？"
 
@@ -180,7 +187,7 @@ msgstr "电影"
 msgid "Pokemon Cards"
 msgstr "宝可梦卡牌"
 
-#: pages/search.py:33
+#: pages/search.py:144
 msgid "UPC"
 msgstr "UPC"
 
@@ -192,11 +199,12 @@ msgstr "乐高套装"
 msgid "Lego Minifigs"
 msgstr "乐高小人"
 
-#: pages/search.py:61
+#: pages/search.py:63
 msgid "Add items to collection:"
 msgstr "将物品添加到收藏："
 
-#: pages/search.py:51
+#: pages/search.py:54
+#: pages/search.py:66
 msgid "(No collections)"
 msgstr "(无收藏)"
 
@@ -209,6 +217,7 @@ msgid "Upload"
 msgstr "上传"
 
 #: pages/search.py:77
+#: pages/search.py:81
 msgid "Camera"
 msgstr "相机"
 
@@ -245,6 +254,7 @@ msgid "Display mode"
 msgstr "显示模式"
 
 #: pages/collectionView.py:66
+#: pages/collectionView.py:69
 msgid "grid"
 msgstr "网格"
 
@@ -264,31 +274,34 @@ msgstr "添加到收藏"
 msgid "Remove From Collection"
 msgstr "从收藏中移除"
 
-#: BackendMethods/global_functions.py:72
+#: BackendMethods/global_functions.py:94
 msgid "Memorabiliacs"
 msgstr "Memorabiliacs"
 
-#: BackendMethods/global_functions.py:79
+#: BackendMethods/global_functions.py:102
 msgid "Search"
 msgstr "搜索"
 
-#: pages/settings.py:56
+#: pages/settings.py:57
 msgid "Select Language:"
 msgstr "选择语言："
 
-#: pages/home_page.py:64
+#: pages/home_page.py:75
 msgid "Hide Collection"
 msgstr "隐藏收藏"
 
-#: pages/home_page.py:74
+#: pages/home_page.py:86
 msgid "Save"
 msgstr "保存"
 
-#: pages/home_page.py:77
+#: pages/home_page.py:104
+#: pages/home_page.py:89
 msgid "Collection name already exists"
 msgstr "收藏名称已存在"
 
-#: pages/home_page.py:88
+#: pages/home_page.py:100
+#: pages/home_page.py:142
+#: pages/search.py:427
 msgid "Type"
 msgstr "类型"
 
@@ -296,11 +309,11 @@ msgstr "类型"
 msgid "Invalid character in name: '_', '-', '\\', '/'"
 msgstr "名称中包含无效字符：'_', '-', '\\', '/'"
 
-#: pages/home_page.py:102
+#: pages/home_page.py:115
 msgid "the following collections:"
 msgstr "以下收藏："
 
-#: pages/home_page.py:157
+#: pages/home_page.py:168
 msgid "All Collections:"
 msgstr "全部收藏："
 
@@ -316,7 +329,8 @@ msgstr "未检测到条码。请尝试更清晰且条码居中的图片。"
 msgid "Enter UPC code"
 msgstr "输入 UPC 代码"
 
-#: pages/search.py:114
+#: pages/search.py:115
+#: pages/search.py:118
 msgid "ready for use"
 msgstr "可用于"
 
@@ -337,6 +351,11 @@ msgid "UPC search results:"
 msgstr "UPC 搜索结果："
 
 #: pages/search.py:135
+#: pages/search.py:190
+#: pages/search.py:231
+#: pages/search.py:336
+#: pages/search.py:377
+#: pages/search.py:418
 msgid "Added '{item}' to your {collection} collection!"
 msgstr "已将“{item}”添加到你的 {collection} 收藏！"
 
@@ -345,6 +364,7 @@ msgid "UPC Item"
 msgstr "UPC 物品"
 
 #: pages/search.py:144
+#: pages/search.py:236
 msgid "No title"
 msgstr "无标题"
 
@@ -353,6 +373,7 @@ msgid "UPC Result"
 msgstr "UPC 结果"
 
 #: pages/search.py:148
+#: pages/search.py:240
 msgid "Description"
 msgstr "描述"
 
@@ -365,6 +386,11 @@ msgid "Item ean"
 msgstr "物品 EAN"
 
 #: pages/search.py:153
+#: pages/search.py:200
+#: pages/search.py:246
+#: pages/search.py:347
+#: pages/search.py:388
+#: pages/search.py:430
 msgid "Add to {collection} Collection"
 msgstr "添加到 {collection} 收藏"
 
@@ -384,7 +410,11 @@ msgstr "搜索宝可梦"
 msgid "Searching Pokemon (Algolia)..."
 msgstr "正在搜索宝可梦（Algolia）..."
 
-#: pages/search.py:177
+#: pages/search.py:174
+#: pages/search.py:219
+#: pages/search.py:325
+#: pages/search.py:366
+#: pages/search.py:407
 msgid "Algolia search failed"
 msgstr "Algolia 搜索失败"
 
@@ -393,6 +423,11 @@ msgid "### Top Pokemon results"
 msgstr "### 热门宝可梦结果"
 
 #: pages/search.py:193
+#: pages/search.py:272
+#: pages/search.py:304
+#: pages/search.py:342
+#: pages/search.py:383
+#: pages/search.py:424
 msgid "No name"
 msgstr "无名称"
 
@@ -448,19 +483,19 @@ msgstr "乐高搜索失败"
 msgid "### Top Lego set results"
 msgstr "### 热门乐高套装结果"
 
-#: pages/search.py:273
+#: pages/search.py:274
 msgid "Year"
 msgstr "年份"
 
-#: pages/search.py:275
+#: pages/search.py:276
 msgid "Theme"
 msgstr "主题"
 
-#: pages/search.py:277
+#: pages/search.py:278
 msgid "Set ID"
 msgstr "套装 ID"
 
-#: pages/search.py:279
+#: pages/search.py:280
 msgid "Part Count"
 msgstr "零件数量"
 
@@ -484,7 +519,7 @@ msgstr "乐高人仔搜索失败"
 msgid "### Top Lego minifigure results"
 msgstr "### 热门乐高人仔结果"
 
-#: pages/search.py:305
+#: pages/search.py:306
 msgid "Minifig ID"
 msgstr "人仔 ID"
 
@@ -553,6 +588,10 @@ msgid "Search functionality for this category is coming soon!"
 msgstr "此类别的搜索功能即将推出！"
 
 #: pages/search.py:194
+#: pages/search.py:236
+#: pages/search.py:343
+#: pages/search.py:384
+#: pages/search.py:425
 msgid "ID"
 msgstr "编号"
 
@@ -572,6 +611,10 @@ msgstr "力量"
 msgid "Card Type"
 msgstr "卡牌类型"
 
-#: pages/search.py:427
+#: pages/search.py:428
 msgid "Rarity"
 msgstr "稀有度"
+
+#: pages/collectionView.py:136
+msgid "Add to Collection"
+msgstr ""

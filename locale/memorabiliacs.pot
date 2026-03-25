@@ -19,67 +19,79 @@ msgstr ""
 msgid "Welcome to Memorabiliacs!"
 msgstr ""
 
-#: BackendMethods/auth_functions.py:215
+#: BackendMethods/auth_functions.py:218
 msgid "Do you have an account?"
 msgstr ""
 
-#: BackendMethods/auth_functions.py:217
+#: BackendMethods/auth_functions.py:219
+#: BackendMethods/auth_functions.py:224
+#: pages/home_page.py:119
 msgid "Yes"
 msgstr ""
 
-#: BackendMethods/auth_functions.py:218
+#: BackendMethods/auth_functions.py:219
+#: BackendMethods/auth_functions.py:240
+#: pages/home_page.py:127
 msgid "No"
 msgstr ""
 
 #: BackendMethods/auth_functions.py:219
+#: BackendMethods/auth_functions.py:254
 msgid "I forgot my password"
 msgstr ""
 
-#: BackendMethods/auth_functions.py:222
+#: BackendMethods/auth_functions.py:229
+#: BackendMethods/auth_functions.py:235
 msgid "Login"
 msgstr ""
 
-#: BackendMethods/auth_functions.py:223
+#: BackendMethods/auth_functions.py:230
+#: BackendMethods/auth_functions.py:245
+#: BackendMethods/auth_functions.py:259
 msgid "Username"
 msgstr ""
 
-#: BackendMethods/auth_functions.py:224
+#: BackendMethods/auth_functions.py:232
+#: BackendMethods/auth_functions.py:247
 msgid "Password"
 msgstr ""
 
-#: BackendMethods/auth_functions.py:230
+#: BackendMethods/auth_functions.py:244
+#: BackendMethods/auth_functions.py:250
 msgid "Create Account"
 msgstr ""
 
-#: BackendMethods/auth_functions.py:238
+#: BackendMethods/auth_functions.py:258
 msgid "Reset Password"
 msgstr ""
 
-#: BackendMethods/auth_functions.py:244
+#: BackendMethods/auth_functions.py:261
 msgid "Send Password Reset Email"
 msgstr ""
 
-#: pages/home_page.py:48
+#: pages/home_page.py:63
 msgid "Your Collections"
 msgstr ""
 
-#: pages/home_page.py:48
+#: pages/home_page.py:63
 msgid "Hello"
 msgstr ""
 
-#: pages/home_page.py:60
+#: pages/home_page.py:147
+#: pages/home_page.py:71
 msgid "Edit"
 msgstr ""
 
-#: pages/home_page.py:42
+#: pages/home_page.py:83
 msgid "Rename"
 msgstr ""
 
-#: pages/home_page.py:85
+#: pages/home_page.py:101
+#: pages/home_page.py:97
 msgid "Add"
 msgstr ""
 
-#: pages/home_page.py:49
+#: pages/home_page.py:99
 msgid "Name the Collection"
 msgstr ""
 
@@ -87,63 +99,58 @@ msgstr ""
 msgid "Give Collection Type"
 msgstr ""
 
-#: pages/home_page.py:56
+#: pages/home_page.py:112
+#: pages/home_page.py:159
 msgid "Remove"
 msgstr ""
 
-#: pages/home_page.py:60
+#: pages/home_page.py:115
 msgid "Are you sure you want to remove"
 msgstr ""
 
-#: pages/home_page.py:62
-msgid "Yes"
-msgstr ""
-
-#: pages/home_page.py:67
-msgid "No"
-msgstr ""
-
-#: pages/home_page.py:74
+#: pages/home_page.py:143
 msgid "View Collection"
 msgstr ""
 
-#: pages/home_page.py:145
+#: pages/home_page.py:156
 msgid "Add Collection"
 msgstr ""
 
-#: pages/settings.py:35
+#: BackendMethods/global_functions.py:98
+#: pages/settings.py:36
 msgid "Home"
 msgstr ""
 
-#: pages/settings.py:38
+#: pages/settings.py:39
 msgid "Logout"
 msgstr ""
 
-#: pages/settings.py:44
+#: BackendMethods/global_functions.py:105
+#: pages/settings.py:45
 msgid "Settings"
 msgstr ""
 
-#: pages/settings.py:130
+#: pages/settings.py:131
 msgid "Select color scheme:"
 msgstr ""
 
-#: pages/settings.py:132
+#: pages/settings.py:133
 msgid "Save Theme Choice"
 msgstr ""
 
-#: pages/settings.py:144
+#: pages/settings.py:146
 msgid "Advanced Settings"
 msgstr ""
 
-#: pages/settings.py:146
+#: pages/settings.py:148
 msgid "Select the background color:"
 msgstr ""
 
-#: pages/settings.py:147
+#: pages/settings.py:149
 msgid "Select the text color:"
 msgstr ""
 
-#: pages/settings.py:148
+#: pages/settings.py:150
 msgid "Select the font:"
 msgstr ""
 
@@ -155,15 +162,15 @@ msgstr ""
 msgid "sans-serif"
 msgstr ""
 
-#: pages/settings.py:156
+#: pages/settings.py:158
 msgid "Save Changes"
 msgstr ""
 
-#: pages/search.py:31
+#: pages/search.py:30
 msgid "Search for Collectables!"
 msgstr ""
 
-#: pages/search.py:38
+#: pages/search.py:40
 msgid "What would you like to search for?"
 msgstr ""
 
@@ -179,7 +186,7 @@ msgstr ""
 msgid "Pokemon Cards"
 msgstr ""
 
-#: pages/search.py:33
+#: pages/search.py:144
 msgid "UPC"
 msgstr ""
 
@@ -191,11 +198,12 @@ msgstr ""
 msgid "Lego Minifigs"
 msgstr ""
 
-#: pages/search.py:61
+#: pages/search.py:63
 msgid "Add items to collection:"
 msgstr ""
 
-#: pages/search.py:51
+#: pages/search.py:54
+#: pages/search.py:66
 msgid "(No collections)"
 msgstr ""
 
@@ -208,6 +216,7 @@ msgid "Upload"
 msgstr ""
 
 #: pages/search.py:77
+#: pages/search.py:81
 msgid "Camera"
 msgstr ""
 
@@ -244,6 +253,7 @@ msgid "Display mode"
 msgstr ""
 
 #: pages/collectionView.py:66
+#: pages/collectionView.py:69
 msgid "grid"
 msgstr ""
 
@@ -263,31 +273,34 @@ msgstr ""
 msgid "Remove From Collection"
 msgstr ""
 
-#: BackendMethods/global_functions.py:72
+#: BackendMethods/global_functions.py:94
 msgid "Memorabiliacs"
 msgstr ""
 
-#: BackendMethods/global_functions.py:79
+#: BackendMethods/global_functions.py:102
 msgid "Search"
 msgstr ""
 
-#: pages/settings.py:56
+#: pages/settings.py:57
 msgid "Select Language:"
 msgstr ""
 
-#: pages/home_page.py:64
+#: pages/home_page.py:75
 msgid "Hide Collection"
 msgstr ""
 
-#: pages/home_page.py:74
+#: pages/home_page.py:86
 msgid "Save"
 msgstr ""
 
-#: pages/home_page.py:77
+#: pages/home_page.py:104
+#: pages/home_page.py:89
 msgid "Collection name already exists"
 msgstr ""
 
-#: pages/home_page.py:88
+#: pages/home_page.py:100
+#: pages/home_page.py:142
+#: pages/search.py:427
 msgid "Type"
 msgstr ""
 
@@ -295,11 +308,11 @@ msgstr ""
 msgid "Invalid character in name: '_', '-', '\\', '/'"
 msgstr ""
 
-#: pages/home_page.py:102
+#: pages/home_page.py:115
 msgid "the following collections:"
 msgstr ""
 
-#: pages/home_page.py:157
+#: pages/home_page.py:168
 msgid "All Collections:"
 msgstr ""
 
@@ -315,7 +328,8 @@ msgstr ""
 msgid "Enter UPC code"
 msgstr ""
 
-#: pages/search.py:114
+#: pages/search.py:115
+#: pages/search.py:118
 msgid "ready for use"
 msgstr ""
 
@@ -336,6 +350,11 @@ msgid "UPC search results:"
 msgstr ""
 
 #: pages/search.py:135
+#: pages/search.py:190
+#: pages/search.py:231
+#: pages/search.py:336
+#: pages/search.py:377
+#: pages/search.py:418
 msgid "Added '{item}' to your {collection} collection!"
 msgstr ""
 
@@ -344,6 +363,7 @@ msgid "UPC Item"
 msgstr ""
 
 #: pages/search.py:144
+#: pages/search.py:236
 msgid "No title"
 msgstr ""
 
@@ -352,6 +372,7 @@ msgid "UPC Result"
 msgstr ""
 
 #: pages/search.py:148
+#: pages/search.py:240
 msgid "Description"
 msgstr ""
 
@@ -364,6 +385,11 @@ msgid "Item ean"
 msgstr ""
 
 #: pages/search.py:153
+#: pages/search.py:200
+#: pages/search.py:246
+#: pages/search.py:347
+#: pages/search.py:388
+#: pages/search.py:430
 msgid "Add to {collection} Collection"
 msgstr ""
 
@@ -383,7 +409,11 @@ msgstr ""
 msgid "Searching Pokemon (Algolia)..."
 msgstr ""
 
-#: pages/search.py:177
+#: pages/search.py:174
+#: pages/search.py:219
+#: pages/search.py:325
+#: pages/search.py:366
+#: pages/search.py:407
 msgid "Algolia search failed"
 msgstr ""
 
@@ -392,6 +422,11 @@ msgid "### Top Pokemon results"
 msgstr ""
 
 #: pages/search.py:193
+#: pages/search.py:272
+#: pages/search.py:304
+#: pages/search.py:342
+#: pages/search.py:383
+#: pages/search.py:424
 msgid "No name"
 msgstr ""
 
@@ -447,19 +482,19 @@ msgstr ""
 msgid "### Top Lego set results"
 msgstr ""
 
-#: pages/search.py:273
+#: pages/search.py:274
 msgid "Year"
 msgstr ""
 
-#: pages/search.py:275
+#: pages/search.py:276
 msgid "Theme"
 msgstr ""
 
-#: pages/search.py:277
+#: pages/search.py:278
 msgid "Set ID"
 msgstr ""
 
-#: pages/search.py:279
+#: pages/search.py:280
 msgid "Part Count"
 msgstr ""
 
@@ -483,7 +518,7 @@ msgstr ""
 msgid "### Top Lego minifigure results"
 msgstr ""
 
-#: pages/search.py:305
+#: pages/search.py:306
 msgid "Minifig ID"
 msgstr ""
 
@@ -552,6 +587,10 @@ msgid "Search functionality for this category is coming soon!"
 msgstr ""
 
 #: pages/search.py:194
+#: pages/search.py:236
+#: pages/search.py:343
+#: pages/search.py:384
+#: pages/search.py:425
 msgid "ID"
 msgstr ""
 
@@ -571,6 +610,10 @@ msgstr ""
 msgid "Card Type"
 msgstr ""
 
-#: pages/search.py:427
+#: pages/search.py:428
 msgid "Rarity"
+msgstr ""
+
+#: pages/collectionView.py:136
+msgid "Add to Collection"
 msgstr ""

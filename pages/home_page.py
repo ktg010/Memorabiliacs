@@ -60,7 +60,7 @@ else:
     st.space("small")
     #st_yled.init(css_path=backEnd.CURR_THEME)
     st_yled.init()
-    st_yled.subheader(f"{_('Your Collections')}\n {_('Hello')}, {st.session_state.user_info['email']}", text_alignment="center")
+    st_yled.subheader(f"{_('Your Collections')}", text_alignment="center", color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor")); st_yled.subheader(f"{_('Hello')}, {st.session_state.user_info['email'].split('@')[0]}!", text_alignment="center", font_size=20, color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"))
     # DEGUB:{st.session_state.user_info}
     st.space("small")
 
@@ -83,9 +83,9 @@ else:
                 st_yled.subheader(f"{_('Rename')} {coll["id"].split('_')[0]}?", text_alignment="center")
                 coll_rename = st.text_input(" ")
             with st.container(horizontal=True, horizontal_alignment="right"):
-                if st_yled.button(_("Save")):
+                if st.button(_("Save")):
                     if coll_rename != "":
-                        if backEnd.rename_collection(coll, coll_rename, db):
+                        if backEnd.rename_collection(coll["id"], coll_rename, db):
                             st_yled.error(_("Collection name already exists"))
                         else:
                             backEnd.get_user_collections.clear(user_id)
@@ -139,12 +139,12 @@ else:
                         if gfuncs.removeCheck:
                             if st.checkbox(" ", key=f"remove_{collInfo[0]}", width="content"):
                                 removedCollections.append(doc['id'])
-                    with st_yled.image_card_one(title=f"{collInfo[0]}", image_path=gfuncs.THUMNAIL_URLS[collInfo[1]], text=f"**Type: {collInfo[1]}**", background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), width=250, height=350, border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
-                        if st_yled.button(_("View Collection"), key=f"{collInfo[0]}_link", width="stretch", border_width=5):
+                    with st_yled.image_card_one(title=f"{collInfo[0]}", image_path=gfuncs.THUMNAIL_URLS[collInfo[1]], text=f"**{_('Type')}: {collInfo[1]}**", background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), width=250, height=350, border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
+                        if st_yled.button(_("View Collection"), border_width=5, key=f"{collInfo[0]}_link", width="stretch"):
                             backEnd.set_collection(doc['id'])
                             st.switch_page(gfuncs.collection_page)
                         st_yled.space("small")
-                        if st_yled.button(_("Edit"), key=f"edit_{collInfo[0]}", width="stretch", border_width=5):
+                        if st_yled.button(_("Edit"), border_width=5, key=f"edit_{collInfo[0]}", width="stretch"):
                             edit_collection(doc)
 
                     st.space("medium")

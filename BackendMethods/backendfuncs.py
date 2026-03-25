@@ -253,6 +253,7 @@ def update_notes(item_id, new_notes, db):
     db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).update(
             {f"items.{item_id}.notes": new_notes}
         )
+    get_collection_items.clear(CURR_COLL)  # Clear cache for this collection to reflect updated notes
 
 
 def create_collection(collection_name: str, collection_type: str, db):

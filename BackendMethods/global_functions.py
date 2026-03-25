@@ -150,6 +150,7 @@ def collection_input_sanitation(coll_name:str):
 
 
 # Ensures url is of proper types
+@st.cache_data(show_spinner=False, ttl=3600)
 def get_image_from_URL(url:str):
     r = requests.get(url)
     return Image.open(BytesIO(r.content))

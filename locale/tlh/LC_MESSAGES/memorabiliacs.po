@@ -20,67 +20,79 @@ msgstr ""
 msgid "Welcome to Memorabiliacs!"
 msgstr "nuqneH Memorabiliacs'e'!"
 
-#: BackendMethods/auth_functions.py:215
+#: BackendMethods/auth_functions.py:218
 msgid "Do you have an account?"
 msgstr "tlhIngan Hol Daghaj'a'?"
 
-#: BackendMethods/auth_functions.py:217
+#: BackendMethods/auth_functions.py:219
+#: BackendMethods/auth_functions.py:224
+#: pages/home_page.py:119
 msgid "Yes"
 msgstr "HIja'"
 
-#: BackendMethods/auth_functions.py:218
+#: BackendMethods/auth_functions.py:219
+#: BackendMethods/auth_functions.py:240
+#: pages/home_page.py:127
 msgid "No"
 msgstr "ghobe'"
 
 #: BackendMethods/auth_functions.py:219
+#: BackendMethods/auth_functions.py:254
 msgid "I forgot my password"
 msgstr "jIghaHta' jIH 'e' jIHar"
 
-#: BackendMethods/auth_functions.py:222
+#: BackendMethods/auth_functions.py:229
+#: BackendMethods/auth_functions.py:235
 msgid "Login"
 msgstr "chel"
 
-#: BackendMethods/auth_functions.py:223
+#: BackendMethods/auth_functions.py:230
+#: BackendMethods/auth_functions.py:245
+#: BackendMethods/auth_functions.py:259
 msgid "Username"
 msgstr "pong"
 
-#: BackendMethods/auth_functions.py:224
+#: BackendMethods/auth_functions.py:232
+#: BackendMethods/auth_functions.py:247
 msgid "Password"
 msgstr "mu'"
 
-#: BackendMethods/auth_functions.py:230
+#: BackendMethods/auth_functions.py:244
+#: BackendMethods/auth_functions.py:250
 msgid "Create Account"
 msgstr "tlhIngan Hol yI'el"
 
-#: BackendMethods/auth_functions.py:238
+#: BackendMethods/auth_functions.py:258
 msgid "Reset Password"
 msgstr "mu' yIqaD"
 
-#: BackendMethods/auth_functions.py:244
+#: BackendMethods/auth_functions.py:261
 msgid "Send Password Reset Email"
 msgstr "mu' qaD 'ej 'ol yIghoS"
 
-#: pages/home_page.py:48
+#: pages/home_page.py:63
 msgid "Your Collections"
 msgstr "Daj collections"
 
-#: pages/home_page.py:48
+#: pages/home_page.py:63
 msgid "Hello"
 msgstr "nuqneH"
 
-#: pages/home_page.py:60
+#: pages/home_page.py:147
+#: pages/home_page.py:71
 msgid "Edit"
 msgstr "choH"
 
-#: pages/home_page.py:42
+#: pages/home_page.py:83
 msgid "Rename"
 msgstr "pong yIchoH"
 
-#: pages/home_page.py:85
+#: pages/home_page.py:101
+#: pages/home_page.py:97
 msgid "Add"
 msgstr "chel"
 
-#: pages/home_page.py:49
+#: pages/home_page.py:99
 msgid "Name the Collection"
 msgstr "collection pong yIghItlh"
 
@@ -88,63 +100,58 @@ msgstr "collection pong yIghItlh"
 msgid "Give Collection Type"
 msgstr "collection Segh yIghItlh"
 
-#: pages/home_page.py:56
+#: pages/home_page.py:112
+#: pages/home_page.py:159
 msgid "Remove"
 msgstr "wech"
 
-#: pages/home_page.py:60
+#: pages/home_page.py:115
 msgid "Are you sure you want to remove"
 msgstr "bISov'a' wech DaneH'a'"
 
-#: pages/home_page.py:62
-msgid "Yes"
-msgstr "HIja'"
-
-#: pages/home_page.py:67
-msgid "No"
-msgstr "ghobe'"
-
-#: pages/home_page.py:74
+#: pages/home_page.py:143
 msgid "View Collection"
 msgstr "collection yIlegh"
 
-#: pages/home_page.py:145
+#: pages/home_page.py:156
 msgid "Add Collection"
 msgstr "collection yIchel"
 
-#: pages/settings.py:35
+#: BackendMethods/global_functions.py:98
+#: pages/settings.py:36
 msgid "Home"
 msgstr "juH"
 
-#: pages/settings.py:38
+#: pages/settings.py:39
 msgid "Logout"
 msgstr "chu'"
 
-#: pages/settings.py:44
+#: BackendMethods/global_functions.py:105
+#: pages/settings.py:45
 msgid "Settings"
 msgstr "ngoD"
 
-#: pages/settings.py:130
+#: pages/settings.py:131
 msgid "Select color scheme:"
 msgstr "rItlh ngoD yIwIv:"
 
-#: pages/settings.py:132
+#: pages/settings.py:133
 msgid "Save Theme Choice"
 msgstr "ngoD wIv yIchenmoH"
 
-#: pages/settings.py:144
+#: pages/settings.py:146
 msgid "Advanced Settings"
 msgstr "mI' ngoD"
 
-#: pages/settings.py:146
+#: pages/settings.py:148
 msgid "Select the background color:"
 msgstr "DuQwI' rItlh yIwIv:"
 
-#: pages/settings.py:147
+#: pages/settings.py:149
 msgid "Select the text color:"
 msgstr "ghItlh rItlh yIwIv:"
 
-#: pages/settings.py:148
+#: pages/settings.py:150
 msgid "Select the font:"
 msgstr "ghItlh mI' yIwIv:"
 
@@ -156,15 +163,15 @@ msgstr "serif"
 msgid "sans-serif"
 msgstr "sans-serif"
 
-#: pages/settings.py:156
+#: pages/settings.py:158
 msgid "Save Changes"
 msgstr "choH yIchenmoH"
 
-#: pages/search.py:31
+#: pages/search.py:30
 msgid "Search for Collectables!"
 msgstr "collectables yIneH!"
 
-#: pages/search.py:38
+#: pages/search.py:40
 msgid "What would you like to search for?"
 msgstr "nuq yIneH DaneH'a'?"
 
@@ -180,7 +187,7 @@ msgstr "movies"
 msgid "Pokemon Cards"
 msgstr "Pokemon Cards"
 
-#: pages/search.py:33
+#: pages/search.py:144
 msgid "UPC"
 msgstr "UPC"
 
@@ -192,11 +199,12 @@ msgstr "Lego Sets"
 msgid "Lego Minifigs"
 msgstr "Lego Minifigs"
 
-#: pages/search.py:61
+#: pages/search.py:63
 msgid "Add items to collection:"
 msgstr "ngogh collection'e' yIchel:"
 
-#: pages/search.py:51
+#: pages/search.py:54
+#: pages/search.py:66
 msgid "(No collections)"
 msgstr "(pagh collections)"
 
@@ -209,6 +217,7 @@ msgid "Upload"
 msgstr "yIghoS"
 
 #: pages/search.py:77
+#: pages/search.py:81
 msgid "Camera"
 msgstr "SIq"
 
@@ -245,6 +254,7 @@ msgid "Display mode"
 msgstr "legh ngoD"
 
 #: pages/collectionView.py:66
+#: pages/collectionView.py:69
 msgid "grid"
 msgstr "grid"
 
@@ -264,31 +274,34 @@ msgstr "collection'e' yIchel"
 msgid "Remove From Collection"
 msgstr "collection'e' wech"
 
-#: BackendMethods/global_functions.py:72
+#: BackendMethods/global_functions.py:94
 msgid "Memorabiliacs"
 msgstr "Memorabiliacs"
 
-#: BackendMethods/global_functions.py:79
+#: BackendMethods/global_functions.py:102
 msgid "Search"
 msgstr "neH"
 
-#: pages/settings.py:56
+#: pages/settings.py:57
 msgid "Select Language:"
 msgstr "Hol yIwIv:"
 
-#: pages/home_page.py:64
+#: pages/home_page.py:75
 msgid "Hide Collection"
 msgstr "collection yISo'"
 
-#: pages/home_page.py:74
+#: pages/home_page.py:86
 msgid "Save"
 msgstr "yIpol"
 
-#: pages/home_page.py:77
+#: pages/home_page.py:104
+#: pages/home_page.py:89
 msgid "Collection name already exists"
 msgstr "collection pong tu'lu'ta'"
 
-#: pages/home_page.py:88
+#: pages/home_page.py:100
+#: pages/home_page.py:142
+#: pages/search.py:427
 msgid "Type"
 msgstr "Segh"
 
@@ -296,11 +309,11 @@ msgstr "Segh"
 msgid "Invalid character in name: '_', '-', '\\', '/'"
 msgstr "pongDaq Degh qab: '_', '-', '\\', '/'"
 
-#: pages/home_page.py:102
+#: pages/home_page.py:115
 msgid "the following collections:"
 msgstr "collectionsvam:"
 
-#: pages/home_page.py:157
+#: pages/home_page.py:168
 msgid "All Collections:"
 msgstr "Hoch Collections:"
 
@@ -316,7 +329,8 @@ msgstr "Barcode vItu'be'. code botlhDaq mIllogh 'avwI' tIn yIlo'."
 msgid "Enter UPC code"
 msgstr "UPC code yIghItlh"
 
-#: pages/search.py:114
+#: pages/search.py:115
+#: pages/search.py:118
 msgid "ready for use"
 msgstr "lo'laH"
 
@@ -337,6 +351,11 @@ msgid "UPC search results:"
 msgstr "UPC nej ghu'vam:"
 
 #: pages/search.py:135
+#: pages/search.py:190
+#: pages/search.py:231
+#: pages/search.py:336
+#: pages/search.py:377
+#: pages/search.py:418
 msgid "Added '{item}' to your {collection} collection!"
 msgstr "'{item}' {collection} collectionDaq vIchelta'!"
 
@@ -345,6 +364,7 @@ msgid "UPC Item"
 msgstr "UPC ngogh"
 
 #: pages/search.py:144
+#: pages/search.py:236
 msgid "No title"
 msgstr "pong pagh"
 
@@ -353,6 +373,7 @@ msgid "UPC Result"
 msgstr "UPC ghu'vam"
 
 #: pages/search.py:148
+#: pages/search.py:240
 msgid "Description"
 msgstr "DelH"
 
@@ -365,6 +386,11 @@ msgid "Item ean"
 msgstr "ngogh ean"
 
 #: pages/search.py:153
+#: pages/search.py:200
+#: pages/search.py:246
+#: pages/search.py:347
+#: pages/search.py:388
+#: pages/search.py:430
 msgid "Add to {collection} Collection"
 msgstr "{collection} CollectionDaq yIchel"
 
@@ -384,7 +410,11 @@ msgstr "Pokemon yIneH"
 msgid "Searching Pokemon (Algolia)..."
 msgstr "Pokemon vIneH (Algolia)..."
 
-#: pages/search.py:177
+#: pages/search.py:174
+#: pages/search.py:219
+#: pages/search.py:325
+#: pages/search.py:366
+#: pages/search.py:407
 msgid "Algolia search failed"
 msgstr "Algolia nej Qagh"
 
@@ -393,6 +423,11 @@ msgid "### Top Pokemon results"
 msgstr "### nIv Pokemon ghu'vam"
 
 #: pages/search.py:193
+#: pages/search.py:272
+#: pages/search.py:304
+#: pages/search.py:342
+#: pages/search.py:383
+#: pages/search.py:424
 msgid "No name"
 msgstr "pong pagh"
 
@@ -448,19 +483,19 @@ msgstr "Lego nej Qagh"
 msgid "### Top Lego set results"
 msgstr "### nIv Lego set ghu'vam"
 
-#: pages/search.py:273
+#: pages/search.py:274
 msgid "Year"
 msgstr "DIS"
 
-#: pages/search.py:275
+#: pages/search.py:276
 msgid "Theme"
 msgstr "ghu'"
 
-#: pages/search.py:277
+#: pages/search.py:278
 msgid "Set ID"
 msgstr "Set ID"
 
-#: pages/search.py:279
+#: pages/search.py:280
 msgid "Part Count"
 msgstr "ngemmey mI'"
 
@@ -484,7 +519,7 @@ msgstr "Lego minifig nej Qagh"
 msgid "### Top Lego minifigure results"
 msgstr "### nIv Lego minifig ghu'vam"
 
-#: pages/search.py:305
+#: pages/search.py:306
 msgid "Minifig ID"
 msgstr "Minifig ID"
 
@@ -553,6 +588,10 @@ msgid "Search functionality for this category is coming soon!"
 msgstr "SeghvamDaq nej Qu'meH laH tugh"
 
 #: pages/search.py:194
+#: pages/search.py:236
+#: pages/search.py:343
+#: pages/search.py:384
+#: pages/search.py:425
 msgid "ID"
 msgstr "ID"
 
@@ -572,6 +611,10 @@ msgstr "HoS"
 msgid "Card Type"
 msgstr "Card Segh"
 
-#: pages/search.py:427
+#: pages/search.py:428
 msgid "Rarity"
 msgstr "rarity"
+
+#: pages/collectionView.py:136
+msgid "Add to Collection"
+msgstr ""

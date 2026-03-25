@@ -31,6 +31,7 @@ else:
     st.space("large")
     col_left, col_right = st.columns([3, 2])
 
+
     collection = st.query_params
     all_types = backEnd.get_collection_types()
     collSearch = None if (collection == {}) else all_types.index(collection["type"])
@@ -194,8 +195,8 @@ else:
                                                card_shadow=True, badge_text=_("Pokemon Card"), badge_color="primary", text=f"\r\n**ID: {item.get('id', '')}**",
                                                height="content", width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", 
                                                border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
-                            st_yled.write(f"**HP: {item.get('hp', 'N/A')}**")
-                            st_yled.write(f"**Flavortext: {item.get('flavorText', 'N/A')}**")
+                            st_yled.write(f"**{_('HP')}: {item.get('hp', 'N/A')}**")
+                            st_yled.write(f"**{_('Flavortext')}: {item.get('flavorText', 'N/A')}**")
                             if backEnd.CURR_COLL:
                                 st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_pokemon_button, kwargs={"item_id": item['id'], "Cardname": item['name']})
 
@@ -340,9 +341,9 @@ else:
                         if item["image"]:
                             st.image(item["image"], width=300)
                         with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), 
-                                               card_shadow=True, badge_text=_("DBZ Card"), badge_color="primary", text=f"\n**ID: {item.get('id', '')}**",
+                                               card_shadow=True, badge_text=_("DBZ Card"), badge_color="primary", text=f"\n**{_('ID')}: {item.get('id', '')}**",
                                                height="content", width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
-                            st_yled.write(f"**Power: {item.get('power', 'N/A')}**")
+                            st_yled.write(f"**{_('Power')}: {item.get('power', 'N/A')}**")
                             if backEnd.CURR_COLL:
                                 st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_dbz_button, kwargs={"item_id": item['id'], "Cardname": item['name']})
 
@@ -381,9 +382,9 @@ else:
                         if item["image"]:
                             st.image(item["image"], width=300)
                         with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), 
-                                               card_shadow=True, badge_text=_("Digimon Card"), badge_color="primary", text=f"\n**ID: {item.get('id', '')}**",
+                                               card_shadow=True, badge_text=_("Digimon Card"), badge_color="primary", text=f"\n**{_('ID')}: {item.get('id', '')}**",
                                                height="content", width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
-                            st_yled.write(f"**Card Type: {item.get('cardType', 'N/A')}**")
+                            st_yled.write(f"**{_('Card Type')}: {item.get('cardType', 'N/A')}**")
                             if backEnd.CURR_COLL:
                                 st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_digimon_button, kwargs={"item_id": item['id'], "Cardname": item['name']})
 
@@ -424,8 +425,8 @@ else:
                         with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), 
                                                card_shadow=True, badge_text=_("One Piece Card"), badge_color="primary", text=f"\n**ID: {item.get('id', '')}**",
                                                height="content", width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
-                            st_yled.write(f"**Type: {item.get('type', 'N/A')}**")
-                            st_yled.write(f"**Rarity: {item.get('rarity', 'N/A')}**")
+                            st_yled.write(f"**{_('Type')}: {item.get('type', 'N/A')}**")
+                            st_yled.write(f"**{_('Rarity')}: {item.get('rarity', 'N/A')}**")
                             if backEnd.CURR_COLL:
                                 st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_onepiece_button, kwargs={"item_id": item['id'], "Cardname": item['name']})
 
