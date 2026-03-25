@@ -18,6 +18,22 @@ st.secrets = access_secret_version()
 # st_yled.init(css_path=".streamlit/st-styled.css")
 # st_yled.init(backEnd.CURR_THEME)
 st_yled.init()
+    
+background_image = "https://gamewardbound.com/wp-content/uploads/2020/11/ikea-kallax-shelves-complete-second-shelf.jpg"
+css = f'''
+    <style>
+        .stApp {{
+            background-image: linear-gradient(to top, {gfuncs.read_config_val(gfuncs.conf_file, "textColor")}, transparent),
+            url({background_image});
+            background-size: cover;
+
+        }}
+        .stApp > header {{
+            background-color: transparent;
+        }}
+    </style>
+    '''
+st.markdown(css, unsafe_allow_html=True)
 st.set_page_config(layout="wide")
 # Initialize Firestore client
 # The credentials are grabbed from Streamlit secrets
