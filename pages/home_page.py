@@ -34,22 +34,6 @@ else:
     # st_yled.init(css_path=backEnd.CURR_THEME)
     st_yled.init()
 
-    image = 'https://pbs.twimg.com/media/F9pQLNmXYAAKAn4.jpg'
-
-    css = f'''
-    <style>
-        .stApp {{
-            background-image: linear-gradient(to top, {gfuncs.read_config_val(gfuncs.conf_file, "textColor")}, transparent),
-            url({image});
-            background-size: cover;
-
-        }}
-        .stApp > header {{
-            background-color: transparent;
-        }}
-    </style>
-    '''
-    st.markdown(css, unsafe_allow_html=True)
     # Set language from database
     user_lang = user_data_dict.get('language', 'en')
     set_language(user_lang)    
@@ -161,6 +145,15 @@ else:
             if not removedCollections == []:
                 remove_collections()
             else:
+                st.rerun()
+        if st.button(_("Toggle Background Image")):
+            if gfuncs.background_image_flag is True:
+                gfuncs.background_image_flag = False
+                gfuncs.sleep(0.25)
+                st.rerun()
+            else:
+                gfuncs.background_image_flag = True
+                gfuncs.sleep(0.25)
                 st.rerun()
 
     with st.sidebar:

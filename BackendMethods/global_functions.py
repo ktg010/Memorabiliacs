@@ -83,14 +83,34 @@ def db_settings_to_config(user_data_dict:dict):
     if config_data != db_data:
         st.rerun()
 
+background_image = 'https://pbs.twimg.com/media/F9pQLNmXYAAKAn4.jpg'
+background_image_flag = True
+
+
 
 # Sets the page width, title, and buttons for home, search, settings
 # To be used at the start of any page
 def page_initialization(user_data_dict:dict):
     
-    
+    css = f'''
+        <style>
+            .stApp {{
+                background-image: linear-gradient(to top, {read_config_val(conf_file, "textColor")}, transparent),
+                url({background_image});
+                background-size: cover;
+
+            }}
+            .stApp > header {{
+                background-color: transparent;
+            }}
+        </style>
+        '''
+
     st.set_page_config(layout="wide")
     st_yled.init()
+    if background_image_flag is True:
+        st.markdown(css, unsafe_allow_html=True)
+
     st_yled.title(_("Memorabiliacs"), text_alignment="center")
 
     with st.container(horizontal=True, vertical_alignment="top"):
