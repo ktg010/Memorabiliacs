@@ -2,7 +2,7 @@
 base="dark"
 backgroundColor="#1a1a1a"
 textColor="#dddddd"
-font="Roboto:https://fonts.cdnfonts.com/css/roboto"
+font="Roboto"
 
 [client]
 showSidebarNavigation=false

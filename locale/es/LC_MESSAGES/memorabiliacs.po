@@ -288,55 +288,55 @@ msgstr "Buscar"
 
 #: pages/home_page.py:75
 msgid "Hide Collection"
-msgstr ""
+msgstr "Ocultar colección"
 
 #: pages/home_page.py:86
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: pages/home_page.py:104
 #: pages/home_page.py:89
 msgid "Collection name already exists"
-msgstr ""
+msgstr "El nombre de la colección ya existe"
 
 #: pages/home_page.py:100
 #: pages/home_page.py:142
 #: pages/search.py:427
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #: pages/home_page.py:97
 msgid "Invalid character in name: '_', '-', '\\', '/'"
-msgstr ""
+msgstr "Carácter inválido en el nombre: '_', '-', '\\', '/'"
 
 #: pages/home_page.py:115
 msgid "the following collections:"
-msgstr ""
+msgstr "las siguientes colecciones:"
 
 #: pages/home_page.py:168
 msgid "All Collections:"
-msgstr ""
+msgstr "Todas las colecciones:"
 
 #: pages/search.py:104
 msgid "Barcode detected, but no UPC/EAN/ISBN code found."
-msgstr ""
+msgstr "Código de barras detectado, pero no se encontró código UPC/EAN/ISBN."
 
 #: pages/search.py:106
 msgid "No barcode detected. Try a clearer image with the code centered."
-msgstr ""
+msgstr "No se detectó ningún código de barras. Prueba una imagen más clara con el código centrado."
 
 #: pages/search.py:109
 msgid "Enter UPC code"
-msgstr ""
+msgstr "Ingresa el código UPC"
 
 #: pages/search.py:115
 #: pages/search.py:118
 msgid "ready for use"
-msgstr ""
+msgstr "listo para usar"
 
 #: pages/search.py:120
 msgid "Enter a valid UPC (8/12), EAN (8/13), or ISBN (10/13)."
-msgstr ""
+msgstr "Ingresa un UPC válido (8/12), EAN (8/13) o ISBN (10/13)."
 
 #: pages/search.py:121
 msgid "Search UPC"
@@ -344,11 +344,11 @@ msgstr "Buscar UPC"
 
 #: pages/search.py:122
 msgid "Searching UPC..."
-msgstr ""
+msgstr "Buscando UPC..."
 
 #: pages/search.py:124
 msgid "UPC search results:"
-msgstr ""
+msgstr "Resultados de búsqueda UPC:"
 
 #: pages/search.py:135
 #: pages/search.py:190
@@ -361,29 +361,29 @@ msgstr "¡Se agregó '{item}' a tu colección {collection}!"
 
 #: pages/search.py:136
 msgid "UPC Item"
-msgstr ""
+msgstr "Artículo UPC"
 
 #: pages/search.py:144
 #: pages/search.py:236
 msgid "No title"
-msgstr ""
+msgstr "Sin título"
 
 #: pages/search.py:144
 msgid "UPC Result"
-msgstr ""
+msgstr "Resultado UPC"
 
 #: pages/search.py:148
 #: pages/search.py:240
 msgid "Description"
-msgstr ""
+msgstr "Descripción"
 
 #: pages/search.py:150
 msgid "Publisher"
-msgstr ""
+msgstr "Editorial"
 
 #: pages/search.py:151
 msgid "Item ean"
-msgstr ""
+msgstr "EAN del artículo"
 
 #: pages/search.py:153
 #: pages/search.py:200
@@ -392,7 +392,7 @@ msgstr ""
 #: pages/search.py:388
 #: pages/search.py:430
 msgid "Add to {collection} Collection"
-msgstr ""
+msgstr "Agregar a la colección {collection}"
 
 #: pages/search.py:156
 msgid "UPC search failed"
@@ -408,7 +408,7 @@ msgstr "Buscar Pokémon"
 
 #: pages/search.py:163
 msgid "Searching Pokemon (Algolia)..."
-msgstr ""
+msgstr "Buscando Pokémon (Algolia)..."
 
 #: pages/search.py:174
 #: pages/search.py:219
@@ -416,11 +416,11 @@ msgstr ""
 #: pages/search.py:366
 #: pages/search.py:407
 msgid "Algolia search failed"
-msgstr ""
+msgstr "La búsqueda de Algolia falló"
 
 #: pages/search.py:182
 msgid "### Top Pokemon results"
-msgstr ""
+msgstr "### Mejores resultados de Pokémon"
 
 #: pages/search.py:193
 #: pages/search.py:272
@@ -429,11 +429,11 @@ msgstr ""
 #: pages/search.py:383
 #: pages/search.py:424
 msgid "No name"
-msgstr ""
+msgstr "Sin nombre"
 
 #: pages/search.py:194
 msgid "Pokemon Card"
-msgstr ""
+msgstr "Carta Pokémon"
 
 #: pages/search.py:204
 msgid "Search for a movie"
@@ -445,23 +445,23 @@ msgstr "Buscar películas"
 
 #: pages/search.py:208
 msgid "Searching Movies (Algolia)..."
-msgstr ""
+msgstr "Buscando películas (Algolia)..."
 
 #: pages/search.py:226
 msgid "### Top Movie results"
-msgstr ""
+msgstr "### Mejores resultados de películas"
 
 #: pages/search.py:236
 msgid "Movie"
-msgstr ""
+msgstr "Película"
 
 #: pages/search.py:242
 msgid "Director"
-msgstr ""
+msgstr "Director"
 
 #: pages/search.py:244
 msgid "Release Year"
-msgstr ""
+msgstr "Año de estreno"
 
 #: pages/search.py:252
 msgid "Search for a Lego set"
@@ -473,31 +473,31 @@ msgstr "Buscar Lego"
 
 #: pages/search.py:256
 msgid "Searching for Lego sets..."
-msgstr ""
+msgstr "Buscando sets de Lego..."
 
 #: pages/search.py:260
 msgid "Lego search failed"
-msgstr ""
+msgstr "La búsqueda de Lego falló"
 
 #: pages/search.py:266
 msgid "### Top Lego set results"
-msgstr ""
+msgstr "### Mejores resultados de sets de Lego"
 
 #: pages/search.py:274
 msgid "Year"
-msgstr ""
+msgstr "Año"
 
 #: pages/search.py:276
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: pages/search.py:278
 msgid "Set ID"
-msgstr ""
+msgstr "ID del set"
 
 #: pages/search.py:280
 msgid "Part Count"
-msgstr ""
+msgstr "Cantidad de piezas"
 
 #: pages/search.py:284
 msgid "Search for a Lego minifigure"
@@ -509,19 +509,19 @@ msgstr "Buscar minifiguras de Lego"
 
 #: pages/search.py:288
 msgid "Searching for Lego minifigs..."
-msgstr ""
+msgstr "Buscando minifiguras de Lego..."
 
 #: pages/search.py:292
 msgid "Lego minifig search failed"
-msgstr ""
+msgstr "La búsqueda de minifiguras de Lego falló"
 
 #: pages/search.py:298
 msgid "### Top Lego minifigure results"
-msgstr ""
+msgstr "### Mejores resultados de minifiguras de Lego"
 
 #: pages/search.py:306
 msgid "Minifig ID"
-msgstr ""
+msgstr "ID de minifigura"
 
 #: pages/search.py:310
 msgid "Search for a Dragonball Z card"
@@ -533,15 +533,15 @@ msgstr "Buscar cartas de DBZ"
 
 #: pages/search.py:314
 msgid "Searching Dragonball Z cards (Algolia)..."
-msgstr ""
+msgstr "Buscando cartas de Dragonball Z (Algolia)..."
 
 #: pages/search.py:331
 msgid "### Top Dragonball Z card results"
-msgstr ""
+msgstr "### Mejores resultados de cartas de Dragonball Z"
 
 #: pages/search.py:343
 msgid "DBZ Card"
-msgstr ""
+msgstr "Carta DBZ"
 
 #: pages/search.py:351
 msgid "Search for a Digimon card"
@@ -553,15 +553,15 @@ msgstr "Buscar cartas de Digimon"
 
 #: pages/search.py:355
 msgid "Searching Digimon cards (Algolia)..."
-msgstr ""
+msgstr "Buscando cartas de Digimon (Algolia)..."
 
 #: pages/search.py:372
 msgid "### Top Digimon card results"
-msgstr ""
+msgstr "### Mejores resultados de cartas de Digimon"
 
 #: pages/search.py:384
 msgid "Digimon Card"
-msgstr ""
+msgstr "Carta Digimon"
 
 #: pages/search.py:392
 msgid "Search for a One Piece card"
@@ -573,15 +573,15 @@ msgstr "Buscar cartas de One Piece"
 
 #: pages/search.py:396
 msgid "Searching One Piece cards (Algolia)..."
-msgstr ""
+msgstr "Buscando cartas de One Piece (Algolia)..."
 
 #: pages/search.py:413
 msgid "### Top One Piece card results"
-msgstr ""
+msgstr "### Mejores resultados de cartas de One Piece"
 
 #: pages/search.py:425
 msgid "One Piece Card"
-msgstr ""
+msgstr "Carta de One Piece"
 
 #: pages/search.py:433
 msgid "Search functionality for this category is coming soon!"
@@ -593,28 +593,28 @@ msgstr "¡La función de búsqueda para esta categoría llegará pronto!"
 #: pages/search.py:384
 #: pages/search.py:425
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: pages/search.py:197
 msgid "HP"
-msgstr ""
+msgstr "PS"
 
 #: pages/search.py:198
 msgid "Flavortext"
-msgstr ""
+msgstr "Texto descriptivo"
 
 #: pages/search.py:345
 msgid "Power"
-msgstr ""
+msgstr "Poder"
 
 #: pages/search.py:386
 msgid "Card Type"
-msgstr ""
+msgstr "Tipo de carta"
 
 #: pages/search.py:428
 msgid "Rarity"
-msgstr ""
+msgstr "Rareza"
 
 #: pages/collectionView.py:136
 msgid "Add to Collection"
-msgstr ""
+msgstr "Agregar a la colección"

@@ -617,4 +617,4 @@ msgstr "Rareté"
 
 #: pages/collectionView.py:136
 msgid "Add to Collection"
-msgstr ""
+msgstr "Ajouter à la collection"

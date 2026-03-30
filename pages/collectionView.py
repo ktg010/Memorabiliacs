@@ -26,6 +26,12 @@ else:
     user_data_dict = backEnd.get_user_data(user_id)
     gfuncs.page_initialization(user_data_dict)
 
+
+    # cloud_image_url = backEnd.get_cloud_storage_image("pikachu.jpeg")  # Example usage of cached image retrieval
+
+    # st.image(cloud_image_url, width=200)  # Display the image from Cloud Storage
+
+
     items = backEnd.get_collection_items(backEnd.CURR_COLL)  # Use cached function
     coll_type = backEnd.CURR_COLL.split("_")[1]
     

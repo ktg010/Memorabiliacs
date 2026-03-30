@@ -55,7 +55,7 @@ else:
         collections = [_("(No collections)")]
 
     # Persist selection in session state
-    default_index = None if (collection == {}) else display_collections.index(collection["name"])
+    default_index = None if (collection == {}) else display_collections.index(collection["name"]) if collection["name"] in display_collections else None
     # if hasattr(backEnd, 'CURR_COLL') and backEnd.CURR_COLL:
     #     try:
     #         default_index = collections.index(backEnd.CURR_COLL+"_"+search_type)

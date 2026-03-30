@@ -617,4 +617,4 @@ msgstr "稀有度"
 
 #: pages/collectionView.py:136
 msgid "Add to Collection"
-msgstr ""
+msgstr "添加到收藏"

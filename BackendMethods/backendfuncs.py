@@ -16,6 +16,8 @@ from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 from pyzbar import pyzbar
 import json
 from pathlib import Path as FilePath
+import firebase_admin
+from firebase_admin import credentials, storage
 
 BASE_API_URL = "https://apitcg.com/api"
 APITCG_API_KEY = st.secrets["APITCG_API_KEY"]
@@ -25,6 +27,19 @@ tmdb.REQUESTS_TIMEOUT = (2, 5)  # seconds, for connect and read specifically
 CURR_COLL = ""
 
 app = FastAPI()
+
+@st.cache_resource
+def get_cloud_storage():
+     """Cached Cloud Storage client to avoid repeated authentication."""
+     firebase_admin.initialize_app(credentials.Certificate(st.secrets["firebase"]), {'storageBucket': "memorabiliacs-ec1bd.firebasestorage.app"})
+     return storage.bucket()
+
+@st.cache_data(ttl=3600)  # Cache for 1 hour
+def get_cloud_storage_image(blob_name: str):
+    """Fetch a signed URL for a blob in Cloud Storage, cached to reduce repeated calls."""
+    bucket = get_cloud_storage()
+    blob = bucket.blob(blob_name)
+    return blob.generate_signed_url(version="v4", expiration=600)
 
 @st.cache_resource
 def get_firestore_client():

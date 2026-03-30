@@ -28,15 +28,14 @@ else:
     backEnd.set_collection("")
     fullCollections = []
     removedCollections = []
-    
+    user_lang = user_data_dict.get('language', 'en')
+    set_language(user_lang)    
     gfuncs.db_settings_to_config(user_data_dict)
     gfuncs.page_initialization(user_data_dict)
     # st_yled.init(css_path=backEnd.CURR_THEME)
     st_yled.init()
 
     # Set language from database
-    user_lang = user_data_dict.get('language', 'en')
-    set_language(user_lang)    
 
     ## -------------------------------------------------------------------------------------------------
     ## Main Page Setup ---------------------------------------------------------------------------------
@@ -44,7 +43,13 @@ else:
     st.space("small")
     #st_yled.init(css_path=backEnd.CURR_THEME)
     st_yled.init()
-    st_yled.subheader(f"{_('Your Collections')}", text_alignment="center", color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor")); st_yled.subheader(f"{_('Hello')}, {st.session_state.user_info['email'].split('@')[0]}!", text_alignment="center", font_size=20, color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"))
+
+    if gfuncs.background_image_flag:
+        subheader_color = gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor")
+    else:
+        subheader_color = gfuncs.read_config_val(gfuncs.conf_file, "textColor")
+    
+    st_yled.subheader(f"{_('Your Collections')}", text_alignment="center", color=subheader_color); st_yled.subheader(f"{_('Hello')}, {st.session_state.user_info['email'].split('@')[0]}!", text_alignment="center", font_size=20, color=subheader_color)
     # DEGUB:{st.session_state.user_info}
     st.space("small")
 

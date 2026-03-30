@@ -12,3 +12,5 @@ requests_futures
 google-cloud-secret-manager
 st-styled
 pyzbar
+firebase-admin
+google-cloud-storage

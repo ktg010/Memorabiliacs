@@ -613,8 +613,8 @@ msgstr "Card Segh"
 
 #: pages/search.py:428
 msgid "Rarity"
-msgstr "rarity"
+msgstr "rarghach"
 
 #: pages/collectionView.py:136
 msgid "Add to Collection"
-msgstr ""
+msgstr "collectionDaq yIchel"

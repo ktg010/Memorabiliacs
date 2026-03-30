@@ -55,6 +55,7 @@ def get_current_lang():
 
 # Set language
 def set_language(lang):
+    _translation_cache.clear()
     st.session_state.language = lang
 
 # Translation function
