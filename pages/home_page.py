@@ -1,7 +1,5 @@
 import streamlit as st
-from google.cloud import firestore
 import BackendMethods.global_functions as gfuncs
-import BackendMethods.auth_functions as authFuncs
 import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 from BackendMethods.translations import set_language
@@ -49,7 +47,8 @@ else:
     else:
         subheader_color = gfuncs.read_config_val(gfuncs.conf_file, "textColor")
     
-    st_yled.subheader(f"{_('Your Collections')}", text_alignment="center", color=subheader_color); st_yled.subheader(f"{_('Hello')}, {st.session_state.user_info['email'].split('@')[0]}!", text_alignment="center", font_size=20, color=subheader_color)
+    st_yled.subheader(f"{_('Your Collections')}", text_alignment="center", color=subheader_color)
+    st_yled.subheader(f"{_('Hello')}, {st.session_state.user_info['email'].split('@')[0]}!", text_alignment="center", font_size=20, color=subheader_color)
     # DEGUB:{st.session_state.user_info}
     st.space("small")
 
@@ -62,7 +61,6 @@ else:
             itemSettings, rename = st.columns([3,2])
             with itemSettings:
                 hidden = st.checkbox(_("Hide Collection"))
-                fields = coll["settings"]
                 # TODO
                 # Add things for other setting when we figure out 
                 # how to do it
@@ -120,7 +118,8 @@ else:
         # iterate through collections
         for doc in collections_docs:
             collInfo = doc['id'].split('_')
-            if collInfo[0] != "DefaultCollection" : fullCollections.append(doc['id'])
+            if collInfo[0] != "DefaultCollection": 
+                fullCollections.append(doc['id'])
             if backEnd.coll_visability(doc['id'], db):
                 with st.container(width="content", horizontal_alignment="center"):
                     with st.container(horizontal=True):

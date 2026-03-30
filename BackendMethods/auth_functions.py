@@ -1,10 +1,9 @@
 import json
-from google.cloud import secretmanager, firestore
+from google.cloud import secretmanager
 import requests
 import streamlit as st
 import toml
 from BackendMethods.translations import _
-import st_yled
 
 ## -------------------------------------------------------------------------------------------------
 ## Secrets Access --------------------------------------------------------------------------------

@@ -1,5 +1,4 @@
 import streamlit as st
-import BackendMethods.auth_functions as authFuncs
 import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 import st_yled

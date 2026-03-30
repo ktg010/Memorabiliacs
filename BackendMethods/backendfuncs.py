@@ -7,15 +7,12 @@ from fastapi import FastAPI, Query, Path
 from requests_futures.sessions import FuturesSession
 import requests
 from concurrent.futures import as_completed
-from BackendMethods.auth_functions import create_account, sign_in, reset_password
 from algoliasearch.search.client import SearchClientSync
 from algoliasearch.search.models.search_params_object import SearchParamsObject
 from google.cloud import firestore
 import io
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 from pyzbar import pyzbar
-import json
-from pathlib import Path as FilePath
 import firebase_admin
 from firebase_admin import credentials, storage
 
@@ -39,7 +36,7 @@ def get_cloud_storage_image(blob_name: str):
     """Fetch a signed URL for a blob in Cloud Storage, cached to reduce repeated calls."""
     bucket = get_cloud_storage()
     blob = bucket.blob(blob_name)
-    return blob.generate_signed_url(version="v4", expiration=600)
+    return blob.generate_signed_url(version="v4", expiration=3600)
 
 @st.cache_resource
 def get_firestore_client():

@@ -1,14 +1,13 @@
 import streamlit as st
 import BackendMethods.global_functions as gfuncs
-from google.cloud import firestore
-from BackendMethods.auth_functions import *
-from BackendMethods.backendfuncs import *
+import BackendMethods.auth_functions as authFuncs
+import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _, set_language
 import st_yled
 from time import sleep
-
+ 
 try:
-    newdb = get_firestore_client()
+    newdb = backEnd.get_firestore_client()
 except Exception as e:
     st.error(f"Failed to initialize Firestore: {e}")
     st.stop()
@@ -37,8 +36,8 @@ else:
                 st.switch_page("pages/home_page.py")
         with st.container(horizontal_alignment="right", vertical_alignment="top"):
             if st_yled.button(_("Logout"), key="logout_button"):
-                set_collection("")
-                sign_out()
+                backEnd.set_collection("")
+                authFuncs.sign_out()
                 st.switch_page("pages/login.py")
 
 
@@ -60,12 +59,12 @@ else:
             set_language(lang_code)
             # Save to database
             newdb.collection("Users").document(user_id).set({"language": lang_code}, merge=True)
-            get_user_data.clear(user_id)
+            backEnd.get_user_data.clear(user_id)
             st.rerun()
 
     # Grabs settings from database
     # Also grabs current configuration data from config file
-    db_settings = get_user_data(user_id)
+    db_settings = backEnd.get_user_data(user_id)
     current_base = gfuncs.read_config_val(conf_file, "base")
     current_background_color = gfuncs.read_config_val(conf_file, "backgroundColor")
     current_text_color = gfuncs.read_config_val(conf_file, "textColor")
@@ -135,7 +134,7 @@ else:
                 gfuncs.update_settings(conf_file, theme_dict[color_theme])
                 newdb.collection("Users").document(user_id).set(theme_dict[color_theme], merge=True)
                 #gfuncs.apply_css_theme(color_theme)
-                get_user_data.clear(user_id)
+                backEnd.get_user_data.clear(user_id)
                 sleep(0.25)
                 st.rerun()
                 
@@ -166,7 +165,7 @@ else:
                                                                 "font" : font_choice,
                                                                 "theme" : "Custom"},
                                                                 merge=True)
-                get_user_data.clear(user_id)
+                backEnd.get_user_data.clear(user_id)
                 sleep(0.25)
                 st.rerun()
 

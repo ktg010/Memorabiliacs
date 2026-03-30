@@ -2,19 +2,16 @@
 #   Author(s): Cooper Wooten, Kieran Gilpin
 #   Desc: Basic version of login page for memorabiliacs using streamlit
 ###############################################################
-import json
-import os
 
 import streamlit as st
 import BackendMethods.global_functions as gfuncs
-from google.cloud import firestore
-from BackendMethods.auth_functions import *
+import BackendMethods.auth_functions as authFuncs
 import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 import st_yled
 
 
-st.secrets = access_secret_version()
+st.secrets = authFuncs.access_secret_version()
 # st_yled.init(css_path=".streamlit/st-styled.css")
 # st_yled.init(backEnd.CURR_THEME)
 st_yled.init()
@@ -46,7 +43,7 @@ except Exception as e:
 st_yled.title(_("Welcome to Memorabiliacs!"), text_alignment="center")
 
 if 'user_info' not in st.session_state:
-    generate_login_template(db)
+    authFuncs.generate_login_template(db)
 ## -------------------------------------------------------------------------------------------------
 ## Logged in --------------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------
