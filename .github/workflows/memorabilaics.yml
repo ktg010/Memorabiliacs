@@ -20,7 +20,7 @@ jobs:
           sudo apt-get install -y libzbar0
       - name: Set up Google Cloud credentials
         env:
-          GOOGLE_APPLICATION_CREDENTIALS_CONTENT: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+          GOOGLE_APPLICATION_CREDENTIALS_CONTENT: ${{ secrets.GOOGLE_CLOUD_SDK_JSON }}
         run: |
            echo "$GOOGLE_APPLICATION_CREDENTIALS_CONTENT" > ${{ runner.temp }}/gcloud-key.json
            echo "GOOGLE_APPLICATION_CREDENTIALS=${{ runner.temp }}/gcloud-key.json" >> $GITHUB_ENV
