@@ -21,7 +21,9 @@ jobs:
       - name: Create Streamlit secrets file for CI/CD
         run: |
           mkdir -p .streamlit
-          echo "${{ secrets.CI_SECRETS }}" > .streamlit/secrets.toml
+          cat > .streamlit/secrets.toml << 'EOF'
+          ${{ secrets.CI_SECRETS }}
+          EOF
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13.2"
