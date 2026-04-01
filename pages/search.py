@@ -3,13 +3,15 @@ import BackendMethods.global_functions as gfuncs
 import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 import st_yled
+import os
 
 st.session_state["last_code"] = ""
 
+is_test_mode = os.getenv("STREAMLIT_TEST_MODE", "false").lower() == "true"
 # user sign-in check
 if 'user_info' not in st.session_state:
     # Check if running in test mode (AppTest sets a marker)
-    if hasattr(st, '_is_running_with_streamlit_app_test'):
+    if is_test_mode:
         st.session_state.user_info = {
             "localId": "test_user_123",
             "email": "test@example.com"

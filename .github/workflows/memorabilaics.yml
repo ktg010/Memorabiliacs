@@ -30,6 +30,8 @@ jobs:
           cat > .streamlit/secrets.toml << 'EOF'
           ${{ secrets.CI_SECRETS }}
           EOF
+      - name: Set test mode environment variable
+        run: echo "STREAMLIT_TEST_MODE=true" >> $GITHUB_ENV
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13.2"
