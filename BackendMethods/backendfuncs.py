@@ -16,6 +16,8 @@ from pyzbar import pyzbar
 import firebase_admin
 from firebase_admin import credentials, storage
 from BackendMethods.auth_functions import access_secret_version
+import os
+import uuid
 
 st.secrets = access_secret_version()
 
@@ -727,6 +729,36 @@ def _extract_supported_codes(decoded: list[dict[str, str]]) -> list[dict[str, st
 def _load_image(uploaded_file: st.runtime.uploaded_file_manager.UploadedFile) -> Image.Image:
 	data = uploaded_file.getvalue()
 	return Image.open(io.BytesIO(data)).convert("RGB")
+
+
+
+def upload_user_image(uploaded_file, user_id: str, db, firestore_field: str = "profile_image_blob") -> str:
+    """
+    Uploads Streamlit UploadedFile to GCS, stores blob path in Firestore.
+    Returns blob_name.
+    """
+    bucket = get_cloud_storage()
+    ext = os.path.splitext(uploaded_file.name or "")[1].lower() or ".bin"
+    blob_name = f"user_uploads/{user_id}/{uuid.uuid4().hex}{ext}"
+    blob = bucket.blob(blob_name)
+
+    blob.upload_from_string(
+        uploaded_file.getvalue(),
+        content_type=(uploaded_file.type or "application/octet-stream")
+    )
+
+    db.collection("Users").document(user_id).set({firestore_field: blob_name}, merge=True)
+    return blob_name
+
+def get_user_image_url(user_id: str, db, firestore_field: str = "image_blob") -> str | None:
+    """Reads blob path from Firestore, returns signed URL."""
+    doc = db.collection("Users").document(user_id).get()
+    if not doc.exists:
+        return None
+    blob_name = (doc.to_dict() or {}).get(firestore_field)
+    if not blob_name:
+        return None
+    return get_cloud_storage_image(blob_name)
 
 
 # Function to upload all pokemon cards to database

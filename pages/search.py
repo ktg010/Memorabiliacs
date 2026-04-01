@@ -430,3 +430,20 @@ else:
 
     else:
         st.info(_("Search functionality for this category is coming soon!"))
+
+
+
+# Test for GCS image upload, leaving here if others want to mess with
+#uploaded = st.file_uploader("Upload image to GCS", type=["png", "jpg", "jpeg", "webp"])
+#
+#if uploaded and st.button("Save image"):
+#    db = backEnd.get_firestore_client()
+#    user_id = st.session_state.user_info["localId"]
+#    backEnd.upload_user_image(uploaded, user_id, db)
+#    st.success("Image uploaded.")
+#
+#db = backEnd.get_firestore_client()
+#user_id = st.session_state.user_info["localId"]
+#img_url = backEnd.get_user_image_url(user_id, db)
+#if img_url:
+#    st.image(img_url)
