@@ -9,7 +9,7 @@ st.session_state["last_code"] = ""
 # user sign-in check
 if 'user_info' not in st.session_state:
     # Check if running in test mode (AppTest sets a marker)
-    if st.secrets['STREAMLIT_TESTING']:
+    if st.secrets.get("STREAMLIT_TESTING", False):
         st.session_state.user_info = {
             "localId": "test_user_123",
             "email": "test@example.com"
