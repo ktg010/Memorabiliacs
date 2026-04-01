@@ -15,10 +15,9 @@ except Exception as e:
 # st_yled.init(CURR_THEME)
 st_yled.init()
 
-# user sign-in check
+is_test_mode = st.session_state.get("_streamlit_test", False)
 if 'user_info' not in st.session_state:
-    # Check if running in test mode (AppTest sets a marker)
-    if hasattr(st, '_is_running_with_streamlit_app_test'):
+    if is_test_mode:
         st.session_state.user_info = {
             "localId": "test_user_123",
             "email": "test@example.com"
