@@ -741,21 +741,15 @@ def _load_image(uploaded_file: st.runtime.uploaded_file_manager.UploadedFile) ->
 	return Image.open(io.BytesIO(data)).convert("RGB")
 
 def renameData(db):
-    pokemon = db.collection("OnePiece")
-    test = pokemon.document("01-TEMPLATE")
-    pokemon.document("#TEMPLATE").set(test.get().to_dict())
-    # itemCollection = "LegoMinifigs"
-    # items = db.collection(itemCollection)
-    # for single in items.stream():
-    #     item = single.to_dict()
-    #     if "img_url" in item:
-    #         newItem = {
-    #             "Image" : item["img_url"],
-    #             "Name" : item["name"],
-    #             "Number of Parts" : item["num_parts"],
-    #             "Minifig Number" : item["fig_num"],
-    #         }
-    #         db.collection(itemCollection).document(single.id).set(newItem)
-            # print(f"changed {single.id}")
-            # return
+    name = "Music"
+    coll = db.collection(name)
+    for single in coll.stream():
+        item = single.to_dict()
+        if "image" in item:
+            newItem = {
+                "Image" : item["image"],
+                "Name" : item["title"],
+                "Artist" : item["creator"],
+            }
+            db.collection(name).document(single.id).set(newItem)
     print("done")
