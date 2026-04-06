@@ -5,6 +5,7 @@ import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _, set_language
 import st_yled
 from time import sleep
+import os
  
 try:
     newdb = backEnd.get_firestore_client()
@@ -15,8 +16,17 @@ except Exception as e:
 # st_yled.init(CURR_THEME)
 st_yled.init()
 
+is_test_mode = os.getenv("STREAMLIT_TEST_MODE", "false").lower() == "true"
+# user sign-in check
 if 'user_info' not in st.session_state:
-    st.switch_page("pages/login.py")
+    # Check if running in test mode (AppTest sets a marker)
+    if is_test_mode:
+        st.session_state.user_info = {
+            "localId": "test_user_123",
+            "email": "test@example.com"
+        }
+    else:
+        st.switch_page("pages/login.py")
 ## -------------------------------------------------------------------------------------------------
 ## Logged in --------------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------

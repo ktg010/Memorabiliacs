@@ -3,13 +3,21 @@ import BackendMethods.global_functions as gfuncs
 import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 import st_yled
+import os
 
 st.session_state["last_code"] = ""
 
+is_test_mode = os.getenv("STREAMLIT_TEST_MODE", "false").lower() == "true"
 # user sign-in check
 if 'user_info' not in st.session_state:
-    st.switch_page("pages/login.py")
-
+    # Check if running in test mode (AppTest sets a marker)
+    if is_test_mode:
+        st.session_state.user_info = {
+            "localId": "test_user_123",
+            "email": "test@example.com"
+        }
+    else:
+        st.switch_page("pages/login.py")
 try:
     db = backEnd.get_firestore_client()
     user_id = st.session_state.user_info["localId"]
@@ -135,6 +143,8 @@ else:
                         with cols[0]:
                             if upc_result["image"]:
                                 st.image(upc_result["image"], width="content")
+                            else:
+                                st.info(_("No image available for this item."))
                             with st_yled.badge_card_one(title=upc_result.get('name', _('No title')), text=f"\n**UPC: {upc_result.get('ean', '')}**", badge_text=_("UPC Result"), badge_color="primary",
                                                    background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), card_shadow=True, height="content", width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", 
                                                    border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
@@ -144,7 +154,7 @@ else:
                                 #     st.write(f"{_('Publisher')}: {upc_result['publisher']}")
                                 st.write(f"{_('Item ean')}: {upc_result['ean']}")
                                 if backEnd.CURR_COLL:
-                                    st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_upc_{upc_result['ean']}", on_click=add_upc_button, kwargs={"upc_result": upc_result})
+                                    st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_upc_{upc_result['ean']}", on_click=add_upc_button, kwargs={"upc_result": upc_result})                           
 
                     except Exception as e:
                         st_yled.error(f"{_('UPC search failed')}: {e}")

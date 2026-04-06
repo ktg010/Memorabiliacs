@@ -4,6 +4,7 @@ import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 from BackendMethods.translations import set_language
 import st_yled
+import os
 
 # Connects to db
 try:
@@ -12,9 +13,17 @@ except Exception as e:
     st.error(f"Failed to initialize Firestore: {e}")
     st.stop()
 
+is_test_mode = os.getenv("STREAMLIT_TEST_MODE", "false").lower() == "true"
 # user sign-in check
 if 'user_info' not in st.session_state:
-    st.switch_page("pages/login.py")
+    # Check if running in test mode (AppTest sets a marker)
+    if is_test_mode:
+        st.session_state.user_info = {
+            "localId": "test_user_123",
+            "email": "test@example.com"
+        }
+    else:
+        st.switch_page("pages/login.py")
 ## -------------------------------------------------------------------------------------------------
 ## Logged in ---------------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------

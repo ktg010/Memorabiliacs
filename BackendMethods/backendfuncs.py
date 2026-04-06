@@ -77,16 +77,6 @@ def type_fields(coll_type: str):
     db = get_firestore_client()
     typeRef = db.collection(coll_type)
     return typeRef.document("#TEMPLATE").get().to_dict()
-    # res = {}
-    # index = 0
-    # for doc in typeRef.stream():
-    #     fields = doc.to_dict()
-    #     index += 1
-    #     for key in fields.keys():
-    #         res[key] = True
-    #     if index >= 2:
-    #         return res
-    # return res
 
 def set_collection(collection:str):
     """Sets the collection name for reference across pages
@@ -612,7 +602,7 @@ def test_upc_api(upc_code: str):
             'description': item['description'],
             # 'publisher': item.get('publisher', None) if item['publisher'] else None,
             'ean': item['ean'],
-            'image': item['images'][0]  # Get the first image if available
+            'image': item['images'][0] if item['images'] else None, # Get the first image if available
         }
     else:
         raise ValueError("No items found for the provided UPC code.")
