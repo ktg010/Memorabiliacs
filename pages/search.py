@@ -192,8 +192,8 @@ else:
                             proper_id = str(item_id).replace("-", "_")
                             backEnd.add_reference_search(proper_id, item_id, db)
                             st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Cardname, collection=backEnd.CURR_COLL.split('_')[0]))
-                        if item.get("images"):
-                            st.image(item["images"]['small'], width=300)
+                        if item.get("image"):
+                            st.image(item["image"], width=300)
                         with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), 
                                                card_shadow=True, badge_text=_("Pokemon Card"), badge_color="primary", text=f"\r\n**ID: {item.get('id', '')}**",
                                                height="content", width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", 
@@ -251,15 +251,15 @@ else:
                         
 
 #TODO: Fix the rebrickable items within the db so image tags are correct, then add to algolia
-    elif search_type == "Lego Sets":
+    elif search_type == "LegoSets":
         with st_yled.form(key="lego_search_form", clear_on_submit=False):
             lego_query = st_yled.text_input(_("Search for a Lego set"))
             lego_search_submitted = st_yled.form_submit_button(_("Search Lego"))
 
         if lego_search_submitted:
-            with st.spinner(_("Searching for Lego sets...")):
+            with st.spinner(_("Searching for Lego sets (Algolia)...")):
                 try:
-                    results = backEnd.search_sets_rebrickable(lego_query, max_results=10)
+                    results = backEnd.search_algolia(lego_query, index_name="LegoSetSearchResults", max_results=10)
                 except Exception as e:
                     st.error(f"{_('Lego search failed')}: {e}")
                     results = []
@@ -271,27 +271,29 @@ else:
                 cols = st.columns(2)
                 for idx, item in enumerate(lego_results):
                     with cols[idx % 2]:
-                        if item.get("image_url"):
-                            st.image(item["image_url"], width=200)
+                        if item.get("image"):
+                            st.image(item["image"], width=200)
                         st.write(f"{item.get('name', _('No name'))}")
-                        if item.get('year'):
-                            st.write(f"{_('Year')}: {item['year']}")
-                        if item.get('theme'):
-                            st.write(f"{_('Theme')}: {item['theme']}")
-                        if item.get('set_id'):
-                            st.write(f"{_('Set ID')}: {item['set_id']}")
+                        if item.get('Set Number'):
+                            st.write(f"{_('Set Number')}: {item['Set Number']}")
+                        if item.get('Theme ID'):
+                            st.write(f"{_('Theme')}: {item['Theme ID']}")
+                        if item.get('Set ID'):
+                            st.write(f"{_('Set ID')}: {item['Set ID']}")
                         if item.get('num_parts'):
                             st.write(f"{_('Part Count')}: {item['num_parts']}")
+                        if item.get('year'):
+                            st.write(f"{_('Release Year')}: {item['year']}")
                             
-    elif search_type == "Lego Minifigs":
+    elif search_type == "LegoMinifigs":
         with st_yled.form(key="lego_minifig_search_form", clear_on_submit=False):
             minifig_query = st_yled.text_input(_("Search for a Lego minifigure"))
             minifig_search_submitted = st_yled.form_submit_button(_("Search Lego Minifigs"))
 
         if minifig_search_submitted:
-            with st.spinner(_("Searching for Lego minifigs...")):
+            with st.spinner(_("Searching for Lego minifigs (Algolia)...")):
                 try:
-                    results = backEnd.search_minifigs_rebrickable(minifig_query, max_results=10)
+                    results = backEnd.search_algolia(minifig_query, index_name="LegoMinifigSearchResults", max_results=10)
                 except Exception as e:
                     st.error(f"{_('Lego minifig search failed')}: {e}")
                     results = []
@@ -303,11 +305,11 @@ else:
                 cols = st.columns(2)
                 for idx, item in enumerate(lego_minifig_results):
                     with cols[idx % 2]:
-                        if item.get("image_url"):
-                            st.image(item["image_url"], width=200)
-                        st.write(f"{item.get('name', _('No name'))}")
-                        if item.get('minifig_id'):
-                            st.write(f"{_('Minifig ID')}: {item['minifig_id']}")
+                        if item.get("Image"):
+                            st.image(item["Image"], width=200)
+                        st.write(f"{item.get('Name', _('No name'))}")
+                        if item.get('Minifig Number'):
+                            st.write(f"{_('Minifig ID')}: {item['Minifig Number']}")
 
     elif search_type == "Dragonball":
         with st_yled.form(key="dbz_search_form", clear_on_submit=False):

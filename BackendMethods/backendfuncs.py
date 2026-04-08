@@ -241,8 +241,9 @@ def get_collection_items(collection_name: str):
     collectionData = generate_collection(collection_name, db)
     items = {}
     for id in collectionData:
-        items[id] = {'info' : (collectionData[id].get('ref')).get().to_dict(),
+        items[id] = {'info' : {**(collectionData[id].get('ref')).get().to_dict(), "id": id},
                      'notes' : collectionData[id].get('notes')
+                    #'quantity' : collectionData[id].get('quantity', 1)  # Default to 1 if quantity is not set
                     }
     return items
 
@@ -525,10 +526,10 @@ def search_algolia(query: str, index_name: str, max_results: int = 10):
             for hit in hits:
                 results.append({
                     "id": getattr(hit, 'object_id', getattr(hit, 'object_id', None)),
-                    "name": getattr(hit, 'name', None),
-                    "images": getattr(hit, 'images', None),
-                    "flavorText": getattr(hit, 'flavorText', None),
-                    "hp": getattr(hit, 'hp', getattr(hit, 'hp', None))
+                    "name": getattr(hit, 'Name', None),
+                    "image": getattr(hit, 'Image', None),
+                    "flavorText": getattr(hit, 'Flavor Text', None),
+                    "hp": getattr(hit, 'HP', getattr(hit, 'HP', None))
                 })
             return results
         
@@ -575,6 +576,28 @@ def search_algolia(query: str, index_name: str, max_results: int = 10):
                     "type": getattr(hit, 'type', None),
                     "image": getattr(hit, 'image', None),
                     "rarity": getattr(hit, 'rarity', None)
+                })
+            return results
+        
+        elif index_name == "LegoSetSearchResults":
+            results = []
+            for hit in hits:
+                results.append({
+                    "id": getattr(hit, 'object_id', None),
+                    "name": getattr(hit, 'Name', None),
+                    "year": getattr(hit, 'Year', None),
+                    "num_parts": getattr(hit, 'NumParts', None),
+                    "image": getattr(hit, 'Image', None)
+                })
+
+        elif index_name == "LegoMinifigSearchResults":
+            results = []
+            for hit in hits:
+                results.append({
+                    "id": getattr(hit, 'object_id', None),
+                    "name": getattr(hit, 'Name', None),
+                    "minifig_number": getattr(hit, 'Minifig Number', None),
+                    "image": getattr(hit, 'Image', None)
                 })
             return results
 

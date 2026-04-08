@@ -101,8 +101,8 @@ else:
                         if info != items[key].get('notes'):
                             backEnd.update_notes(key, info, db)
                             st.success("Updated!")
-
-                        if st_yled.button("View More", key=f"{curr_item["info"]["Name"]}_view"):
+                        print(curr_item)
+                        if st_yled.button("View More", key=f"{curr_item["info"]["id"]}_view"):
                             viewItem(key)
                         st.space("medium")
     else:
