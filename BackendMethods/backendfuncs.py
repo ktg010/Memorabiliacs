@@ -747,18 +747,49 @@ def upload_user_image(uploaded_file, user_id: str, db, firestore_field: str = "p
         content_type=(uploaded_file.type or "application/octet-stream")
     )
 
-    db.collection("Users").document(user_id).set({firestore_field: blob_name}, merge=True)
+    db.collection("Users").document(user_id).collection("UserImages").document().set({
+        "image_name": uploaded_file.name,
+        "image": blob_name
+    })
     return blob_name
 
-def get_user_image_url(user_id: str, db, firestore_field: str = "image_blob") -> str | None:
-    """Reads blob path from Firestore, returns signed URL."""
-    doc = db.collection("Users").document(user_id).get()
+
+
+# need to edit some more along with get names
+def get_user_image_url(user_id: str, db, image_doc_id: str) -> str | None:
+    """
+    Returns a signed URL for one image doc in:
+    Users/{user_id}/UserImages/{image_doc_id}
+    
+    """
+
+    if not image_doc_id:
+        return None
+    doc = (
+        db.collection("Users")
+        .document(user_id)
+        .collection("UserImages")
+        .document(image_doc_id)
+        .get()
+    )
+
     if not doc.exists:
         return None
-    blob_name = (doc.to_dict() or {}).get(firestore_field)
+
+    data = doc.to_dict() or {}
+    
+    
+    blob_name = data.get("blob_name") or data.get("image")  # supports old/new field names
+    #print(blob_name)
     if not blob_name:
         return None
+
     return get_cloud_storage_image(blob_name)
+
+def get_user_image_names(user_id: str) -> list[str]:
+    bucket = get_cloud_storage()
+    prefix = f"user_uploads/{user_id}/"
+    return [blob.name.rsplit("/", 1)[-1] for blob in bucket.list_blobs(prefix=prefix)]
 
 
 # Function to upload all pokemon cards to database
