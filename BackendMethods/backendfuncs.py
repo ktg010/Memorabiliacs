@@ -286,7 +286,11 @@ def rename_collection(collection_name:str, new_collection:str, db):
     # created new collection to move data to
     fullName = f"{new_collection.title()}_{coll_Info[1]}"
     
-    db.collection('Users').document(user_id).collection('Collections').document(fullName).set(collection_ref_OLD.get().to_dict())
+    new_coll = db.collection('Users').document(user_id).collection('Collections').document(fullName)
+    new_coll.set(collection_ref_OLD.get().to_dict())
+    for sub in get_sub_collections(collection_name):
+        data = get_sub_collection_items(collection_name, sub)
+        new_coll.collection("Sub Collections").document(sub).set(data)
     collection_ref_OLD.delete()
     get_user_collections.clear(user_id)
 
@@ -349,11 +353,12 @@ def update_collection_views(collection_name:str, views, db):
     collection_ref.update({"settings.views": views})
 
 ## Sub Coll ##
-def create_sub_collection(name:str, collection:str, db):
+def create_sub_collection(name:str, collection:str, size:int, db):
     """Creates a subcollection in a given collection
     
     name: name of subcolleciton
     collection: name of parent collection
+    size: size of sub collection
     db: firestore database
     """
     user_id = st.session_state.user_info['localId']
@@ -373,7 +378,9 @@ def create_sub_collection(name:str, collection:str, db):
             # ? way to re-order collections on main page ?
             "order" : "figure out later, way to sort/filter/order on main page",
             # hidden on main page
-            "hidden" : False
+            "hidden" : False,
+            # number of items avalible for sub collection
+            "size" : size
         }
     }
     db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(name.title()).set(baseInfo)

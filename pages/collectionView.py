@@ -91,9 +91,13 @@ else:
     @st.dialog("Create Sub Collection")
     def subColl():
         name = st.text_input("Name your sub collection")
+        size = st.text_input("What is the size of the collection")
         if st.button("Save"):
-            backEnd.create_sub_collection(name, backEnd.CURR_COLL, db)
-            st.rerun()
+            if size.isdigit():
+                backEnd.create_sub_collection(name, backEnd.CURR_COLL, size, db)
+                st.rerun()
+            else:
+                st.error("Size needs to be a whole number")
 
     st.space("small")
     st.subheader(backEnd.CURR_COLL.split("_")[0], text_alignment="center")

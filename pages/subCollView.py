@@ -130,14 +130,6 @@ else:
 
 
     # Container in bottom right for add button
-    # with st.container(horizontal=True, horizontal_alignment="right", vertical_alignment="bottom"):
-    #     collection = {
-    #         "name" : backEnd.CURR_COLL.split("_")[0],
-    #         "type" : backEnd.CURR_COLL.split("_")[1]
-    #     }
+    with st.container(horizontal=True, horizontal_alignment="right", vertical_alignment="bottom"):
+        pass
 
-    #     st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
-
-    #     if st.button("Create subColl"):
-    #         subColl()
-            

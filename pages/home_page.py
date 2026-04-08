@@ -129,10 +129,9 @@ else:
             collInfo = doc['id'].split('_')
             if collInfo[0] != "DefaultCollection": 
                 fullCollections.append(doc['id'])
-            if backEnd.coll_visability(doc['id'], db):
+            if backEnd.coll_visability(doc["id"], db):
                 with st.container(width="content", horizontal_alignment="center"):
                     with st.container(horizontal=True):
-                        #st.subheader(f"{collInfo[0]}", text_alignment="center")
                         if gfuncs.removeCheck:
                             if st.checkbox(" ", key=f"remove_{collInfo[0]}", width="content"):
                                 removedCollections.append(doc['id'])
