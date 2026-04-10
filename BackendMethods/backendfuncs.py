@@ -760,7 +760,7 @@ def get_user_image_url(user_id: str, db, image_doc_id: str) -> str | None:
     """
     Returns a signed URL for one image doc in:
     Users/{user_id}/UserImages/{image_doc_id}
-    
+
     """
 
     if not image_doc_id:
@@ -777,8 +777,8 @@ def get_user_image_url(user_id: str, db, image_doc_id: str) -> str | None:
         return None
 
     data = doc.to_dict() or {}
-    
-    
+
+
     blob_name = data.get("blob_name") or data.get("image")  # supports old/new field names
     #print(blob_name)
     if not blob_name:
@@ -786,11 +786,14 @@ def get_user_image_url(user_id: str, db, image_doc_id: str) -> str | None:
 
     return get_cloud_storage_image(blob_name)
 
-def get_user_image_names(user_id: str) -> list[str]:
-    bucket = get_cloud_storage()
-    prefix = f"user_uploads/{user_id}/"
-    return [blob.name.rsplit("/", 1)[-1] for blob in bucket.list_blobs(prefix=prefix)]
-
+def get_user_image_names(user_id: str, db) -> list[str]:
+    docs = (
+        db.collection("Users")
+        .document(user_id)
+        .collection("UserImages")
+        .stream()
+    )
+    return [(doc.to_dict() or {}).get("image_name", "") for doc in docs]
 
 # Function to upload all pokemon cards to database
 # I have this placed into the homepage 'add_collection' button for the sole purpose of running the code

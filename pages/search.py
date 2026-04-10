@@ -452,3 +452,30 @@ else:
 
     else:
         st.info(_("Search functionality for this category is coming soon!"))
+
+
+# Uncomment below code to test GCS/firestore image upload and retrieval, leaving here for others to mess with as needed
+# RN you can search images by their actual document id on firestore rather than name, will change later 
+
+#uploaded = st.file_uploader("Upload image to GCS", type=["png", "jpg", "jpeg", "webp"])
+#
+#if uploaded and st.button("Save image"):
+#    db = backEnd.get_firestore_client()
+#    user_id = st.session_state.user_info["localId"]
+#    backEnd.upload_user_image(uploaded, user_id, db)
+#    st.success("Image uploaded.")
+#
+#db = backEnd.get_firestore_client()
+#user_id = st.session_state.user_info["localId"]
+#
+#test_doc_id = st.text_input("Image doc id")
+#if test_doc_id and st.button("Test fetch URL"):
+#    url = backEnd.get_user_image_url(user_id, db, test_doc_id)
+#    st.write(url)
+#    if url:
+#        st.image(url)
+#
+#names = backEnd.get_user_image_names(user_id, db)
+#st.write("User image names:")
+#for name in names:
+#    st.write(name)
