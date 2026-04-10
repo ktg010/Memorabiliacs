@@ -53,6 +53,7 @@ else:
     @st.fragment
     @st.dialog("Add to Sub Collection")
     def addToSub():
+        totalSize = backEnd.get_sub_coll_size(backEnd.SUB_COLL, backEnd.CURR_COLL)
         if "itemsToAdd" not in st.session_state:
             st.session_state["itemsToAdd"] = {}
             fristThrough = True
@@ -63,14 +64,16 @@ else:
         with st.container(horizontal_alignment="center"):
             fullItems = backEnd.get_collection_items(backEnd.CURR_COLL)
             cols = st.columns(3, width="stretch") 
+            totalQaunt = 0
+            for item in itemsToAdd.keys(): 
+                totalQaunt += itemsToAdd[item]
             for i, key in enumerate(fullItems.keys()):
                 col = cols[i % 3]
                 curr_item = fullItems[key]
                 with col.container(horizontal_alignment="center"):
-                    name = curr_item['info'].get('Name')
-                    st_yled.subheader(f"{name}", text_alignment="center")
+                    st_yled.subheader(f"{curr_item['info'].get('Name')}", text_alignment="center")
                     if fristThrough:
-                        itemsToAdd[name] = 0
+                        itemsToAdd[key] = 0
 
                     if backEnd.CURR_COLL.split("_")[1] == "Custom":
                         if curr_item["info"]["image"] is not None:
@@ -80,17 +83,28 @@ else:
                     else:
                         st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
 
-                    itemQuant = curr_item.get("quantity")
-                    st.write(f"{itemsToAdd[name]}/{itemQuant}")
+                    itemQuant = int(curr_item.get("quantity"))
+                    st.write(f"{itemsToAdd[key]}/{itemQuant}")
                     
-                    if st.button("", icon=":material/add:", key=f"{name}_add"):
-                        itemsToAdd[name] += 1
-
-
-                        sleep(.25)
+                    if st.button("", icon=":material/add:", key=f"{key}_add"):
+                        if totalQaunt == totalSize:
+                            st.warning("Sub Collection full")
+                        elif itemsToAdd[key] == itemQuant:
+                            st.warning("Not enough of that item")
+                        else:
+                            itemsToAdd[key] += 1
+                            st.rerun(scope="fragment")
+                    
+            totalQaunt = 0
+            for item in itemsToAdd.keys(): 
+                totalQaunt += itemsToAdd[item]
+            st.write(f"{totalQaunt}/{totalSize}")
 
             if st.button("Save"):
-                pass
+                for item in itemsToAdd.keys(): 
+                    if itemsToAdd[item] != 0:
+                        backEnd.add_item_sub_coll(item, fullItems[item].get("Notes"), itemsToAdd[item], backEnd.SUB_COLL, backEnd.CURR_COLL)
+                st.rerun()
     
     @st.dialog("Item Info")
     def viewItem(item):
@@ -119,6 +133,8 @@ else:
             else: 
                 col = cols[1]
             curr_item = items[key]
+            print(key)
+            print(curr_item)
             with col.container(horizontal_alignment="center"):
                 if views["Name"]:
                     st_yled.subheader(f"{curr_item['info'].get('Name')}", text_alignment="center")

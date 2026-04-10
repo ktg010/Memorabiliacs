@@ -222,9 +222,21 @@ def get_sub_collection_items(collection_name:str, sub_collection_name: str):
     for item in data:
         items[item] = {'info' : (data[item].get('ref')).get().to_dict(),
                        'notes' : data[item].get('notes'),
-                    #    'quantity' : data[item].get('quantitiy')
+                       'quantity' : data[item].get('quantitiy', 1)
                     }
     return items
+
+@st.cache_data(ttl=3600)
+def get_sub_coll_size(name:str, collection:str) -> int:
+    """Gets the size of the given sub collection
+    
+    name: name of sub collection
+    collection: parent collection
+    """
+    db = get_firestore_client()  # Use cached client
+    user_id = st.session_state.user_info['localId']
+    sub_collection = db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(name)
+    return int(sub_collection.get().to_dict()["settings"]["size"])
 
 
 ###################################################################################################
@@ -426,6 +438,31 @@ def delete_sub_collection(name:str, collection:str):
     sub_ref = db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(name)
     sub_ref.delete()
     get_sub_collections.clear(collection)
+
+def add_item_sub_coll(item_id:str, notes:str, quantity:int, sub_coll:str, collection:str):
+    """Adds an item to a users sub collection
+
+    item_id: the id/name of the item
+    notes: specific per user note for item
+    quantitiy: how many to add
+    sub_coll: name of sub collection
+    collection: name of parent collection
+    """
+    user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
+    coll_type = collection.split("_")[1]
+    fixed_name = item_id.replace("_", "-")
+    item_ref = db.collection(coll_type).document(fixed_name)
+
+    sub_ref = db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(sub_coll)
+    sub_ref.update({
+    f"items.{item_id}": {
+        "notes": notes,
+        "ref": item_ref,
+        "quantity" : quantity
+        }
+    })
+    get_sub_collection_items.clear(collection, sub_coll)
 
 ###################################################################################################
 ############################################ [Other] ##############################################
