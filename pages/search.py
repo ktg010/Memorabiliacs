@@ -153,6 +153,28 @@ else:
 
                     except Exception as e:
                         st_yled.error(f"{_('UPC search failed')}: {e}")
+
+        st.divider()
+
+        # Test for GCS image upload, leaving here if others want to mess with
+        uploaded = st.file_uploader("Upload image to GCS", type=["png", "jpg", "jpeg", "webp"])
+
+        if uploaded and st.button("Save image"):
+            db = backEnd.get_firestore_client()
+            user_id = st.session_state.user_info["localId"]
+            backEnd.upload_user_image(uploaded, user_id, db)
+            st.success("Image uploaded.")
+
+        db = backEnd.get_firestore_client()
+        user_id = st.session_state.user_info["localId"]
+        img_url = backEnd.get_user_image_url(user_id, db)
+        if img_url:
+            st.image(img_url)
+
+        st.divider()
+
+        # display all pictures with button to add to collection
+
     elif search_type == "Pokemon":
         with st_yled.form(key="algolia_search_form", clear_on_submit=False):
             pokemon_query = st_yled.text_input(_("Search for a Pokemon card"))
@@ -430,20 +452,3 @@ else:
 
     else:
         st.info(_("Search functionality for this category is coming soon!"))
-
-
-
-# Test for GCS image upload, leaving here if others want to mess with
-#uploaded = st.file_uploader("Upload image to GCS", type=["png", "jpg", "jpeg", "webp"])
-#
-#if uploaded and st.button("Save image"):
-#    db = backEnd.get_firestore_client()
-#    user_id = st.session_state.user_info["localId"]
-#    backEnd.upload_user_image(uploaded, user_id, db)
-#    st.success("Image uploaded.")
-#
-#db = backEnd.get_firestore_client()
-#user_id = st.session_state.user_info["localId"]
-#img_url = backEnd.get_user_image_url(user_id, db)
-#if img_url:
-#    st.image(img_url)
