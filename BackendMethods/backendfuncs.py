@@ -585,10 +585,11 @@ def search_algolia(query: str, index_name: str, max_results: int = 10):
                 results.append({
                     "id": getattr(hit, 'object_id', None),
                     "name": getattr(hit, 'Name', None),
-                    "year": getattr(hit, 'Year', None),
-                    "num_parts": getattr(hit, 'NumParts', None),
+                    "year": getattr(hit, 'Year of Release', None),
+                    "num_parts": getattr(hit, 'Number of Parts', None),
                     "image": getattr(hit, 'Image', None)
                 })
+            return results
 
         elif index_name == "LegoMinifigSearchResults":
             results = []

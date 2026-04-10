@@ -117,13 +117,9 @@ def page_initialization(user_data_dict:dict):
             if st_yled.button(_("Home"), key="home_button"):
                 backEnd.set_collection("")
                 st.switch_page("pages/home_page.py")
-        with st.container(horizontal_alignment="center", vertical_alignment="top"):
+        with st.container(horizontal_alignment="right", vertical_alignment="top"):
             if st_yled.button(_("Search"), key="search_button"):
                 st.switch_page("pages/search.py")
-        with st.container(horizontal_alignment="right", vertical_alignment="top"):
-            if st_yled.button(_("Settings"), key="settings_button"):
-                st.switch_page("pages/settings.py")
-        
 
 def base_theme_threshold(hex_num:str) -> str:
     r = int(hex_num[1:3], 16)
