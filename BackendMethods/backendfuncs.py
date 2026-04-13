@@ -17,7 +17,7 @@ import firebase_admin
 from firebase_admin import credentials, storage
 from BackendMethods.auth_functions import access_secret_version
 
-st.secrets = access_secret_version()
+#st.secrets = access_secret_version()
 BASE_API_URL = "https://apitcg.com/api"
 APITCG_API_KEY = st.secrets["APITCG_API_KEY"]
 REBRICK_API_KEY = st.secrets["REBRICK_API_KEY"]
