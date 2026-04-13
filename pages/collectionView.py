@@ -80,7 +80,8 @@ else:
         if st_yled.button(_("Create Template"), key='CT'):
             # Make Template arrays in both locations
             db.collection('Custom').document(backEnd.CURR_COLL).update({"templates": {tempName: template}})
-            db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({"templates": {tempName: template}})
+            db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f"templates.{tempName}": template})
+            backEnd.get_collection_items.clear(backEnd.CURR_COLL)
     
     if "createCustomItemPopup" not in st.session_state:
         st.session_state.createCustomItemPopup = False
@@ -89,6 +90,7 @@ else:
     @st.dialog("Item Info")
     def createCustomItem(template):
         attributes = {}
+        template = db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).get().to_dict()['templates'][template]
         with st_yled.badge_card_one(title="Enter values", text="", badge_text="New item", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
             if ("name" in template) == False and ("Name" in template) == False:
                 name = st.text_input("Name", value="", key="force_name")
@@ -99,15 +101,14 @@ else:
                 if attribute != "":
                     attributes[template[i]] = attribute
             if st_yled.button(_("Create"), key="CreateKey"):
+                new_item_id = db.collection('Custom').document(backEnd.CURR_COLL)
                 db.collection('Custom').document(backEnd.CURR_COLL).update({
                     "items": {name: attributes}
                 })
-                item_ref = db.collection('Custom').document(backEnd.CURR_COLL).get()
-                print(item_ref)
                 db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({
                     f"items.{name}": {
                         "notes": "Your notes here",
-                        "ref": item_ref   
+                        "ref": new_item_id   
                         }
                     })
                 st.session_state.createCustomItemPopup = False
@@ -130,6 +131,9 @@ else:
                 if coll_type == "Custom" and items == None:
                     pass
                 else:
+                    if coll_type == "Custom":
+                        # Make custom item list match format of normal item list
+                        item_list = db.collection('Custom').document(backEnd.CURR_COLL).get().to_dict()['items']
                     for i, key in enumerate(items.keys()):
                         col = cols[i % 3]
                         print(f'items = {items}')
@@ -194,12 +198,10 @@ else:
         #  after the creation of the user's first template.
 
         if coll_type == "Custom":
-            types = backEnd.get_template_types.clear()
-            if types == {} or types == None:
-                st.text("No Custom Templates")
-            else:     
-                tempType = st.selectbox(_("Type"), list(types.keys())) 
-                template = types[tempType]   
+            types = backEnd.get_template_types()
+            print(f"Types = {types}")     
+            template = st.selectbox(_("Type"), types) 
+              
             st.page_link(page="pages/search.py", label=_("Add Existing Item"), query_params=collection)
             if st_yled.button(_("New Custom Template"), key="NCT"):
                 createCustomTemplate()

@@ -57,7 +57,7 @@ def get_user_collections(user_id: str):
     db = get_firestore_client()
     return [{"id": doc.id,**doc.to_dict()} for doc in db.collection('Users').document(user_id).collection('Collections').stream()]
 
-@st.cache_data(ttl=3600)  # Cache for 1 hour
+@st.cache_resource(ttl=3600)  # Cache for 1 hour
 def get_collection_types():
     """Fetch collection types, cached globally."""
     db = get_firestore_client()
@@ -76,11 +76,12 @@ def get_template_types():
     """Fetch collection types, cached globally."""
     db = get_firestore_client()
     user_id = st.session_state.user_info['localId']
-    types = db.collection("Users").document(user_id).collection("Collections").document(CURR_COLL).get().to_dict()["templates"]
-    if types == {} or types == None:
-        return {}
+    types = db.collection("Users").document(user_id).collection("Collections").document(CURR_COLL).get().to_dict()['templates']
+    typelist = list(types.keys())
+    if typelist == ["No Custom Template"]:
+        return typelist
     else:
-        return types
+        return typelist[2::]
     
 
 @st.cache_data(ttl=3600)
@@ -257,17 +258,21 @@ def get_collection_items(collection_name: str):
     coll_type = CURR_COLL.split("_")[1]
     if coll_type != "Custom":
         for id in collectionData:
-            items[id] = {'info' : (collectionData[id].get('ref')).get().to_dict()['items'],
+            items[id] = {'info' : (collectionData[id].get('ref')).get().to_dict(),
                         'notes' : collectionData[id].get('notes')
                         }
         return items
     else:
-        for key in collectionData:
-            actualData = collectionData[key]['ref'].get().to_dict()
-            for id in actualData:
-               items[id] = {'info' : (actualData[id].get('ref')).get().to_dict()['items'],
-                        'notes' : actualData[id].get('notes')
-                        } 
+        if collectionData == {}:
+            return items
+        else:
+            for key in collectionData:
+                actualData = collectionData[key]['ref'].get().to_dict()
+                for id in actualData:
+                    items[id] = {'info' : (actualData[id].get('ref')).get().to_dict()['items'],
+                                'notes' : actualData[id].get('notes')
+                                }
+            return items 
 
 
 def update_notes(item_id, new_notes, db):
@@ -343,7 +348,7 @@ def create_custom_collection(collection_name: str, collection_type: str, db):
     # created new collection
     baseInfo = {
         # list of items per collection
-        "items": {"No Custom Templates"},
+        "items": {},
 
         # collection settings
         "settings": {
@@ -360,7 +365,7 @@ def create_custom_collection(collection_name: str, collection_type: str, db):
         },
         
         # list of item templates
-        "templates": {}
+        "templates": {"No Custom Template" : []}
     }
     db.collection('Custom').document(fullName).set(baseInfo)
     db.collection('Users').document(user_id).collection('Collections').document(fullName).set(baseInfo)
