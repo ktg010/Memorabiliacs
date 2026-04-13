@@ -14,7 +14,10 @@ def access_secret_version():
     Access the payload for a secret version.
     """
     # Create the Secret Manager client.
-    client = secretmanager.SecretManagerServiceClient()
+    if st.secrets is not None:
+        client = secretmanager.SecretManagerServiceClient(credentials=st.secrets['firebase'])
+    else:
+        client = secretmanager.SecretManagerServiceClient()
 
     # Build the resource name of the secret version.
     name = "projects/memorabiliacs-ec1bd/secrets/Streamlit_secrets/versions/latest"
