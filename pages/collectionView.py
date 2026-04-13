@@ -22,6 +22,7 @@ if 'user_info' not in st.session_state:
             "localId": "test_user_123",
             "email": "test@example.com"
         }
+        st.session_state["muted"] = False  # Add this line
     else:
         st.switch_page("pages/login.py")
 ## -------------------------------------------------------------------------------------------------
