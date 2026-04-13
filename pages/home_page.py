@@ -22,6 +22,7 @@ if 'user_info' not in st.session_state:
             "localId": "test_user_123",
             "email": "test@example.com"
         }
+        st.session_state["muted"] = False  # Add this line
     else:
         st.switch_page("pages/login.py")
 ## -------------------------------------------------------------------------------------------------
@@ -179,4 +180,5 @@ else:
                 backEnd.set_collection(coll)
                 st.switch_page(gfuncs.collection_page)
         st.space(500)
-        st.button(icon=":material/settings:", label=_("Settings"), on_click=lambda: st.switch_page("pages/settings.py"))
+        if st.button(icon=":material/settings:", label=_("Settings")):
+            st.switch_page("pages/settings.py")

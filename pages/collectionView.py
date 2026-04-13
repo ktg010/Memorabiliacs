@@ -4,6 +4,7 @@ import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 import st_yled
 import os
+import time
 
 # Connects to db
 try:
@@ -21,6 +22,7 @@ if 'user_info' not in st.session_state:
             "localId": "test_user_123",
             "email": "test@example.com"
         }
+        st.session_state["muted"] = False  # Add this line
     else:
         st.switch_page("pages/login.py")
 ## -------------------------------------------------------------------------------------------------
@@ -93,10 +95,12 @@ else:
         field_text = ""
         with st_yled.badge_card_one(title=items[item]['info']["Name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
             for key in items[item]['info'].keys():
-                if key not in ("Name", "Image", "Rarity", "ID"):
+                if key not in ("Name", "Image", "Rarity", "id"):
                     if views[key]:
                         st.write(f"**{key}**: **{items[item]['info'][key]}**")
             if st.button(_("Remove From Collection")):
+                st.audio(gfuncs.DEFAULT_SOUNDS["Delete"], autoplay=True, width=1, start_time=0)
+                time.sleep(1)
                 backEnd.delete_reference(item, db)
                 st.rerun()
 
@@ -158,20 +162,15 @@ else:
                     else:
                         st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
 
-                with st.container(horizontal=True, horizontal_alignment="center"):
-                    if views["Notes"]:
-                        notes = curr_item.get("Notes")
-                        if notes != "Enter notes here":
-                            # info = st.text_input("Notes", value = curr_item.get('notes'), key = f"notes_{key}", width=250)
-                            st.write(notes)
+                if views["Notes"]:
+                    notes = curr_item.get("Notes")
+                    if notes != "Enter notes here":
+                        # info = st.text_input("Notes", value = curr_item.get('notes'), key = f"notes_{key}", width=250)
+                        st.write(notes)
 
-                    if views["Quantity"]:
-                        st.write(f"x{curr_item.get("quantity")}")
+                if views["Quantity"]:
+                    st.write(f"x{curr_item.get("quantity")}")
                 
-                # if info != items[key].get('notes'):
-                #     backEnd.update_notes(key, info, db)
-                #     st.success("Updated!")
-
                 if st_yled.button("View More", key=f"{curr_item["info"]["Name"]}_view"):
                     viewItem(key)
                 st.space("medium")

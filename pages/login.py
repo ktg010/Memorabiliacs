@@ -2,13 +2,16 @@
 #   Author(s): Cooper Wooten, Kieran Gilpin
 #   Desc: Basic version of login page for memorabiliacs using streamlit
 ###############################################################
-
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import streamlit as st
 import BackendMethods.global_functions as gfuncs
 import BackendMethods.auth_functions as authFuncs
 import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 import st_yled
+
 
 st.secrets = authFuncs.access_secret_version()
 # st_yled.init(css_path=".streamlit/st-styled.css")
@@ -48,4 +51,5 @@ if 'user_info' not in st.session_state:
 ## -------------------------------------------------------------------------------------------------
 else:
     gfuncs.login_color_flag = 0
+    st.session_state.muted = False
     st.switch_page("pages/home_page.py")

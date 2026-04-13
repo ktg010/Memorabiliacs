@@ -18,6 +18,8 @@ removeCheck = False
 
 thumbnails_path = os.path.join(os.path.dirname(__file__), 'thumbnails')
 
+sounds_path = os.path.join(os.path.dirname(__file__), 'sounds')
+
 THUMNAIL_URLS = {
     "Pokemon": os.path.join(thumbnails_path, "pikachu.jpeg"),
     "Digimon": os.path.join(thumbnails_path, "agumon.jpeg"),
@@ -26,6 +28,11 @@ THUMNAIL_URLS = {
     "OnePiece": os.path.join(thumbnails_path, "luffy.jpeg"),
     "Custom": os.path.join(thumbnails_path, "barcode.jpeg"),
     "Music": os.path.join(thumbnails_path, "vinyl.jpeg")
+}
+
+DEFAULT_SOUNDS = {
+    "Delete" : os.path.join(sounds_path, "fading-scream.mp3"),
+    "add" : os.path.join(sounds_path, "add.wav"),
 }
 
 
@@ -92,6 +99,7 @@ background_image_flag = False
 # Sets the page width, title, and buttons for home, search, settings
 # To be used at the start of any page
 def page_initialization(user_data_dict:dict):
+
     
     css = f'''
         <style>
@@ -104,8 +112,24 @@ def page_initialization(user_data_dict:dict):
             .stApp > header {{
                 background-color: transparent;
             }}
+
+            .stAudio {{
+                display: none;
+            }}
         </style>
         '''
+    icon_cols = st.columns([1, 1, 1], width=100)
+    with icon_cols[0]:
+        if st.button("", icon=":material/no_sound:", type="secondary", key="mute_button"):
+            st.session_state.muted = True
+    with icon_cols[1]:
+        if st.button("", icon=":material/sound_detection_loud_sound:", type="secondary", key="unmute_button"):
+            st.session_state.muted = False
+            st.rerun()
+        else:
+            if not st.session_state.muted:
+                with icon_cols[2]:
+                    st.audio(os.path.join(sounds_path, "ambient.mp3"), autoplay=True, loop=True, width=1)
 
     st.set_page_config(layout="wide")
     st_yled.init()

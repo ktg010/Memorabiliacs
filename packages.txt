@@ -1,5 +1,5 @@
 libgl1
-libzbar0
+libzbar0t64
 libzbar-dev
 libsm6
 libxrender1

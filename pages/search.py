@@ -17,6 +17,7 @@ if 'user_info' not in st.session_state:
             "localId": "test_user_123",
             "email": "test@example.com"
         }
+        st.session_state["muted"] = False  # Add this line
     else:
         st.switch_page("pages/login.py")
 try:
@@ -52,6 +53,7 @@ else:
         if st.button("Save"):
             if quantity.isdigit():
                 backEnd.add_item(item_id, notes, quantity, db)
+                st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
                 st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=name, collection=backEnd.CURR_COLL.split('_')[0]))
                 sleep(.5)
                 st.rerun()
@@ -125,28 +127,6 @@ else:
                 else:
                     uploaded = st.file_uploader(_("Upload barcode image"), type=["png", "jpg", "jpeg"])
 
-                decoded: list[dict[str, str]] = []
-                if uploaded is not None:
-                    try:
-                        image = backEnd._load_image(uploaded)
-                        decoded = backEnd._decode_barcodes(image)
-                        if enhanced and not decoded:
-                            decoded = backEnd._decode_with_enhancements(image)
-                    except Exception as exc:
-                        st_yled.error(f"{_('Failed to read image:')} {exc}")
-
-                if decoded:
-                    supported_codes = backEnd._extract_supported_codes(decoded)
-                    if supported_codes:
-                        st_yled.success(_("Supported code(s) detected"))
-                        options = [f"{item['code']} ({item['label']})" for item in supported_codes]
-                        selected = st_yled.selectbox(_("Detected codes"), options=options)
-                        st.session_state["last_code"] = selected.split(" ")[0]
-                    else:
-                        st_yled.warning(_("Barcode detected, but no UPC/EAN/ISBN code found."))
-                elif uploaded is not None:
-                    st_yled.warning(_("No barcode detected. Try a clearer image with the code centered."))
-
                 st.divider()
                 upc_query = st_yled.text_input(_("Enter UPC code"), value=st.session_state.get("last_code", ""))
                 if upc_query:
@@ -173,6 +153,7 @@ else:
                                     #add UPC object to Custom collection in firestore
                                     db.collection("Custom").document(proper_id).set(upc_result, merge=True)
                                     backEnd.add_reference_search(proper_id, item_id, db)
+                                    st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
                                     st_yled.success(
                                         _("Added '{item}' to your {collection} collection!").format(
                                             item=upc_result.get("name", _("UPC Item")),
@@ -198,13 +179,44 @@ else:
 
                             except Exception as e:
                                 st_yled.error(f"{_('UPC search failed')}: {e}")
+        
             elif search_type == "Pokemon":
                 with st_yled.form(key="algolia_search_form", clear_on_submit=False):
                     pokemon_query = st_yled.text_input(_("Search for a Pokemon card"))
                     pokemon_search_submitted = st_yled.form_submit_button(_("Search Pokemon"))
 
-                if pokemon_search_submitted:
-                    with st.spinner(_("Searching Pokemon (Algolia)...")):
+                pokemon_results = st.session_state.get("pokemon_results", [])
+                if pokemon_results:
+                    st.markdown(_("### Top Pokemon results"))
+                    cols = st.columns(3)
+                    for idx, item in enumerate(pokemon_results):
+                        with cols[idx % 3]:
+                            innercols = st.columns([0.5,4,0.5])
+                            def add_pokemon_button(item_id, Cardname):
+                                proper_id = str(item_id).replace("-", "_")
+                                backEnd.add_reference_search(proper_id, item_id, db)
+                                st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
+                                st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Cardname, collection=backEnd.CURR_COLL.split('_')[0]))
+                            if item.get("image"):
+                                with innercols[1]:
+                                    st.image(item["image"], width="stretch")
+                            with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), 
+                                                card_shadow=True, badge_text=_("Pokemon Card"), badge_color="primary", text=f"\r\n**ID: {item.get('id', '')}**",
+                                                height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", 
+                                                border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
+                                st_yled.write(f"**{_('HP')}: {item.get('hp', 'N/A')}**")
+                                st_yled.write(f"**{_('Flavortext')}: {item.get('flavorText', 'N/A')}**")
+                                if backEnd.CURR_COLL:
+                                    st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item_id": item['id'], "name": item['name']})
+                            st.space("small")
+
+        elif search_type == "Movies":
+            with st_yled.form(key="algolia_search_form", clear_on_submit=False):
+                movies_query = st_yled.text_input(_("Search for a movie"))
+                movies_search_submitted = st_yled.form_submit_button(_("Search Movies"))
+
+            if movies_search_submitted:
+                with st.spinner(_("Searching Movies (Algolia)...")):
                         try:
                             algolia_conf = st.secrets.get("algolia", {})
                             app_id = algolia_conf.get("app_id")
@@ -213,20 +225,182 @@ else:
                             if not (app_id and search_key):
                                 raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
 
-                            hits = backEnd.search_algolia(pokemon_query, index_name="PokemonSearchResults", max_results=10)
                         except Exception as e:
                             st.error(f"{_('Algolia search failed')}: {e}")
                             hits = []
 
-                    st.session_state["pokemon_results"] = hits
+                movie_results = st.session_state.get("movies_results", [])
+                if movie_results:
+                    st.markdown(_("### Top Movie results"))
+                    cols = st.columns(3)
+                    def add_movie_button(item_id, Moviename):
+                                proper_id = str(item_id).replace("-", "_")
+                                backEnd.add_reference_search(proper_id, item_id, db)
+                                st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
+                                st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Moviename, collection=backEnd.CURR_COLL.split('_')[0]))
+                    for idx, item in enumerate(movie_results):
+                        with cols[idx % 3]:
+                            innercols = st.columns([0.5,4,0.5])
+                            if item.get("image"):
+                                with innercols[1]:
+                                    st.image(item["image"], width="stretch")
+                            with st_yled.badge_card_one(title=item.get('name', _('No title')), text=f"\n**ID: {item.get('id', '')}**", badge_text=_("Movie"), badge_color="primary",
+                                                background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), card_shadow=True, height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", 
+                                                border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
+                                if item.get('overview'):
+                                    st_yled.write(f"{_('Description')}: {item['overview']}")
+                                if item.get('director'):
+                                    st_yled.write(f"{_('Director')}: {item['director']}")
+                                if item.get('release_date'):
+                                    st_yled.write(f"{_('Release Year')}: {item['release_date'][:4]}")
+                                if backEnd.CURR_COLL:
+                                    st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_movie_button, kwargs={"item_id": item['id'], "Moviename": item['name']})
+                            st.space("small")
 
+    #TODO: Fix the rebrickable items within the db so image tags are correct, then add to algolia
+        elif search_type == "LegoSets":
+            with st_yled.form(key="lego_search_form", clear_on_submit=False):
+                lego_query = st_yled.text_input(_("Search for a Lego set"))
+                lego_search_submitted = st_yled.form_submit_button(_("Search Lego"))
 
-                    pokemon_results = st.session_state.get("pokemon_results", [])
-                    if pokemon_results:
-                        st.markdown(_("### Top Pokemon results"))
-                        cols = st.columns(3)
-                        for idx, item in enumerate(pokemon_results):
-                            with cols[idx % 3]:
+            if lego_search_submitted:
+                with st.spinner(_("Searching for Lego sets (Algolia)...")):
+                    try:
+                        results = backEnd.search_algolia(lego_query, index_name="LegoSetSearchResults", max_results=10)
+                    except Exception as e:
+                        st.error(f"{_('Lego search failed')}: {e}")
+                        results = []
+                st.session_state["lego_results"] = results
+
+                lego_results = st.session_state.get("lego_results", [])
+                if lego_results:
+                    st.markdown(_("### Top Lego set results"))
+                    cols = st.columns(3)
+                    for idx, item in enumerate(lego_results):
+                        with cols[idx % 3]:
+                            innercols = st.columns([0.5,4,0.5])
+                            if item.get("image"):
+                                with innercols[1]:
+                                    st.image(item["image"], width="stretch")
+                            with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"),
+                                                card_shadow=True, badge_text=_("Lego Set"), badge_color="primary", text=f"\n**ID: {item.get('id', '')}**",
+                                                height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
+                                if item.get('num_parts'):
+                                    st.write(f"{_('Part Count')}: {item['num_parts']}")
+                                if item.get('year'):
+                                    st.write(f"{_('Release Year')}: {item['year']}")
+                            st.space("small")
+
+        elif search_type == "LegoMinifigs":
+            with st_yled.form(key="lego_minifig_search_form", clear_on_submit=False):
+                minifig_query = st_yled.text_input(_("Search for a Lego minifigure"))
+                minifig_search_submitted = st_yled.form_submit_button(_("Search Lego Minifigs"))
+
+            if minifig_search_submitted:
+                with st.spinner(_("Searching for Lego minifigs (Algolia)...")):
+                    try:
+                        results = backEnd.search_algolia(minifig_query, index_name="LegoMinifigSearchResults", max_results=10)
+                    except Exception as e:
+                        st.error(f"{_('Lego minifig search failed')}: {e}")
+                        results = []
+                st.session_state["lego_minifig_results"] = results
+
+                lego_minifig_results = st.session_state.get("lego_minifig_results", [])
+                if lego_minifig_results:
+                    st.markdown(_("### Top Lego minifigure results"))
+                    cols = st.columns(3)
+                    for idx, item in enumerate(lego_minifig_results):
+                        with cols[idx % 3]:
+                            innercols = st.columns([0.5,4,0.5])
+                            if item.get("image"):
+                                with innercols[1]:
+                                    st.image(item["image"], width="stretch")
+                            with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"),
+                                                card_shadow=True, badge_text=_("Lego Minifig"), badge_color="primary", text=f"\n**ID: {item.get('id', '')}**",
+                                                height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
+                                if item.get('minifig_number'):
+                                    st.write(f"{_('Minifig ID')}: {item['minifig_number']}")
+                            st.space("small")
+
+        elif search_type == "Dragonball":
+            with st_yled.form(key="dbz_search_form", clear_on_submit=False):
+                dbz_query = st_yled.text_input(_("Search for a Dragonball Z card"))
+                dbz_search_submitted = st_yled.form_submit_button(_("Search DBZ Cards"))
+
+            if dbz_search_submitted:
+                with st.spinner(_("Searching Dragonball Z cards (Algolia)...")):
+                    try:
+                        algolia_conf = st.secrets.get("algolia", {})
+                        app_id = algolia_conf.get("app_id")
+                        search_key = algolia_conf.get("search_key")
+
+                        if not (app_id and search_key):
+                            raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
+
+                        hits = backEnd.search_algolia(dbz_query, index_name="DragonballSearchResults", max_results=10)
+                    except Exception as e:
+                        st.error(f"{_('Algolia search failed')}: {e}")
+                        hits = []
+
+                st.session_state["dbz_results"] = hits
+                dbz_results = st.session_state.get("dbz_results", [])
+                if dbz_results:
+                    st.markdown(_("### Top Dragonball Z card results"))
+                    cols = st.columns(3)
+                    def add_dbz_button(item_id, Cardname):
+                                proper_id = str(item_id).replace("-", "_")
+                                backEnd.add_reference_search(proper_id, item_id, db)
+                                st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
+                                st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Cardname, collection=backEnd.CURR_COLL.split('_')[0]))
+
+                    for idx, item in enumerate(dbz_results):
+                        with cols[idx % 3]:
+                            innercols = st.columns([0.5,4,0.5])
+                            if item["image"]:
+                                with innercols[1]:
+                                    st.image(item["image"], width="stretch")
+                            with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), 
+                                                card_shadow=True, badge_text=_("DBZ Card"), badge_color="primary", text=f"\n**{_('ID')}: {item.get('id', '')}**",
+                                                height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
+                                st_yled.write(f"**{_('Power')}: {item.get('power', 'N/A')}**")
+                                if backEnd.CURR_COLL:
+                                    st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_dbz_button, kwargs={"item_id": item['id'], "Cardname": item['name']})
+                            st.space("small")
+
+        elif search_type == "Digimon":
+            with st_yled.form(key="digimon_search_form", clear_on_submit=False):
+                digimon_query = st_yled.text_input(_("Search for a Digimon card"))
+                digimon_search_submitted = st_yled.form_submit_button(_("Search Digimon Cards"))
+
+            if digimon_search_submitted:
+                with st.spinner(_("Searching Digimon cards (Algolia)...")):
+                    try:
+                        algolia_conf = st.secrets.get("algolia", {})
+                        app_id = algolia_conf.get("app_id")
+                        search_key = algolia_conf.get("search_key")
+
+                        if not (app_id and search_key):
+                            raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
+
+                        hits = backEnd.search_algolia(digimon_query, index_name="DigimonSearchResults", max_results=10)
+                    except Exception as e:
+                        st.error(f"{_('Algolia search failed')}: {e}")
+                        hits = []
+
+                st.session_state["digimon_results"] = hits
+                digimon_results = st.session_state.get("digimon_results", [])
+                if digimon_results:
+                    st.markdown(_("### Top Digimon card results"))
+                    cols = st.columns(3)
+                    def add_digimon_button(item_id, Cardname):
+                                proper_id = str(item_id).replace("-", "_")
+                                backEnd.add_reference_search(proper_id, item_id, db)
+                                st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
+                                st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Cardname, collection=backEnd.CURR_COLL.split('_')[0]))
+
+                    for idx, item in enumerate(digimon_results):
+                        with cols[idx % 3]:
+                            if item["image"]:
                                 innercols = st.columns([0.5,4,0.5])
                                 def add_pokemon_button(item_id, Cardname):
                                     proper_id = str(item_id).replace("-", "_")
@@ -265,7 +439,16 @@ else:
                                 st.error(f"{_('Algolia search failed')}: {e}")
                                 hits = []
 
-                    st.session_state["movies_results"] = hits
+                st.session_state["onepiece_results"] = hits
+                onepiece_results = st.session_state.get("onepiece_results", [])
+                if onepiece_results:
+                    st.markdown(_("### Top One Piece card results"))
+                    cols = st.columns(3)
+                    def add_onepiece_button(item_id, Cardname):
+                                proper_id = str(item_id).replace("-", "_")
+                                backEnd.add_reference_search(proper_id, item_id, db)
+                                st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
+                                st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Cardname, collection=backEnd.CURR_COLL.split('_')[0]))
 
                     movie_results = st.session_state.get("movies_results", [])
                     if movie_results:
