@@ -2,7 +2,6 @@ import streamlit as st
 import BackendMethods.global_functions as gfuncs
 import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
-from time import sleep
 import st_yled
 
 # Connects to db
