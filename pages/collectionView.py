@@ -123,7 +123,7 @@ else:
         global viewing_flag
         if viewing_flag:
             ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
-            note = st.text_input("Item Note", value=ref.get().to_dict()["items"][item].get('notes'), key=f"notes")
+            note = st.text_input("Item Note", value=ref.get().to_dict()["items"][item].get('notes'), key="notes")
             if st.button("Save"):
                 backEnd.update_notes(item, note, db)
                 viewing_flag = False
