@@ -107,8 +107,7 @@ else:
 
         # Remove collection dialog to remove a collection from the db
         @st.dialog(_("Remove")) 
-        def remove_collections():
-            
+        def remove_collections(): 
             st_yled.subheader(f"{_('Are you sure you want to remove')} {_('the following collections:')}", text_alignment="center")
             for coll in removedCollections:
                 st.write(coll.split("_")[0])
@@ -125,15 +124,15 @@ else:
                     gfuncs.removeCheck = False
                     st.rerun()
 
+
         # iterate through collections
         for doc in collections_docs:
             collInfo = doc['id'].split('_')
             if collInfo[0] != "DefaultCollection": 
                 fullCollections.append(doc['id'])
-            if backEnd.coll_visability(doc['id'], db):
+            if backEnd.coll_visability(doc["id"], db):
                 with st.container(width="content", horizontal_alignment="center"):
                     with st.container(horizontal=True):
-                        #st.subheader(f"{collInfo[0]}", text_alignment="center")
                         if gfuncs.removeCheck:
                             if st.checkbox(" ", key=f"remove_{collInfo[0]}", width="content"):
                                 removedCollections.append(doc['id'])
@@ -169,6 +168,9 @@ else:
                 gfuncs.background_image_flag = True
                 gfuncs.sleep(0.25)
                 st.rerun()
+
+        # if st.button("Change data"):
+        #     backEnd.renameData(db)
 
     with st.sidebar:
         st.space("small")

@@ -10,6 +10,8 @@ from io import BytesIO
 
 conf_file = ".streamlit/config.toml"
 collection_page = "pages/collectionView.py"
+sub_coll_page = "pages/subCollView.py"
+home_page = "pages/home_page.py"
 
 #st_yled.init(css_path=backEnd.CURR_THEME)
 removeCheck = False
@@ -113,6 +115,11 @@ def page_initialization(user_data_dict:dict):
             .stAudio {{
                 display: none;
             }}
+
+            .stPageLink {{
+                color: {read_config_val(conf_file, "textColor")};
+                background-color: {read_config_val(conf_file, "backgroundColor")};
+            }}
         </style>
         '''
     icon_cols = st.columns([1, 1, 1], width=100)
@@ -139,6 +146,7 @@ def page_initialization(user_data_dict:dict):
         with st.container(horizontal_alignment="left", vertical_alignment="top"):
             if st_yled.button(_("Home"), key="home_button"):
                 backEnd.set_collection("")
+                backEnd.set_sub_collection("")
                 st.switch_page("pages/home_page.py")
         with st.container(horizontal_alignment="right", vertical_alignment="top"):
             if st_yled.button(_("Search"), key="search_button"):
