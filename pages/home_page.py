@@ -159,15 +159,6 @@ else:
                 remove_collections()
             else:
                 st.rerun()
-        if st.button(_("Toggle Background Image")):
-            if gfuncs.background_image_flag is True:
-                gfuncs.background_image_flag = False
-                gfuncs.sleep(0.25)
-                st.rerun()
-            else:
-                gfuncs.background_image_flag = True
-                gfuncs.sleep(0.25)
-                st.rerun()
 
         # if st.button("Change data"):
         #     backEnd.renameData(db)
