@@ -137,7 +137,7 @@ def page_initialization(user_data_dict:dict):
 
     st.set_page_config(layout="wide")
     st_yled.init()
-    if background_image_flag is True:
+    if user_data_dict["backgroundImageFlag"] is True:
         st.markdown(css, unsafe_allow_html=True)
 
     st_yled.title(_("Memorabiliacs"), text_alignment="center")
