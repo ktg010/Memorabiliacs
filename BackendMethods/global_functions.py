@@ -91,9 +91,6 @@ def db_settings_to_config(user_data_dict:dict):
     if config_data != db_data:
         st.rerun()
 
-background_image_flag = True
-
-
 
 # Sets the page width, title, and buttons for home, search, settings
 # To be used at the start of any page
