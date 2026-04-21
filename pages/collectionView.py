@@ -85,7 +85,7 @@ else:
             hidden = st.checkbox(_("Hide Collection"), value=ref.get().to_dict()['settings']['hidden'])
             if st.button("Save"):
                 ref.update({"settings.hidden" : hidden})
-                ref.update({"settings" : {"collection view" : view_mode}}, merge=True)
+                ref.set({"settings" : {"collection view" : view_mode}}, merge=True)
                 st.rerun()
         else: 
             st.header("Collection Views", text_alignment="center")
@@ -123,7 +123,7 @@ else:
         global viewing_flag
         if viewing_flag:
             ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
-            note = st.text_input("Item Note", value=ref.get().to_dict()["items"][item].get('notes'), key=f"notes")
+            note = st.text_input("Item Note", value=ref.get().to_dict()["items"][item].get('notes'), key="notes")
             if st.button("Save"):
                 backEnd.update_notes(item, note, db)
                 viewing_flag = False
@@ -198,16 +198,17 @@ else:
                             st.image(gfuncs.THUMNAIL_URLS["Custom"], width=200)
                     else:
                         st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
-
-                if views["Quantity"]:
-                    st.subheader(f"x{curr_item.get("quantity")}", text_alignment="right")
-
-                if views["Notes"]:
-                    notes = curr_item.get("Notes")
-                    if notes != "Enter notes here":
-                        st.subheader(notes)
-                
-                if st_yled.button("View More", key=f"{curr_item["info"]["Name"]}_view"):
+                itemCols = st.columns(2, width="stretch")
+                with itemCols[1].container(horizontal_alignment="right"):
+                    if views["Quantity"]:
+                        st.subheader(f"x{curr_item.get("quantity")}", text_alignment="right")
+                with itemCols[0].container(horizontal_alignment="left"):
+                    if views["Notes"]:
+                        notes = curr_item.get("Notes")
+                        if notes != "Enter notes here":
+                            st.subheader(notes)
+                    
+                if st_yled.button("View More", key=f"{curr_item['info']['Name']}_{key}_view"):
                     viewItem(key)
                 st.space("medium")
     

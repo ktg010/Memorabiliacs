@@ -179,4 +179,17 @@ else:
                 backEnd.get_user_data.clear(user_id)
                 sleep(0.25)
                 st.rerun()
+    with st.popover(_("Background Image Settings")):
+        new_image_URL = st.text_input(("URL of image to be used for background: "), value=db_settings["backgroundImageURL"])
 
+        if st.checkbox(_("Toggle Background Image"), value=db_settings["backgroundImageFlag"], key="toggle_background"):
+            newdb.collection("Users").document(user_id).set({"backgroundImageFlag" : True}, merge=True)
+        else:
+            newdb.collection("Users").document(user_id).set({"backgroundImageFlag" : False}, merge=True)
+
+        if st_yled.button(_("Save Background Image Changes"), key="save_background_button"):
+            if new_image_URL != "" and "https:" in new_image_URL: 
+                newdb.collection("Users").document(user_id).set({"backgroundImageURL" : new_image_URL}, merge=True)
+            backEnd.get_user_data.clear(user_id)
+            sleep(0.25)
+            st.rerun()

@@ -184,26 +184,48 @@ else:
                 with st_yled.form(key="algolia_search_form", clear_on_submit=False):
                     pokemon_query = st_yled.text_input(_("Search for a Pokemon card"))
                     pokemon_search_submitted = st_yled.form_submit_button(_("Search Pokemon"))
+                
+                if pokemon_search_submitted:
+                    with st.spinner(_("Searching Pokemon cards (Algolia)...")):
+                        try:
+                            algolia_conf = st.secrets.get("algolia", {})
+                            app_id = algolia_conf.get("app_id")
+                            search_key = algolia_conf.get("search_key")
 
-                pokemon_results = st.session_state.get("pokemon_results", [])
-                if pokemon_results:
-                    st.markdown(_("### Top Pokemon results"))
-                    cols = st.columns(3)
-                    for idx, item in enumerate(pokemon_results):
-                        with cols[idx % 3]:
-                            innercols = st.columns([0.5,4,0.5])
-                            if item.get("image"):
-                                with innercols[1]:
-                                    st.image(item["image"], width="stretch")
-                            with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), 
-                                                card_shadow=True, badge_text=_("Pokemon Card"), badge_color="primary", text=f"\r\n**ID: {item.get('id', '')}**",
-                                                height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", 
-                                                border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
-                                st_yled.write(f"**{_('HP')}: {item.get('hp', 'N/A')}**")
-                                st_yled.write(f"**{_('Flavortext')}: {item.get('flavorText', 'N/A')}**")
-                                if backEnd.CURR_COLL:
-                                    st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item_id": item['id'], "name": item['name']})
-                            st.space("small")
+                            if not (app_id and search_key):
+                                raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
+
+                            hits = backEnd.search_algolia(pokemon_query, index_name="PokemonSearchResults", max_results=10)
+                        except Exception as e:
+                            st.error(f"{_('Algolia search failed')}: {e}")
+                            hits = []
+
+                    st.session_state["pokemon_results"] = hits
+
+                    pokemon_results = st.session_state.get("pokemon_results", [])
+                    if pokemon_results:
+                        st.markdown(_("### Top Pokemon results"))
+                        cols = st.columns(3)
+                        for idx, item in enumerate(pokemon_results):
+                            with cols[idx % 3]:
+                                innercols = st.columns([0.5,4,0.5])
+                                def add_pokemon_button(item_id, Cardname):
+                                    proper_id = str(item_id).replace("-", "_")
+                                    backEnd.add_reference_search(proper_id, item_id, db)
+                                    st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
+                                    st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Cardname, collection=backEnd.CURR_COLL.split('_')[0]))
+                                if item.get("image"):
+                                    with innercols[1]:
+                                        st.image(item["image"], width="stretch")
+                                with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), 
+                                                    card_shadow=True, badge_text=_("Pokemon Card"), badge_color="primary", text=f"\r\n**ID: {item.get('id', '')}**",
+                                                    height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", 
+                                                    border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
+                                    st_yled.write(f"**{_('HP')}: {item.get('hp', 'N/A')}**")
+                                    st_yled.write(f"**{_('Flavortext')}: {item.get('flavorText', 'N/A')}**")
+                                    if backEnd.CURR_COLL:
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item_id": item['id'], "name": item['name']})
+                                st.space("small")
 
             elif search_type == "Movies":
                 with st_yled.form(key="algolia_search_form", clear_on_submit=False):
