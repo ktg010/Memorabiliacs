@@ -37,7 +37,9 @@ else:
     fullCollections = []
     removedCollections = []
     user_lang = user_data_dict.get('language', 'en')
-    set_language(user_lang)    
+    set_language(user_lang)
+    with open(gfuncs.conf_file, "w") as f:
+        f.write("base=dark\nbackgroundColor=#1a1a1a\ntextColor=#dddddd\nfont=Roboto:https://fonts.cdnfonts.com/css/roboto")
     gfuncs.db_settings_to_config(user_data_dict)
     st_yled.init()
     gfuncs.page_initialization(user_data_dict)
