@@ -127,6 +127,29 @@ else:
                 else:
                     uploaded = st.file_uploader(_("Upload barcode image"), type=["png", "jpg", "jpeg"])
 
+                decoded: list[dict[str, str]] = []
+                if uploaded is not None:
+                    try:
+                        image = backEnd._load_image(uploaded)
+                        decoded = backEnd._decode_barcodes(image)
+                        if enhanced and not decoded:
+                            decoded = backEnd._decode_with_enhancements(image)
+                    except Exception as exc:
+                        st_yled.error(f"{_('Failed to read image:')} {exc}")
+
+                if decoded:
+                    supported_codes = backEnd._extract_supported_codes(decoded)
+                    if supported_codes:
+                        st_yled.success(_("Supported code(s) detected"))
+                        options = [f"{item['code']} ({item['label']})" for item in supported_codes]
+                        selected = st_yled.selectbox(_("Detected codes"), options=options)
+                        st.session_state["last_code"] = selected.split(" ")[0]
+                    else:
+                        st_yled.warning(_("Barcode detected, but no UPC/EAN/ISBN code found."))
+                elif uploaded is not None:
+                    st_yled.warning(_("No barcode detected. Try a clearer image with the code centered."))
+
+
                 st.divider()
                 upc_query = st_yled.text_input(_("Enter UPC code"), value=st.session_state.get("last_code", ""))
                 if upc_query:
