@@ -144,10 +144,9 @@ def page_initialization(user_data_dict:dict):
                     st.audio(os.path.join(sounds_path, "ambient.mp3"), autoplay=True, loop=True, width=1)
 
     st.set_page_config(layout="wide")
-    st_yled.init()
     if user_data_dict["backgroundImageFlag"] is True:
         st.markdown(css, unsafe_allow_html=True)
-
+    st_yled.init()
     st_yled.title(_("Memorabiliacs"), text_alignment="center")
 
     with st.container(horizontal=True, vertical_alignment="top"):
