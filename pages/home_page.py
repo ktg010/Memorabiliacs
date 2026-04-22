@@ -39,9 +39,9 @@ else:
     user_lang = user_data_dict.get('language', 'en')
     set_language(user_lang)    
     gfuncs.db_settings_to_config(user_data_dict)
+    st_yled.init()
     gfuncs.page_initialization(user_data_dict)
     # st_yled.init(css_path=backEnd.CURR_THEME)
-    st_yled.init()
 
     # Set language from database
 
