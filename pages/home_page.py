@@ -38,8 +38,11 @@ else:
     removedCollections = []
     user_lang = user_data_dict.get('language', 'en')
     set_language(user_lang)
-    with open(gfuncs.conf_file, "w") as f:
-        f.write("[theme]\nbase=\"dark\"\nbackgroundColor=\"#1a1a1a\"\ntextColor=\"#dddddd\"\nfont=\"Roboto:https://fonts.cdnfonts.com/css/roboto\"\n[client]\nshowSidebarNavigation=false")
+    print(gfuncs.conf_file)
+    with open(gfuncs.conf_file, "r") as f:
+        config_lines = f.readlines()
+        print(config_lines)
+        #f.write("[theme]\nbase=\"dark\"\nbackgroundColor=\"#1a1a1a\"\ntextColor=\"#dddddd\"\nfont=\"Roboto:https://fonts.cdnfonts.com/css/roboto\"\n[client]\nshowSidebarNavigation=false")
     gfuncs.db_settings_to_config(user_data_dict)
     st_yled.init()
     gfuncs.page_initialization(user_data_dict)
