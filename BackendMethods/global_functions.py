@@ -9,7 +9,7 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 
-conf_file = ".streamlit/config.toml"
+conf_file = os.path.join(os.path.dirname(__file__), '..', '.streamlit', 'config.toml')
 collection_page = "pages/collectionView.py"
 sub_coll_page = "pages/subCollView.py"
 home_page = "pages/home_page.py"
@@ -52,24 +52,25 @@ def update_config_val(conf:str, var:str, new:str) -> None:
         f.writelines(config_lines)
 
 
-# A check to not adjust "theme" in config file (should be in database)
-def update_settings(conf:str, diction:dict) -> None:
+# A check to not adjust "theme" in the session state (should be in database)
+def update_settings( diction:dict) -> None:
     for setting in diction:
         if setting != "theme":
-            update_config_val(conf, setting, diction[setting])
+            #update_config_val(conf, setting, diction[setting])
+            st.session_state[setting] = diction[setting]
 
 
-# Opens config file and reads the value of a specified variable
-def read_config_val(conf:str, var:str) -> str:
-    with open(conf, "r") as f:
-        config_lines = f.readlines()
+# checks session state and reads the value of a specified variable
+def read_config_val(var:str) -> str:
+    return st.session_state.get(var, "")
 
-        for line in config_lines:
-            if var in line:
-                result_list = line.split('"')
-
-    return result_list[1]
-
+def db_settings_to_session_state(user_data_dict:dict):
+    st.session_state["backgroundImageURL"] = user_data_dict.get("backgroundImageURL", "")
+    st.session_state["backgroundImageFlag"] = user_data_dict.get("backgroundImageFlag", False)
+    st.session_state["base"] = user_data_dict.get("base", "dark")
+    st.session_state["backgroundColor"] = user_data_dict.get("backgroundColor", "#1a1a1a")
+    st.session_state["textColor"] = user_data_dict.get("textColor", "#dddddd")
+    st.session_state["font"] = user_data_dict.get("font", "Roboto:https://fonts.cdnfonts.com/css/roboto")
 
 # Updates config data to match database data
 def db_settings_to_config(user_data_dict:dict):
@@ -80,7 +81,7 @@ def db_settings_to_config(user_data_dict:dict):
     config_data = []
     db_data = []
     for var in variables_to_update:
-        config_data.append(read_config_val(conf_file, var))
+        config_data.append(read_config_val( var))
         db_data.append(user_data_dict[var])
 
 
@@ -92,9 +93,22 @@ def db_settings_to_config(user_data_dict:dict):
     if config_data != db_data:
         st.rerun()
 
-background_image_flag = True
-
-
+def apply_background_image(background_image_url:str) -> None:
+    # valid_url_response = requests.head(background_image_url)
+    # if valid_url_response.headers.get('Content-Type', '').startswith('image/'):
+    css = f'''
+        <style>
+            .stApp {{
+                background-image: linear-gradient(to top, {read_config_val("textColor")}, transparent),
+                url({background_image_url});
+                background-size: cover;
+                background-color: {read_config_val( "backgroundColor")};
+                color: {read_config_val( "textColor")} !important;
+                font-family: {read_config_val( "font")};
+            }}
+        </style>
+        '''
+    st.markdown(css, unsafe_allow_html=True)
 
 # Sets the page width, title, and buttons for home, search, settings
 # To be used at the start of any page
@@ -102,16 +116,11 @@ def page_initialization(user_data_dict:dict):
     is_test_mode = os.getenv("STREAMLIT_TEST_MODE", "false").lower() == "true"
     # Check if running in test mode (AppTest sets a marker)
     if is_test_mode:
-        user_data_dict = {"backgroundImageURL": "https://i.ytimg.com/vi/DE6wyfsTfFI/maxresdefault.jpg"}
+        user_data_dict = {"backgroundImageURL": "https://i.ytimg.com/vi/DE6wyfsTfFI/maxresdefault.jpg",
+                          "backgroundImageFlag": False}
     
     css = f'''
         <style>
-            .stApp {{
-                background-image: linear-gradient(to top, {read_config_val(conf_file, "textColor")}, transparent),
-                url({user_data_dict["backgroundImageURL"]});
-                background-size: cover;
-
-            }}
             .stApp > header {{
                 background-color: transparent;
             }}
@@ -121,8 +130,60 @@ def page_initialization(user_data_dict:dict):
             }}
 
             .stPageLink {{
-                color: {read_config_val(conf_file, "textColor")};
-                background-color: {read_config_val(conf_file, "backgroundColor")};
+                color: {read_config_val( "textColor")};
+                background-color: {read_config_val( "backgroundColor")};
+            }}
+
+            .stHeading {{
+                border-radius: 15px;
+            }}
+
+            # .stElementContainer:has(.stHeading > h1) {{
+
+            # }}
+
+            [data-testid="stHeadingWithActionElements"]:has(h1) {{
+                padding-left:20%;
+                padding-right:25%;
+            }}
+
+            .stSidebar {{
+                color: {read_config_val( "textColor")} !important;
+                background-color: {read_config_val( "backgroundColor")};
+            }}
+
+            h1 {{
+                color: {read_config_val( "textColor")};
+                background-color: {read_config_val( "backgroundColor")};
+                border-radius: 15px;
+            }}
+
+            .stText{{
+                background-color: {read_config_val( "backgroundColor")};
+                border-radius: 15px;
+                font-family: {read_config_val( "font")};
+                width: 250px;
+                font-weight: bolder;
+            }}
+
+            .stText span{{
+                color: {read_config_val( "textColor")} !important;
+            }}
+
+            .stElementContainer:has(.stText) {{
+                padding-left:40%;
+                padding-right:40%;
+            }}
+
+            p {{
+                color: {read_config_val( "textColor")};
+            }}
+
+            button {{
+                background-color: {read_config_val( "backgroundColor")} !important;
+                font-family: {read_config_val( "font")};
+                border: 2px solid {read_config_val( "textColor")} !important;
+                border-radius: 15px;
             }}
         </style>
         '''
@@ -140,12 +201,11 @@ def page_initialization(user_data_dict:dict):
                     st.audio(os.path.join(sounds_path, "ambient.mp3"), autoplay=True, loop=True, width=1)
 
     st.set_page_config(layout="wide")
-    st_yled.init()
-    if background_image_flag is True:
+    if user_data_dict["backgroundImageFlag"] is True:
         st.markdown(css, unsafe_allow_html=True)
-
-    st_yled.title(_("Memorabiliacs"), text_alignment="center")
-
+        apply_background_image(user_data_dict["backgroundImageURL"])
+    st_yled.init()
+    st_yled.title(_("Memorabiliacs"), text_alignment="center", width="stretch")
     with st.container(horizontal=True, vertical_alignment="top"):
         with st.container(horizontal_alignment="left", vertical_alignment="top"):
             if st_yled.button(_("Home"), key="home_button"):

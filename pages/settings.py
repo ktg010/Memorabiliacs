@@ -34,7 +34,8 @@ if 'user_info' not in st.session_state:
 else:
 
     # Specifies the config file that will be read from and written to
-    conf_file = ".streamlit/config.toml"
+    conf_file = os.path.join(os.path.dirname(__file__), '..',  '.streamlit', 'config.toml')
+    #conf_file = ".streamlit/config.toml"
 
     user_id = st.session_state.user_info["localId"]
 
@@ -76,10 +77,10 @@ else:
     # Grabs settings from database
     # Also grabs current configuration data from config file
     db_settings = backEnd.get_user_data(user_id)
-    current_base = gfuncs.read_config_val(conf_file, "base")
-    current_background_color = gfuncs.read_config_val(conf_file, "backgroundColor")
-    current_text_color = gfuncs.read_config_val(conf_file, "textColor")
-    current_font = gfuncs.read_config_val(conf_file, "font")
+    current_base = gfuncs.read_config_val( "base")
+    current_background_color = gfuncs.read_config_val( "backgroundColor")
+    current_text_color = gfuncs.read_config_val( "textColor")
+    current_font = gfuncs.read_config_val( "font")
     # Theme is special in that it exists in the database but not the config file
     current_theme = db_settings["theme"]
     #gfuncs.apply_css_theme(current_theme)
@@ -142,7 +143,7 @@ else:
         with st.container(horizontal_alignment="right", vertical_alignment="top"):
             if st_yled.button(_("Save Theme Choice"), key="save_theme_button"):
                 #setTheme(css_dict[color_theme])
-                gfuncs.update_settings(conf_file, theme_dict[color_theme])
+                gfuncs.update_settings(theme_dict[color_theme])
                 newdb.collection("Users").document(user_id).set(theme_dict[color_theme], merge=True)
                 #gfuncs.apply_css_theme(color_theme)
                 backEnd.get_user_data.clear(user_id)
@@ -166,10 +167,14 @@ else:
         # and writes changes to database for consistency between states
         with st.container(horizontal_alignment="right", vertical_alignment="bottom"):
             if st_yled.button(_("Save Changes"), key="save_advanced_button"):
-                gfuncs.update_config_val(conf_file, "base", "dark" if base_choice=="dark" else "light")
-                gfuncs.update_config_val(conf_file, "backgroundColor", background_color_choice)
-                gfuncs.update_config_val(conf_file, "textColor", text_color_choice)
-                gfuncs.update_config_val(conf_file, "font", font_dict[font_choice])
+                st.session_state["base"] = base_choice
+                st.session_state["backgroundColor"] = background_color_choice
+                st.session_state["textColor"] = text_color_choice
+                st.session_state["font"] = font_dict[font_choice]
+                # gfuncs.update_config_val(conf_file, "base", "dark" if base_choice=="dark" else "light")
+                # gfuncs.update_config_val(conf_file, "backgroundColor", background_color_choice)
+                # gfuncs.update_config_val(conf_file, "textColor", text_color_choice)
+                # gfuncs.update_config_val(conf_file, "font", font_dict[font_choice])
                 newdb.collection("Users").document(user_id).set({"base" : base_choice, 
                                                                 "backgroundColor" : background_color_choice, 
                                                                 "textColor" : text_color_choice,
@@ -184,12 +189,15 @@ else:
 
         if st.checkbox(_("Toggle Background Image"), value=db_settings["backgroundImageFlag"], key="toggle_background"):
             newdb.collection("Users").document(user_id).set({"backgroundImageFlag" : True}, merge=True)
+            st.session_state["backgroundImageFlag"] = True
         else:
             newdb.collection("Users").document(user_id).set({"backgroundImageFlag" : False}, merge=True)
+            st.session_state["backgroundImageFlag"] = False
 
         if st_yled.button(_("Save Background Image Changes"), key="save_background_button"):
             if new_image_URL != "" and "https:" in new_image_URL: 
                 newdb.collection("Users").document(user_id).set({"backgroundImageURL" : new_image_URL}, merge=True)
+                st.session_state["backgroundImageURL"] = new_image_URL
             backEnd.get_user_data.clear(user_id)
             sleep(0.25)
             st.rerun()

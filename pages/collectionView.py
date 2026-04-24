@@ -136,7 +136,7 @@ else:
                 st.rerun()
         else:
             field_text = ""
-            with st_yled.badge_card_one(title=items[item]['info']["Name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
+            with st_yled.badge_card_one(title=items[item]['info']["Name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
                 for key in items[item]['info'].keys():
                     if key not in ("Name", "Image", "Rarity", "id"):
                         if views[key]:
@@ -175,7 +175,7 @@ else:
     with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
         for subCollection in backEnd.get_sub_collections(backEnd.CURR_COLL):
             with st.container(width="content", horizontal_alignment="center"):
-                with st_yled.image_card_one(title=f"{subCollection}", image_path=gfuncs.THUMNAIL_URLS[coll_type], text=f"**{_('Type')}: {coll_type}**", background_color=gfuncs.read_config_val(gfuncs.conf_file, "backgroundColor"), width=250, height=350, border_style="solid", border_color=gfuncs.read_config_val(gfuncs.conf_file, "textColor"), border_width=1):
+                with st_yled.image_card_one(title=f"{subCollection}", image_path=gfuncs.THUMNAIL_URLS[coll_type], text=f"**{_('Type')}: {coll_type}**", background_color=gfuncs.read_config_val( "backgroundColor"), width=250, height=350, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
                     if st_yled.button(_("View Collection"), border_width=5, key=f"{subCollection}_link", width="stretch"):
                         backEnd.set_sub_collection(subCollection)
                         st.switch_page(gfuncs.sub_coll_page)

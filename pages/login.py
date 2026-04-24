@@ -22,7 +22,7 @@ background_image = "https://gamewardbound.com/wp-content/uploads/2020/11/ikea-ka
 css = f'''
     <style>
         .stApp {{
-            background-image: linear-gradient(to top, {gfuncs.read_config_val(gfuncs.conf_file, "textColor")}, transparent),
+            background-image: linear-gradient(to top, {gfuncs.read_config_val( "textColor")}, transparent),
             url({background_image});
             background-size: cover;
 
