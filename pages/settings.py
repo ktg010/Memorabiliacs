@@ -187,12 +187,19 @@ else:
     with st.popover(_("Background Image Settings")):
         new_image_URL = st.text_input(("URL of image to be used for background: "), value=db_settings["backgroundImageURL"])
 
-        if st.checkbox(_("Toggle Background Image"), value=db_settings["backgroundImageFlag"], key="toggle_background"):
+        if st.checkbox(_("Display Background Image"), value=db_settings["backgroundImageFlag"], key="toggle_background"):
             newdb.collection("Users").document(user_id).set({"backgroundImageFlag" : True}, merge=True)
             st.session_state["backgroundImageFlag"] = True
         else:
             newdb.collection("Users").document(user_id).set({"backgroundImageFlag" : False}, merge=True)
             st.session_state["backgroundImageFlag"] = False
+
+        if st.checkbox(_("Gradient for Background Image"), value=db_settings["gradientBool"], key="toggle_gradient"):
+            newdb.collection("Users").document(user_id).set({"gradientBool" : True}, merge=True)
+            st.session_state["gradientBool"] = True
+        else:
+            newdb.collection("Users").document(user_id).set({"gradientBool" : False}, merge=True)
+            st.session_state["gradientBool"] = False
 
         if st_yled.button(_("Save Background Image Changes"), key="save_background_button"):
             if new_image_URL != "" and "https:" in new_image_URL: 
