@@ -285,7 +285,7 @@ def create_collection(collection_name: str, collection_type: str, db):
             # sets preview image 
             "image" : "url to display image",
             # sets a background image when viewing collection
-            "background" : "url to background image",
+            "background" : "",
             # ? way to re-order collections on main page ?
             "order" : "figure out later, way to sort/filter/order on main page",
             # hidden on main page
@@ -376,6 +376,9 @@ def add_item(item_id:str, notes:str, quantity:int, db):
             "quantity" : quantity
             }
         })
+    wishlist = get_collection_wishlisted(CURR_COLL)
+    if fixed_name in wishlist:
+        delete_wishilst_item(fixed_name, CURR_COLL)
     get_collection_items.clear(CURR_COLL)
 
 def wishlist_item(item:str, collection:str) -> bool:
@@ -418,6 +421,17 @@ def delete_reference(item_doc_id, db):
         ref.update({f"items.{item_doc_id}.quantity": ammount })
     get_collection_items.clear(CURR_COLL)
 
+def delete_wishilst_item(item:str, collection:str):
+    """Removes given item from wishlist in given collection
+    
+    item: item id
+    collection: full collection name
+    """
+    user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
+    ref = db.collection("Users").document(user_id).collection("Collections").document(collection)
+    ref.update({f"Wishlist.{item}": firestore.DELETE_FIELD})
+
 def update_collection_views(collection_name:str, views, db):
     """Updates the type views for the collection
 
@@ -452,7 +466,7 @@ def create_sub_collection(name:str, collection:str, size:int, db):
             # sets preview image 
             "image" : "url to display image",
             # sets a background image when viewing collection
-            "background" : "url to background image",
+            "background" : "",
             # ? way to re-order collections on main page ?
             "order" : "figure out later, way to sort/filter/order on main page",
             # hidden on main page

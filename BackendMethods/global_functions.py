@@ -205,7 +205,7 @@ def get_image_from_URL(url:str):
     r = requests.get(url)
     return Image.open(BytesIO(r.content))
 
-def image_to_array(image:str):
+def image_grayscale(image:str):
     r = requests.get(image)
     img = np.asarray(Image.open(BytesIO(r.content)).convert("RGB"))
     # return np.dot(img[...,:3], [0.299, 0.587, 0.114])
@@ -222,6 +222,3 @@ def image_to_array(image:str):
     overlay = overlay.astype(np.uint8)
     return overlay
 
-def fade():
-    r = requests.get("https://www.ober-surfaces.com/cache/images/product/1235-oberflex_purepapercolor_skin_grey010_detail.jpg")
-    return np.asarray(Image.open(BytesIO(r.content)).convert("RGB"))

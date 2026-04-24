@@ -46,26 +46,30 @@ else:
 
     @st.dialog(_("Edit")) 
     def edit_collection(sub):
+        global ref
+        subRef = ref.collection("Sub Collections").document(sub)
         itemSettings, rename = st.columns([3,2])
         with itemSettings:
-            if st.button("Remove Sub Collection"):
-                backEnd.delete_sub_collection(sub, backEnd.CURR_COLL)
-                st.rerun()
+            new_image_URL = st.text_input(("URL of image to be used for background: "), value=subRef.get().to_dict().get("settings").get("background"))
             currSize = backEnd.get_sub_coll_size(sub, backEnd.CURR_COLL)
             newSize = st.text_input("Change size of collection?", value=currSize)
             if newSize.isdigit():
                 if int(newSize) < currSize:
                     st.warning("Cannot change size to be smaller than current size")
                 elif int(newSize) > currSize:
-                    ref = db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).collection("Sub Collections").document(sub)
-                    ref.update({"settings.size": int(newSize)})
+                    subRef.update({"settings.size": int(newSize)})
             else:
                 st.warning("Size must be a whole number")
+            if st.button("Remove Sub Collection"):
+                backEnd.delete_sub_collection(sub, backEnd.CURR_COLL)
+                st.rerun()
         with rename:
             st_yled.subheader(f"{_('Rename')} {sub}?", text_alignment="center")
             sub_rename = st.text_input(" ")
         with st.container(horizontal=True, horizontal_alignment="right"):
             if st.button(_("Save")):
+                if new_image_URL != "" and "https:" in new_image_URL: 
+                    subRef.update({"settings.background" : new_image_URL})
                 if sub_rename != "":
                     if backEnd.rename_sub_collection(backEnd.CURR_COLL, sub, sub_rename, db):
                         st_yled.error(_("Sub Collection name already exists"))
@@ -212,18 +216,23 @@ else:
                     
                 if st_yled.button("View More", key=f"{curr_item['info']['Name']}_{key}_view"):
                     viewItem(key)
-                st.space("medium")
-
+    
+    st.space("large")
+    st.divider()
+    st.subheader("Wishlisted Items", text_alignment="center")
     with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
+        st.space("small")
+        wishCols = st.columns(3, width="stretch") 
         wishlist = backEnd.get_collection_wishlisted(backEnd.CURR_COLL)
         for i, key in enumerate(wishlist.keys()):
             if view_mode == _("grid"):
-                col = cols[i % 3]
+                col = wishCols[i % 3]
             else: 
-                col = cols[1]
+                col = wishCols[1]
             with col.container(horizontal_alignment="center"):
-                img = gfuncs.image_to_array(wishlist[key].get("Image"))
-                st.image(img)  
+                st.header(wishlist[key].get("Name"),text_alignment="center")
+                st.image(gfuncs.image_grayscale(wishlist[key].get("Image")))  
+                st.write(f'<a style="text-align: center"> {key.replace("_", "-")} </a>', unsafe_allow_html=True)
     
 
     # Container in bottom right for add button
