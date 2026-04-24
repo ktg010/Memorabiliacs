@@ -28,7 +28,7 @@ def access_secret_version():
     payload_dict = toml.loads(payload)
     return payload_dict
 
-#st.secrets = access_secret_version()
+# st.secrets = access_secret_version()
 
 
 ## -------------------------------------------------------------------------------------------------
@@ -124,7 +124,10 @@ def sign_in(email: str, password: str, db) -> None:
                         'textColor' : "#dddddd",
                         'font' : 'sans-serif',
                         'theme' : 'Original',
-                        'language' : 'en'
+                        'language' : 'en',
+                        'backgroundImageURL' : '',
+                        'backgroundImageFlag' : False,
+                        'gradientBool' : True
                     }
                     user_ref.set(data)
                     user_ref.collection('Collections').document('DefaultCollection').set({'name': 'Default'})
