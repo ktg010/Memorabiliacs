@@ -39,7 +39,6 @@ else:
     user_lang = user_data_dict.get('language', 'en')
     set_language(user_lang)
     gfuncs.db_settings_to_session_state(user_data_dict)
-    print("Session state after db settings to session state:", st.session_state)
     #gfuncs.db_settings_to_config(user_data_dict)
     st_yled.init()
     gfuncs.page_initialization(user_data_dict)
@@ -156,10 +155,10 @@ else:
             else:
                 st.rerun()
 
-        if st.button("Test"):
-            test = backEnd.get_collection_wishlisted("Pokemon_Pokemon")
-            for thing in test:
-                print(f"{thing} : {test[thing].get("Name")}")
+        # if st.button("Test"):
+        #     test = backEnd.get_collection_wishlisted("Pokemon_Pokemon")
+        #     for thing in test:
+        #         print(f"{thing} : {test[thing].get("Name")}")
 
     with st.sidebar:
         st.space("small")

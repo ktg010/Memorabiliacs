@@ -35,7 +35,12 @@ else:
     gfuncs.page_initialization(user_data_dict)
     views = backEnd.collection_views(backEnd.CURR_COLL, db)
     ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
+    subRef = ref.collection("Sub Collections").document(backEnd.SUB_COLL)
     view_mode = ref.get().to_dict()['settings']['collection view']
+
+    background = subRef.get().to_dict().get("settings").get("background")
+    if background != "":
+        gfuncs.apply_background_image(background)
 
     if st.button("Back"):
         backEnd.set_sub_collection("")

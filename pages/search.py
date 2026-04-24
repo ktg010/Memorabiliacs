@@ -331,6 +331,8 @@ else:
                                         st.write(f"{_('Part Count')}: {item['num_parts']}")
                                     if item.get('year'):
                                         st.write(f"{_('Release Year')}: {item['year']}")
+                                    if backEnd.CURR_COLL:
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item_id": item['id'], "name": item['name']})
                                 st.space("small")
 
             elif search_type == "LegoMinifigs":
@@ -362,6 +364,8 @@ else:
                                                     height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
                                     if item.get('minifig_number'):
                                         st.write(f"{_('Minifig ID')}: {item['minifig_number']}")
+                                    if backEnd.CURR_COLL:
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item_id": item['id'], "name": item['name']})
                                 st.space("small")
 
             elif search_type == "Dragonball":
