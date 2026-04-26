@@ -280,34 +280,43 @@ def apply_settingspage_css():
 
 def apply_marty_animation():
     st.html(
-            f"""
-            <script>
-                console.log('Script running...');
+        f"""
+        <script>
+            console.log('Script running...');
 
-                fetch('/app/static/anime.min.js')
-                    .then(response => response.text())
-                    .then(jsCode => {{
-                        eval(jsCode);
+            fetch('app/static/anime.min.js')
+                .then(response => {{
+                    console.log('Response status:', response.status);
+                    console.log('Response URL:', response.url);
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    return response.text();
+                }})
+                .then(jsCode => {{
+                    eval(jsCode);
+                    console.log('anime loaded, typeof anime:', typeof anime);
 
-                        const Marty = window.parent.document.querySelector('#Marty');
+                    const Marty = window.parent.document.querySelector('#Marty');
+                    if (!Marty) {{
+                        console.error('Marty element not found!');
+                        return;
+                    }}
 
-                        Marty.addEventListener('mouseover', () => {{ anime({{
+                    Marty.addEventListener('mouseover', () => {{
+                        anime({{
                             targets: Marty,
                             translateX: [5, 10, 0],
                             translateY: [0, -10, 0],
                             backgroundColor: ['{read_config_val("backgroundColor")}', '{read_config_val("backgroundColor")}'],
                             duration: 1500,
                             easing: 'easeInOutQuad'
-                            }});
                         }});
-                        
-
-                    }})
-                    .catch(err => console.error('Fetch failed:', err));
-            </script>
-            """,
-            unsafe_allow_javascript=True
-        )
+                    }});
+                }})
+                .catch(err => console.error('Fetch failed:', err));
+        </script>
+        """,
+        unsafe_allow_javascript=True
+    )
 
 
 def apply_css_theme(theme):
