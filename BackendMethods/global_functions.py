@@ -281,6 +281,7 @@ def apply_settingspage_css():
 def apply_marty_animation():
     st.html(
         f"""
+        <img id="Marty" src="app/static/Marty2.png" style="width:100px;height:100px;background:{read_config_val('backgroundColor')};position:relative;z-index:999;" />
         <script>
             console.log('Script running...');
 
