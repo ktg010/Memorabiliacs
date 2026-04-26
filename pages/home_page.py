@@ -5,7 +5,7 @@ from BackendMethods.translations import _
 from BackendMethods.translations import set_language
 import st_yled
 import os
-
+from streamlit_javascript import st_javascript
 # Connects to db
 try:
     db = backEnd.get_firestore_client()
@@ -39,10 +39,9 @@ else:
     user_lang = user_data_dict.get('language', 'en')
     set_language(user_lang)
     gfuncs.db_settings_to_session_state(user_data_dict)
-    print("Session state after db settings to session state:", st.session_state)
-    #gfuncs.db_settings_to_config(user_data_dict)
     st_yled.init()
     gfuncs.page_initialization(user_data_dict)
+    gfuncs.apply_homepage_css()
     # st_yled.init(css_path=backEnd.CURR_THEME)
 
     # Set language from database
@@ -61,7 +60,7 @@ else:
 
     # Center section for collections
     with st.container(horizontal=True, horizontal_alignment="center"):
-
+        
         # Edit dialog to change the name of the collection
         @st.dialog(_("Edit")) 
         def edit_collection(coll):
@@ -170,3 +169,7 @@ else:
         st.space(500)
         if st.button(icon=":material/settings:", label=_("Settings")):
             st.switch_page("pages/settings.py")
+        st.markdown(f"""<img id="Marty" src="app/static/Marty2.png" style="width:100px;height:100px;background:{gfuncs.read_config_val('backgroundColor')};position:relative;z-index:999;" />""", unsafe_allow_html=True)
+    gfuncs.apply_marty_animation()
+
+

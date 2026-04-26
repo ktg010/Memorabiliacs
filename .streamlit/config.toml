@@ -6,3 +6,6 @@ font="Roboto"
 
 [client]
 showSidebarNavigation=false
+
+[server]
+enableStaticServing = true

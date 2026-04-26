@@ -27,7 +27,8 @@ THUMNAIL_URLS = {
     "Movies": os.path.join(thumbnails_path, "movies.jpeg"),
     "OnePiece": os.path.join(thumbnails_path, "luffy.jpeg"),
     "Custom": os.path.join(thumbnails_path, "barcode.jpeg"),
-    "Music": os.path.join(thumbnails_path, "vinyl.jpeg")
+    "Music": os.path.join(thumbnails_path, "vinyl.jpeg"),
+    "Marty": os.path.join(thumbnails_path, "Marty.png")
 }
 
 DEFAULT_SOUNDS = {
@@ -122,16 +123,9 @@ def apply_background_image(background_image_url:str, gradient_bool:bool) -> None
             '''
     st.markdown(css, unsafe_allow_html=True)
 
-# Sets the page width, title, and buttons for home, search, settings
-# To be used at the start of any page
-def page_initialization(user_data_dict:dict):
-    is_test_mode = os.getenv("STREAMLIT_TEST_MODE", "false").lower() == "true"
-    # Check if running in test mode (AppTest sets a marker)
-    if is_test_mode:
-        user_data_dict = {"backgroundImageURL": "https://i.ytimg.com/vi/DE6wyfsTfFI/maxresdefault.jpg",
-                          "backgroundImageFlag": False}
-    
-    css = f'''
+
+def apply_global_css():
+    st.markdown(f"""
         <style>
             .stApp > header {{
                 background-color: transparent;
@@ -174,7 +168,6 @@ def page_initialization(user_data_dict:dict):
                 background-color: {read_config_val( "backgroundColor")};
                 border-radius: 15px;
                 font-family: {read_config_val( "font")};
-                width: 250px;
                 font-weight: bolder;
             }}
 
@@ -182,10 +175,7 @@ def page_initialization(user_data_dict:dict):
                 color: {read_config_val( "textColor")} !important;
             }}
 
-            .stElementContainer:has(.stText) {{
-                padding-left:40%;
-                padding-right:40%;
-            }}
+            
 
             p {{
                 color: {read_config_val( "textColor")};
@@ -197,8 +187,17 @@ def page_initialization(user_data_dict:dict):
                 border: 2px solid {read_config_val( "textColor")} !important;
                 border-radius: 15px;
             }}
-        </style>
-        '''
+        </style>""", unsafe_allow_html=True)
+
+# Sets the page width, title, and buttons for home, search, settings
+# To be used at the start of any page
+def page_initialization(user_data_dict:dict):
+    is_test_mode = os.getenv("STREAMLIT_TEST_MODE", "false").lower() == "true"
+    # Check if running in test mode (AppTest sets a marker)
+    if is_test_mode:
+        user_data_dict = {"backgroundImageURL": "https://i.ytimg.com/vi/DE6wyfsTfFI/maxresdefault.jpg",
+                          "backgroundImageFlag": False}
+    
     icon_cols = st.columns([1, 1, 1], width=100)
     with icon_cols[0]:
         if st.button("", icon=":material/no_sound:", type="secondary", key="mute_button"):
@@ -213,8 +212,8 @@ def page_initialization(user_data_dict:dict):
                     st.audio(os.path.join(sounds_path, "ambient.mp3"), autoplay=True, loop=True, width=1)
 
     st.set_page_config(layout="wide")
+    apply_global_css()
     if user_data_dict["backgroundImageFlag"] is True:
-        st.markdown(css, unsafe_allow_html=True)
         apply_background_image(user_data_dict["backgroundImageURL"], user_data_dict["gradientBool"])
     st_yled.init()
     st_yled.title(_("Memorabiliacs"), text_alignment="center", width="stretch")
@@ -234,6 +233,81 @@ def base_theme_threshold(hex_num:str) -> str:
     b = int(hex_num[5:], 16)
     brightness = ((r*299)+(g*587)+(b*114))/1000
     return "dark" if brightness >= 128 else "light"
+
+
+def apply_homepage_css():
+    st.markdown("""
+                <style>
+                
+                .stElementContainer:has(.stText) {
+                    padding-left:40%;
+                    padding-right:40%;
+                }
+                
+                .stText {
+                    width: 250px;
+                }
+                
+                </style>
+                """, unsafe_allow_html=True)
+
+  
+
+def apply_collectionpage_css():
+    st.markdown(f"""
+            <style>
+            
+            .stElementContainer:has(.stText) {{
+                padding-left: calc(50% - 100px);
+                padding-right: calc(50% - 100px);
+            }}
+
+            .stText {{
+                width: 200px;
+            }}
+            
+
+            h3 {{
+                color: {read_config_val( "textColor")};
+                background-color: {read_config_val( "backgroundColor")};
+                border-radius: 15px;
+            }}
+            </style>
+            """, unsafe_allow_html=True)
+
+def apply_settingspage_css():
+    pass
+
+def apply_marty_animation():
+    st.html(
+            f"""
+            <script>
+                console.log('Script running...');
+
+                fetch('/app/static/anime.min.js')
+                    .then(response => response.text())
+                    .then(jsCode => {{
+                        eval(jsCode);
+
+                        const Marty = window.parent.document.querySelector('#Marty');
+
+                        Marty.addEventListener('mouseover', () => {{ anime({{
+                            targets: Marty,
+                            translateX: [5, 10, 0],
+                            translateY: [0, -10, 0],
+                            backgroundColor: ['{read_config_val("backgroundColor")}', '{read_config_val("backgroundColor")}'],
+                            duration: 1500,
+                            easing: 'easeInOutQuad'
+                            }});
+                        }});
+                        
+
+                    }})
+                    .catch(err => console.error('Fetch failed:', err));
+            </script>
+            """,
+            unsafe_allow_javascript=True
+        )
 
 
 def apply_css_theme(theme):

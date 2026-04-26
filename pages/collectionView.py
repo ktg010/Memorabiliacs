@@ -34,6 +34,7 @@ else:
     user_id = st.session_state.user_info["localId"]
     user_data_dict = backEnd.get_user_data(user_id)
     gfuncs.page_initialization(user_data_dict)
+    gfuncs.apply_collectionpage_css()
     views = backEnd.collection_views(backEnd.CURR_COLL, db)
     ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
     view_mode = ref.get().to_dict()['settings']['collection view']
@@ -158,7 +159,7 @@ else:
             else:
                 st.error("Size needs to be a whole number")
 
-    st.subheader(backEnd.CURR_COLL.split("_")[0], text_alignment="center")
+    st_yled.text(f"{backEnd.CURR_COLL.split('_')[0]}", text_alignment="center", font_size="1.75rem")
     with st.container(horizontal_alignment="right"):
         if st.button("Collection Settings", icon=":material/settings:", type="tertiary"):
             settings_page_flag = False
@@ -176,6 +177,7 @@ else:
                     if st_yled.button(_("Edit"), border_width=5, key=f"edit_{subCollection}", width="stretch"):
                             edit_collection(subCollection)
 
+    st.space("large")
     # all items
     with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
         cols = st.columns(3, width="stretch") 
@@ -186,9 +188,10 @@ else:
             else: 
                 col = cols[1]
             curr_item = items[key]
-            with col.container(horizontal_alignment="center"):
+            with col.container(horizontal_alignment="center", vertical_alignment="center"):
                 if views["Name"]:
-                    st_yled.subheader(f"{curr_item['info'].get('Name')}", text_alignment="center")
+                    # st_yled.subheader(f"{curr_item['info'].get('Name')}", text_alignment="center")
+                    st_yled.text(f"{curr_item['info'].get('Name')}", text_alignment="center", font_size="1.75rem")
 
                 if views["Image"]:
                     if backEnd.CURR_COLL.split("_")[1] == "Custom":
@@ -198,15 +201,17 @@ else:
                             st.image(gfuncs.THUMNAIL_URLS["Custom"], width=200)
                     else:
                         st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
-                itemCols = st.columns(2, width="stretch")
-                with itemCols[1].container(horizontal_alignment="right"):
-                    if views["Quantity"]:
-                        st.subheader(f"x{curr_item.get("quantity")}", text_alignment="right")
-                with itemCols[0].container(horizontal_alignment="left"):
-                    if views["Notes"]:
-                        notes = curr_item.get("Notes")
-                        if notes != "Enter notes here":
-                            st.subheader(notes)
+                # itemCols = st.columns([0.3, 0.3, 0.3], width=250)
+                # with itemCols[0].container(horizontal_alignment="left"):
+                if views["Quantity"]:
+                    st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
+                if views["Notes"]:
+                    notes = curr_item.get("Notes")
+                    if notes != "Enter notes here" and notes != "Your notes here":
+                        st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
+                    else:
+                        st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))
+                            
                     
                 if st_yled.button("View More", key=f"{curr_item['info']['Name']}_{key}_view"):
                     viewItem(key)
