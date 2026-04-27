@@ -39,6 +39,7 @@ else:
     ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
     view_mode = ref.get().to_dict()['settings']['collection view']
     items = backEnd.get_collection_items(backEnd.CURR_COLL)  # Use cached function
+    print(f'items = {items}')
     coll_type = backEnd.CURR_COLL.split("_")[1]
     settings_page_flag = False
     viewing_flag = False
@@ -177,6 +178,9 @@ else:
         if st.button(_("Create Template"), key='CT'):
             # Make Template arrays in both locations
             db.collection('Custom').document(backEnd.CURR_COLL).update({"templates": {tempName: template}})
+            for key in template:
+                db.collection('Custom').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
+                db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
             db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f"templates.{tempName}": template})
             backEnd.get_template_types.clear()
             st.rerun()
@@ -189,13 +193,18 @@ else:
     def createCustomItem(template):
         attributes = {}
         template = db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).get().to_dict()['templates'][template]
+       
         with st_yled.badge_card_one(title="Enter values", text='', badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
             if ("name" in template) == False and ("Name" in template) == False:
                 name = st.text_input("Name", value="", key="force_name")
+            if ("quantity" in template) == False and ("Quantity" in template) == False:
+                quantity = st.text_input("Quantity", value=1, key="force_quantity") # value default to 1
             for i in range(len(template)):
                 attribute = st.text_input(_(template[i]), value="", key=i)
                 if template[i] == "name" or template[i] == "Name":
                     name = attribute
+                if template[i] == "quantity" or template[i] == "Quantity":
+                    quantity = attribute
                 if attribute != "":
                     attributes[template[i]] = attribute
                 if attribute == "":
@@ -208,7 +217,8 @@ else:
                 db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({
                     f"items.{name}": {
                         "notes": "Your notes here",
-                        "ref": new_item_id   
+                        "ref": new_item_id,
+                        'quantity' : quantity  # Default to 1 if quantity is not set   
                         }
                     })
                 st.session_state.createCustomItemPopup = False
@@ -237,6 +247,7 @@ else:
             else: 
                 col = cols[1]
             curr_item = items[key]
+            print(f'curr_item = {curr_item}')
             with col.container(horizontal_alignment="center", vertical_alignment="center"):
                 if views["Name"]:
                     # st_yled.subheader(f"{curr_item['info'].get('Name')}", text_alignment="center")
@@ -255,7 +266,7 @@ else:
                 if views["Quantity"]:
                     st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
                 if views["Notes"]:
-                    notes = curr_item.get("Notes")
+                    notes = curr_item.get("notes")
                     if notes != "Enter notes here" and notes != "Your notes here":
                         st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
                     else:

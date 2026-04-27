@@ -117,7 +117,7 @@ else:
                 if st_yled.button(_("Yes"), key="confirmRemove", width="content"):
                     for coll in removedCollections:
                         ref = db.collection("Users").document(user_id).collection("Collections").document(coll)
-                        coll_type = ref.split("_")[1]
+                        coll_type = ref.id.split("_")[1]
                         ref.delete()
                         if coll_type == "Custom":
                             db.collection("Custom").document(coll).delete()

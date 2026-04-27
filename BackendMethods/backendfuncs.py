@@ -174,7 +174,8 @@ def get_collection_items(collection_name: str):
     if coll_type != "Custom":
         for id in collectionData:
             items[id] = {'info' : (collectionData[id].get('ref')).get().to_dict(),
-                        'notes' : collectionData[id].get('notes')
+                        'notes' : collectionData[id].get('notes'),
+                        'quantity' : collectionData[id].get('quantity', 1)  # Default to 1 if quantity is not set
                         }
         return items
     else:
@@ -188,7 +189,8 @@ def get_collection_items(collection_name: str):
                 print(f'userData = {userData}')
                 for id in actualData:
                     items[id] = {'info' : actualData[id],
-                                'notes' : userData[id].get('notes')
+                                'notes' : userData[id].get('notes'),
+                                'quantity' : userData[id].get('quantity', 1)  # Default to 1 if quantity is not set
                                 }
             return items
 
