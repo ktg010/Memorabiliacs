@@ -294,7 +294,7 @@ def apply_marty_animation():
                 .catch(err => console.error('Fetch failed:', err));
 
             function waitForMarty(retries) {{
-                const Marty = window.parent.document.querySelector('#Marty');
+                const Marty = document.querySelector('#Marty');
 
                 if (Marty) {{
                     console.log('Marty found! Attaching animation.');
