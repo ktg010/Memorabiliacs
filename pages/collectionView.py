@@ -39,10 +39,10 @@ else:
     ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
     view_mode = ref.get().to_dict()['settings']['collection view']
     items = backEnd.get_collection_items(backEnd.CURR_COLL)  # Use cached function
-    print(f'items = {items}')
     coll_type = backEnd.CURR_COLL.split("_")[1]
     settings_page_flag = False
     viewing_flag = False
+    st.session_state.createCustomItemPopup = False
 
     @st.dialog(_("Edit")) 
     def edit_collection(sub):
@@ -168,7 +168,7 @@ else:
 
     @st.dialog("Template Info")
     def createCustomTemplate():
-        template = ["Image"]
+        template = ["Image", "Name"]
         with st_yled.badge_card_one(title='Create Custom Template', text='', badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
             tempName = st.text_input("Enter template name: ", value="here")
             for index in range(0,10):
@@ -177,7 +177,7 @@ else:
                     template.append(value.title())
         if st.button(_("Create Template"), key='CT'):
             # Make Template arrays in both locations
-            db.collection('Custom').document(backEnd.CURR_COLL).update({"templates": {tempName: template}})
+            db.collection('Custom').document(backEnd.CURR_COLL).update({f"templates.{tempName}" : template})
             for key in template:
                 db.collection('Custom').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
                 db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
@@ -247,7 +247,6 @@ else:
             else: 
                 col = cols[1]
             curr_item = items[key]
-            print(f'curr_item = {curr_item}')
             with col.container(horizontal_alignment="center", vertical_alignment="center"):
                 if views["Name"]:
                     # st_yled.subheader(f"{curr_item['info'].get('Name')}", text_alignment="center")
@@ -288,9 +287,8 @@ else:
             
         if coll_type == "Custom":
             types = backEnd.get_template_types()
-            print(f"Types = {types}")     
             template = st.selectbox(_("Type"), types) 
-              
+            
             st.page_link(page="pages/search.py", label=_("Add Existing Item"), query_params=collection)
             if st_yled.button(_("New Custom Template"), key="NCT"):
                 createCustomTemplate()

@@ -28,7 +28,9 @@ THUMNAIL_URLS = {
     "OnePiece": os.path.join(thumbnails_path, "luffy.jpeg"),
     "Custom": os.path.join(thumbnails_path, "barcode.jpeg"),
     "Music": os.path.join(thumbnails_path, "vinyl.jpeg"),
-    "Marty": os.path.join(thumbnails_path, "Marty.png")
+    "Marty": os.path.join(thumbnails_path, "Marty.png"),
+    "LegoSets": os.path.join(thumbnails_path, "legoFlat.png"),
+    "LegoMinifigs": os.path.join(thumbnails_path, "legoFlat.png")
 }
 
 DEFAULT_SOUNDS = {

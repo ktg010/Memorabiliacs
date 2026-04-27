@@ -185,8 +185,8 @@ def get_collection_items(collection_name: str):
             for key in collectionData:
                 actualData = collectionData[key]['ref'].get().to_dict()['items']
                 userData = db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).get().to_dict()['items']
-                print(f'actual data = {actualData}')
-                print(f'userData = {userData}')
+                # print(f'actual data = {actualData}')
+                # print(f'userData = {userData}')
                 for id in actualData:
                     items[id] = {'info' : actualData[id],
                                 'notes' : userData[id].get('notes'),
@@ -339,29 +339,25 @@ def create_custom_collection(collection_name: str, collection_type: str, db):
         },
         
         # list of item templates
-        "templates": {"No Custom Template" : []}
+        "templates": {}
     }
     db.collection('Custom').document(fullName).set(baseInfo)
     db.collection('Users').document(user_id).collection('Collections').document(fullName).set(baseInfo)
     get_user_collections.clear(user_id)
 
-@st.cache_data(ttl=3600)  # Cache for 1 hour
 def get_template_types():
     """Fetch collection types, cached globally."""
     db = get_firestore_client()
     user_id = st.session_state.user_info['localId']
     types = db.collection("Users").document(user_id).collection("Collections").document(CURR_COLL).get().to_dict()['templates']
-    typelist = list(types.keys())
     tlist = []
-    for key in typelist:
-        if key == 'No Custom Template':
-            tlist.insert(0, 'No Custom Template')
-        else:
+    for key in types.keys():
+        if key != "No Custom Template":
             tlist.append(key)
-    if typelist == ["No Custom Template"]:
-        return typelist
+    if not tlist:
+        return ["No Custom Template"]
     else:
-        return tlist[1::]
+        return tlist
 
 def rename_collection(collection_name:str, new_collection:str, db):
     """Renames a collection, by use of creating a new collection and moving the data
