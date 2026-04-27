@@ -15,6 +15,7 @@ from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 from pyzbar import pyzbar
 import firebase_admin
 from firebase_admin import credentials, storage
+import os
 
 # from BackendMethods.auth_functions import access_secret_version
 # st.secrets = access_secret_version()
@@ -169,7 +170,6 @@ def get_collection_items(collection_name: str):
     else:
         collectionData = []
     items = {}
-    # print(f'collectionData = {collectionData}')
     coll_type = CURR_COLL.split("_")[1]
     user_id = st.session_state.user_info['localId']
     if coll_type != "Custom":
@@ -998,4 +998,29 @@ def renameData(db):
             db.collection(name).document(single.id).set(newItem, merge=True)
             db.collection(name).document(single.id).set({"Notes": firestore.DELETE_FIELD}, merge=True)
             # return
-    print("done")
+
+def upload_user_image(uploaded_file, user_id: str, db, firestore_field: str = "profile_image_blob") -> str:
+    """
+    Uploads Streamlit UploadedFile to GCS, stores blob path in Firestore.
+    Returns blob_name.
+    """
+    bucket = get_cloud_storage()
+    ext = os.path.splitext(uploaded_file.name or "")[1].lower() or ".bin"
+    blob_name = f"user_uploads/{user_id}/{uploaded_file.name}"
+    blob = bucket.blob(blob_name)
+
+    blob.upload_from_string(
+        uploaded_file.getvalue(),
+        content_type=(uploaded_file.type or "application/octet-stream")
+    )
+
+    return blob_name
+
+def get_user_image_names(user_id: str, db) -> list[str]:
+    docs = (
+        db.collection("Users")
+        .document(user_id)
+        .collection("UserImages")
+        .stream()
+    )
+    return [(doc.to_dict() or {}).get("image_name", "") for doc in docs]
