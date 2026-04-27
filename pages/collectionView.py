@@ -45,7 +45,7 @@ else:
     viewing_flag = False
 
     background = ref.get().to_dict().get("settings").get("background")
-    if background != "":
+    if background != "" and user_data_dict["backgroundImageFlag"]:
         gfuncs.apply_background_image(background, user_data_dict["gradientBool"])
         
 
