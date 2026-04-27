@@ -171,6 +171,7 @@ else:
         template = ["Image", "Name"]
         with st_yled.badge_card_one(title='Create Custom Template', text='', badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
             tempName = st.text_input("Enter template name: ", value="here")
+            st.divider()
             for index in range(0,10):
                 value = (st.text_input("Enter attribute name: ", value="here", key=index))
                 if value != "here":
