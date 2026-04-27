@@ -39,7 +39,6 @@ else:
     ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
     view_mode = ref.get().to_dict()['settings']['collection view']
     items = backEnd.get_collection_items(backEnd.CURR_COLL)  # Use cached function
-    print(f'items = {items}')
     coll_type = backEnd.CURR_COLL.split("_")[1]
     settings_page_flag = False
     viewing_flag = False
@@ -192,6 +191,8 @@ else:
     @st.dialog("Item Info")
     def createCustomItem(template):
         attributes = {}
+        db = backEnd.get_firestore_client()
+        user_id = st.session_state.user_info["localId"]
         template = db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).get().to_dict()['templates'][template]
        
         with st_yled.badge_card_one(title="Enter values", text='', badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
@@ -205,10 +206,20 @@ else:
                     name = attribute
                 if template[i] == "quantity" or template[i] == "Quantity":
                     quantity = attribute
+                if template[i] == "Image":
+                    uploaded = st.file_uploader("Upload image to GCS", type=["png", "jpg", "jpeg", "webp"])
+                    db = backEnd.get_firestore_client()
+                    user_id = st.session_state.user_info["localId"]
+                    if uploaded:
+                        blob_name = backEnd.upload_user_image(uploaded, user_id, db)
+                        attribute= blob_name
+                        st.success("Image uploaded.")
+                        attribute = blob_name
+                    else:
+                        attribute = ''
                 if attribute != "":
                     attributes[template[i]] = attribute
-                if attribute == "":
-                    attributes[template[i]] = gfuncs.THUMNAIL_URLS["Custom"]
+                        
             if st_yled.button(_("Create"), key="CreateKey"):
                 new_item_id = db.collection('Custom').document(backEnd.CURR_COLL)
                 db.collection('Custom').document(backEnd.CURR_COLL).update({
@@ -247,22 +258,18 @@ else:
             else: 
                 col = cols[1]
             curr_item = items[key]
-            print(f'curr_item = {curr_item}')
             with col.container(horizontal_alignment="center", vertical_alignment="center"):
                 if views["Name"]:
-                    # st_yled.subheader(f"{curr_item['info'].get('Name')}", text_alignment="center")
                     st_yled.text(f"{curr_item['info'].get('Name')}", text_alignment="center", font_size="1.75rem")
 
                 if views["Image"]:
                     if backEnd.CURR_COLL.split("_")[1] == "Custom":
-                        if curr_item["info"]["Image"] is not None:
-                            st.image(curr_item["info"]["Image"], width=200)
+                        if curr_item["info"]["Image"] is not (None or ""):
+                            st.image(backEnd.get_cloud_storage_image(curr_item["info"]["Image"]), width=200)
                         else:
                             st.image(gfuncs.THUMNAIL_URLS["Custom"], width=200)
                     else:
                         st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
-                # itemCols = st.columns([0.3, 0.3, 0.3], width=250)
-                # with itemCols[0].container(horizontal_alignment="left"):
                 if views["Quantity"]:
                     st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
                 if views["Notes"]:
@@ -287,8 +294,7 @@ else:
         st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
             
         if coll_type == "Custom":
-            types = backEnd.get_template_types()
-            print(f"Types = {types}")     
+            types = backEnd.get_template_types()     
             template = st.selectbox(_("Type"), types) 
               
             st.page_link(page="pages/search.py", label=_("Add Existing Item"), query_params=collection)
@@ -304,3 +310,22 @@ else:
         
         if st.button("Create subColl"):
             subColl()
+            
+# Uncomment below code to test GCS/firestore image upload and retrieval, leaving here for others to mess with as needed
+# RN you can search images by their actual document id on firestore rather than name, will change later 
+
+
+#db = backEnd.get_firestore_client()
+#user_id = st.session_state.user_info["localId"]
+#
+#test_doc_id = st.text_input("Image doc id")
+#if test_doc_id and st.button("Test fetch URL"):
+#    url = backEnd.get_user_image_url(user_id, db, test_doc_id)
+#    st.write(url)
+#    if url:
+#        st.image(url)
+#
+#names = backEnd.get_user_image_names(user_id, db)
+#st.write("User image names:")
+#for name in names:
+#    st.write(name)
