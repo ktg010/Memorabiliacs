@@ -15,8 +15,9 @@ from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 from pyzbar import pyzbar
 import firebase_admin
 from firebase_admin import credentials, storage
+from BackendMethods.auth_functions import access_secret_version
 
-#st.secrets = access_secret_version()
+st.secrets = access_secret_version()
 BASE_API_URL = "https://apitcg.com/api"
 APITCG_API_KEY = st.secrets["APITCG_API_KEY"]
 REBRICK_API_KEY = st.secrets["REBRICK_API_KEY"]
@@ -156,23 +157,40 @@ def get_user_collections(user_id: str):
 
 @st.cache_data(ttl=3600)
 def get_collection_items(collection_name: str):
-    """Gets all items in a collection from the database.
-
-    collection_name: Name of the collection to retrieve
-    db: Firestore database instance
-    Returns a list of items (data dictionaries) referenced in the specified collection
-    """
+    """Fetch and process all items in a collection - cached to avoid repeated DB reads"""
     db = get_firestore_client()  # Use cached client
     user_id = st.session_state.user_info['localId']
-    collection = db.collection('Users').document(user_id).collection('Collections').document(collection_name).get()
-    data = collection.to_dict()["items"]
+    collection_ref = db.collection('Users').document(user_id).collection('Collections').document(collection_name)
+    collection_doc = collection_ref.get()
+    if collection_doc.exists:
+        items_refs = collection_doc.to_dict()
+        collectionData = items_refs["items"]
+    else:
+        collectionData = []
     items = {}
-    for item in data:
-        items[item] = {'info' : (data[item].get('ref')).get().to_dict(),
-                       'Notes' : data[item].get('notes'),
-                       'quantity' : data[item].get('quantity', 1)  # Default to 1 if quantity is not set
-                    }
-    return items
+    # print(f'collectionData = {collectionData}')
+    coll_type = CURR_COLL.split("_")[1]
+    user_id = st.session_state.user_info['localId']
+    if coll_type != "Custom":
+        for id in collectionData:
+            items[id] = {'info' : (collectionData[id].get('ref')).get().to_dict(),
+                        'notes' : collectionData[id].get('notes')
+                        }
+        return items
+    else:
+        if collectionData == {}:
+            return items
+        else:
+            for key in collectionData:
+                actualData = collectionData[key]['ref'].get().to_dict()['items']
+                userData = db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).get().to_dict()['items']
+                print(f'actual data = {actualData}')
+                print(f'userData = {userData}')
+                for id in actualData:
+                    items[id] = {'info' : actualData[id],
+                                'notes' : userData[id].get('notes')
+                                }
+            return items
 
 def collection_views(collection_name:str, db):
     """Gets the collection type views
@@ -279,6 +297,69 @@ def create_collection(collection_name: str, collection_type: str, db):
     }
     db.collection('Users').document(user_id).collection('Collections').document(fullName).set(baseInfo)
     get_user_collections.clear(user_id)
+    
+def create_custom_collection(collection_name: str, collection_type: str, db):
+    """Create a custom collection of items in the database with the specified name and type.
+
+    collection_name: Name of the collection to create
+    collection_type: Type of the collection (e.g., "Pokemon", "Movies", etc.)
+    db: Firestore database instance
+    Returns true if collection already exits, else sets collection
+    """
+    user_id = st.session_state.user_info['localId']
+
+    # generates db collection name
+    fullName = collection_name.title() + f"_{collection_type}"
+
+    # check if name already exists in the database
+    if check_for_coll_name(collection_name.title(), db):
+        return True
+    
+    # created new collection
+    baseInfo = {
+        # list of items per collection
+        "items": {},
+
+        # collection settings
+        "settings": {
+            # sets what fields are viewed via item type
+            "views" : type_fields(collection_type),
+            # sets preview image 
+            "image" : "url to display image",
+            # sets a background image when viewing collection
+            "background" : "url to background image",
+            # ? way to re-order collections on main page ?
+            "order" : "figure out later, way to sort/filter/order on main page",
+            # hidden on main page
+            "hidden" : False,
+            # gid / colomn view
+            "collection view" : "grid"
+        },
+        
+        # list of item templates
+        "templates": {"No Custom Template" : []}
+    }
+    db.collection('Custom').document(fullName).set(baseInfo)
+    db.collection('Users').document(user_id).collection('Collections').document(fullName).set(baseInfo)
+    get_user_collections.clear(user_id)
+
+@st.cache_data(ttl=3600)  # Cache for 1 hour
+def get_template_types():
+    """Fetch collection types, cached globally."""
+    db = get_firestore_client()
+    user_id = st.session_state.user_info['localId']
+    types = db.collection("Users").document(user_id).collection("Collections").document(CURR_COLL).get().to_dict()['templates']
+    typelist = list(types.keys())
+    tlist = []
+    for key in typelist:
+        if key == 'No Custom Template':
+            tlist.insert(0, 'No Custom Template')
+        else:
+            tlist.append(key)
+    if typelist == ["No Custom Template"]:
+        return typelist
+    else:
+        return tlist[1::]
 
 def rename_collection(collection_name:str, new_collection:str, db):
     """Renames a collection, by use of creating a new collection and moving the data

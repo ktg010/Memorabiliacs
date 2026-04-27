@@ -92,13 +92,20 @@ else:
             collType = st.selectbox(_("Type"), backEnd.get_collection_types())
             if st_yled.button(_("Add"), key="makeColl") and name is not None and collType is not None:
                 if gfuncs.collection_input_sanitation(name):
-                    if backEnd.create_collection(name, collType, db):
-                        st_yled.error(_("Collection name already exists"))
-                    else:
-                        backEnd.get_user_collections.clear(user_id)
-                        st.rerun()
-                else: 
-                    st_yled.error(_("Invalid character in name: '_', '-', '\\', '/'"))
+                    if collType == "Custom":
+                        if backEnd.create_custom_collection(name, collType, db):
+                            st_yled.error(_("Collection name already exists"))
+                        else:
+                            backEnd.get_user_collections.clear(user_id)
+                            st.rerun()
+                    elif collType != "Custom":
+                        if backEnd.create_collection(name, collType, db):
+                            st_yled.error(_("Collection name already exists"))
+                        else:
+                            backEnd.get_user_collections.clear(user_id)
+                            st.rerun()
+                    else: 
+                        st_yled.error(_("Invalid character in name: '_', '-', '\\', '/'"))
 
         # Remove collection dialog to remove a collection from the db
         @st.dialog(_("Remove")) 
@@ -110,7 +117,10 @@ else:
                 if st_yled.button(_("Yes"), key="confirmRemove", width="content"):
                     for coll in removedCollections:
                         ref = db.collection("Users").document(user_id).collection("Collections").document(coll)
+                        coll_type = ref.split("_")[1]
                         ref.delete()
+                        if coll_type == "Custom":
+                            db.collection("Custom").document(coll).delete()
                     removedCollections.clear()
                     backEnd.get_user_collections.clear(user_id)
                     st.rerun()
