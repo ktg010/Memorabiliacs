@@ -148,7 +148,7 @@ else:
                             st.write(f"**{key}**: **{items[item]['info'][key]}**")
                 st.divider()
                 st.header("Personal Fields")
-                notes = items[item].get("Notes")
+                notes = items[item].get("notes")
                 if notes != "Enter notes here":
                     st.write(f"Notes: {notes}")
                 else:
@@ -224,7 +224,7 @@ else:
                         st.subheader(f"x{curr_item.get("quantity")}", text_alignment="right")
                 with itemCols[0].container(horizontal_alignment="left"):
                     if views["Notes"]:
-                        notes = curr_item.get("Notes")
+                        notes = curr_item.get("notes")
                         if notes != "Enter notes here":
                             st.subheader(notes)
                     
@@ -257,6 +257,6 @@ else:
         }
         st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
 
-        if st.button("Create subColl"):
+        if st.button("Create Sub Collection"):
             subColl()
             

@@ -123,7 +123,7 @@ else:
             if st.button("Save"):
                 for item in itemsToAdd.keys(): 
                     if itemsToAdd[item] != 0:
-                        backEnd.add_item_sub_coll(item, fullItems[item].get("Notes"), itemsToAdd[item], backEnd.SUB_COLL, backEnd.CURR_COLL)
+                        backEnd.add_item_sub_coll(item, fullItems[item].get("notes"), itemsToAdd[item], backEnd.SUB_COLL, backEnd.CURR_COLL)
                 del st.session_state["itemsToAdd"]
                 st.rerun()
     
@@ -135,7 +135,18 @@ else:
                 if key not in ("Name", "Image"):
                     if views[key]:
                         st.write(f"**{key}**: **{items[item]['info'][key]}**")
-            if st.button(_("Remove From Collection")):
+
+            st.divider()
+            st.header("Personal Fields")
+            notes = items[item].get("notes")
+            if notes != "Enter notes here":
+                st.write(f"Notes: {notes}")
+            else:
+                st.write("Notes: ")
+            st.write(f"Number in Sub Collection: {items[item].get("quantity")}")
+            st.divider()
+
+            if st.button(_("Remove From Sub Collection")):
                 backEnd.del_item_sub_coll(item, 1, backEnd.SUB_COLL, backEnd.CURR_COLL)
                 st.rerun()
 
@@ -170,7 +181,7 @@ else:
                         st.subheader(f"x{curr_item.get("quantity")}", text_alignment="right")
                 with itemCols[0].container(horizontal_alignment="left"):
                     if views["Notes"]:
-                        notes = curr_item.get("Notes")
+                        notes = curr_item.get("notes")
                         if notes != "Enter notes here":
                             st.subheader(notes)
                 if st_yled.button("View More", key=f"{curr_item["info"]["Name"]}_{key}_view"):

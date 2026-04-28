@@ -171,7 +171,7 @@ def get_collection_items(collection_name: str):
     items = {}
     for item in data:
         items[item] = {'info' : (data[item].get('ref')).get().to_dict(),
-                       'Notes' : data[item].get('notes'),
+                       'notes' : data[item].get('notes'),
                        'quantity' : data[item].get('quantity', 1)  # Default to 1 if quantity is not set
                     }
     return items
