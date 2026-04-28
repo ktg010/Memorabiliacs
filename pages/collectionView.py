@@ -143,9 +143,18 @@ else:
             field_text = ""
             with st_yled.badge_card_one(title=items[item]['info']["Name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
                 for key in items[item]['info'].keys():
-                    if key not in ("Name", "Image", "Rarity", "id"):
+                    if key not in ("Name", "Image"):
                         if views[key]:
                             st.write(f"**{key}**: **{items[item]['info'][key]}**")
+                st.divider()
+                st.header("Personal Fields")
+                notes = items[item].get("Notes")
+                if notes != "Enter notes here":
+                    st.write(f"Notes: {notes}")
+                else:
+                    st.write("Notes: ")
+                st.write(f"Number owned: {items[item].get("quantity")}")
+                st.divider()
                 if st.button("Edit Note"):
                     viewing_flag = True
                     st.rerun(scope="fragment")
