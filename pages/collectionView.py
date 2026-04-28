@@ -5,6 +5,8 @@ from BackendMethods.translations import _
 import st_yled
 import os
 import time
+import numpy as np
+
 
 # Connects to db
 try:
@@ -44,28 +46,37 @@ else:
     viewing_flag = False
     st.session_state.createCustomItemPopup = False
 
+    background = ref.get().to_dict().get("settings").get("background")
+    if background != "" and user_data_dict["backgroundImageFlag"]:
+        gfuncs.apply_background_image(background, user_data_dict["gradientBool"])
+        
+
     @st.dialog(_("Edit")) 
     def edit_collection(sub):
+        global ref
+        subRef = ref.collection("Sub Collections").document(sub)
         itemSettings, rename = st.columns([3,2])
         with itemSettings:
-            if st.button("Remove Sub Collection"):
-                backEnd.delete_sub_collection(sub, backEnd.CURR_COLL)
-                st.rerun()
+            new_image_URL = st.text_input(("URL of image to be used for background: "), value=subRef.get().to_dict().get("settings").get("background"))
             currSize = backEnd.get_sub_coll_size(sub, backEnd.CURR_COLL)
             newSize = st.text_input("Change size of collection?", value=currSize)
             if newSize.isdigit():
                 if int(newSize) < currSize:
                     st.warning("Cannot change size to be smaller than current size")
                 elif int(newSize) > currSize:
-                    ref = db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).collection("Sub Collections").document(sub)
-                    ref.update({"settings.size": int(newSize)})
+                    subRef.update({"settings.size": int(newSize)})
             else:
                 st.warning("Size must be a whole number")
+            if st.button("Remove Sub Collection"):
+                backEnd.delete_sub_collection(sub, backEnd.CURR_COLL)
+                st.rerun()
         with rename:
             st_yled.subheader(f"{_('Rename')} {sub}?", text_alignment="center")
             sub_rename = st.text_input(" ")
         with st.container(horizontal=True, horizontal_alignment="right"):
             if st.button(_("Save")):
+                if new_image_URL != "" and "https:" in new_image_URL: 
+                    subRef.update({"settings.background" : new_image_URL})
                 if sub_rename != "":
                     if backEnd.rename_sub_collection(backEnd.CURR_COLL, sub, sub_rename, db):
                         st_yled.error(_("Sub Collection name already exists"))
@@ -134,9 +145,18 @@ else:
             field_text = ""
             with st_yled.badge_card_one(title=items[item]['info']["Name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
                 for key in items[item]['info'].keys():
-                    if key not in ("Name", "Image", "Rarity", "id"):
+                    if key not in ("Name", "Image"):
                         if views[key]:
                             st.write(f"**{key}**: **{items[item]['info'][key]}**")
+                st.divider()
+                st.header("Personal Fields")
+                notes = items[item].get("notes")
+                if notes != "Enter notes here":
+                    st.write(f"Notes: {notes}")
+                else:
+                    st.write("Notes: ")
+                st.write(f"Number owned: {items[item].get("quantity")}")
+                st.divider()
                 if st.button("Edit Note"):
                     viewing_flag = True
                     st.rerun(scope="fragment")
@@ -272,19 +292,36 @@ else:
                             st.image(gfuncs.THUMNAIL_URLS["Custom"], width=200)
                     else:
                         st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
+
                 if views["Quantity"]:
                     st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
+                
                 if views["Notes"]:
                     notes = curr_item.get("notes")
                     if notes != "Enter notes here" and notes != "Your notes here":
                         st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
                     else:
-                        st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))
-                            
+                        st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))    
                     
                 if st_yled.button("View More", key=f"{curr_item['info']['Name']}_{key}_view"):
                     viewItem(key)
-                st.space("medium")
+    
+    st.space("large")
+    st.divider()
+    st.subheader("Wishlisted Items", text_alignment="center")
+    with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
+        st.space("small")
+        wishCols = st.columns(3, width="stretch") 
+        wishlist = backEnd.get_collection_wishlisted(backEnd.CURR_COLL)
+        for i, key in enumerate(wishlist.keys()):
+            if view_mode == _("grid"):
+                col = wishCols[i % 3]
+            else: 
+                col = wishCols[1]
+            with col.container(horizontal_alignment="center"):
+                st.header(wishlist[key].get("Name"),text_alignment="center")
+                st.image(gfuncs.image_grayscale(wishlist[key].get("Image")))
+                st_yled.text(f"{key.replace("_", "-")}", text_alignment="center", font_size="1rem")
     
 
     # Container in bottom right for add button
@@ -293,8 +330,7 @@ else:
             "name" : backEnd.CURR_COLL.split("_")[0],
             "type" : backEnd.CURR_COLL.split("_")[1]
         }
-        st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
-            
+
         if coll_type == "Custom":
             types = backEnd.get_template_types()     
             template = st.selectbox(_("Type"), types) 
@@ -310,7 +346,7 @@ else:
         else:    
             st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
         
-        if st.button("Create subColl"):
+        if st.button("Create Sub Collection"):
             subColl()
             
 # Uncomment below code to test GCS/firestore image upload and retrieval, leaving here for others to mess with as needed

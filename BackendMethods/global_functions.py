@@ -7,6 +7,7 @@ import os
 import requests
 from PIL import Image
 from io import BytesIO
+import numpy as np
 
 conf_file = os.path.join(os.path.dirname(__file__), '..', '.streamlit', 'config.toml')
 collection_page = "pages/collectionView.py"
@@ -362,3 +363,21 @@ def collection_input_sanitation(coll_name:str):
 def get_image_from_URL(url:str):
     r = requests.get(url)
     return Image.open(BytesIO(r.content))
+
+def image_grayscale(image:str):
+    r = requests.get(image)
+    img = np.asarray(Image.open(BytesIO(r.content)).convert("RGB"))
+    # return np.dot(img[...,:3], [0.299, 0.587, 0.114])
+
+    gray = 0.2989 * img[:,:,0] + 0.5870 * img[:,:,1] + 0.1140 * img[:,:,2]
+    gray = gray.astype(np.uint8)
+
+    # 3. Replicate gray channel across 3 channels (RGB)
+    gray_3chan = np.stack((gray,)*3, axis=-1)
+
+    # 4. Apply gray overlay (alpha = 0.5 for 50% opacity)
+    alpha = 0.9
+    overlay = (1 - alpha) * img + alpha * gray_3chan
+    overlay = overlay.astype(np.uint8)
+    return overlay
+

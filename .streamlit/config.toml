@@ -1,8 +1,8 @@
 [theme]
-base="dark"
-backgroundColor="#1a1a1a"
-textColor="#dddddd"
-font="Roboto"
+base="light"
+backgroundColor="#b1a8a8"
+textColor="#1733f7"
+font="Roboto:https://fonts.cdnfonts.com/css/roboto"
 
 [client]
 showSidebarNavigation=false

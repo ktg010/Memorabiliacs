@@ -17,8 +17,8 @@ import firebase_admin
 from firebase_admin import credentials, storage
 import os
 
-# from BackendMethods.auth_functions import access_secret_version
-# st.secrets = access_secret_version()
+from BackendMethods.auth_functions import access_secret_version
+st.secrets = access_secret_version()
 
 BASE_API_URL = "https://apitcg.com/api"
 APITCG_API_KEY = st.secrets["APITCG_API_KEY"]
@@ -158,42 +158,19 @@ def get_user_collections(user_id: str):
     return [{"id": doc.id,**doc.to_dict()} for doc in db.collection('Users').document(user_id).collection('Collections').stream()]
 
 @st.cache_data(ttl=3600)
-def get_collection_items(collection_name: str):
+def get_collection_items(collection: str):
     """Fetch and process all items in a collection - cached to avoid repeated DB reads"""
-    db = get_firestore_client()  # Use cached client
+    db = get_firestore_client()
     user_id = st.session_state.user_info['localId']
-    collection_ref = db.collection('Users').document(user_id).collection('Collections').document(collection_name)
-    collection_doc = collection_ref.get()
-    if collection_doc.exists:
-        items_refs = collection_doc.to_dict()
-        collectionData = items_refs["items"]
-    else:
-        collectionData = []
+    collection_ref = db.collection('Users').document(user_id).collection('Collections').document(collection)
+    data = collection_ref.get().to_dict()["items"]
     items = {}
-    coll_type = CURR_COLL.split("_")[1]
-    user_id = st.session_state.user_info['localId']
-    if coll_type != "Custom":
-        for id in collectionData:
-            items[id] = {'info' : (collectionData[id].get('ref')).get().to_dict(),
-                        'notes' : collectionData[id].get('notes'),
-                        'quantity' : collectionData[id].get('quantity', 1)  # Default to 1 if quantity is not set
-                        }
-        return items
-    else:
-        if collectionData == {}:
-            return items
-        else:
-            for key in collectionData:
-                actualData = collectionData[key]['ref'].get().to_dict()['items']
-                userData = db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).get().to_dict()['items']
-                # print(f'actual data = {actualData}')
-                # print(f'userData = {userData}')
-                for id in actualData:
-                    items[id] = {'info' : actualData[id],
-                                'notes' : userData[id].get('notes'),
-                                'quantity' : userData[id].get('quantity', 1)  # Default to 1 if quantity is not set
-                                }
-            return items
+    for item in data:
+        items[item] = {'info' : (data[item].get('ref')).get().to_dict(),
+                       'notes' : data[item].get('notes'),
+                       'quantity' : data[item].get('quantity', 1)  # Default to 1 if quantity is not set
+                    }
+    return items
 
 def collection_views(collection_name:str, db):
     """Gets the collection type views
@@ -207,6 +184,22 @@ def collection_views(collection_name:str, db):
     collection_ref = db.collection("Users").document(user_id).collection("Collections").document(collection_name)
 
     return collection_ref.get().to_dict()["settings"]["views"]
+
+def get_collection_wishlisted(collection:str):
+    """Gets all wishlisted items
+    
+    collection: full name of collection
+    """
+    user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
+    coll_ref = db.collection("Users").document(user_id).collection("Collections").document(collection)
+    data = coll_ref.get().to_dict().get("Wishlist", None)
+
+    items = {}
+    if data != None:
+        for item in data:
+            items[item] = data[item].get("ref").get().to_dict()
+    return items
 
 ## Sub Coll ##
 @st.cache_data(ttl=3600)
@@ -289,7 +282,7 @@ def create_collection(collection_name: str, collection_type: str, db):
             # sets preview image 
             "image" : "url to display image",
             # sets a background image when viewing collection
-            "background" : "url to background image",
+            "background" : "",
             # ? way to re-order collections on main page ?
             "order" : "figure out later, way to sort/filter/order on main page",
             # hidden on main page
@@ -388,6 +381,17 @@ def rename_collection(collection_name:str, new_collection:str, db):
     collection_ref_OLD.delete()
     get_user_collections.clear(user_id)
 
+def delete_collection(collection:str):
+    """Deletes collection
+    
+    collection: full name of collection
+    """
+    user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
+
+    ref = db.collection("Users").document(user_id).collection("Collections").document(collection)
+    db.recursive_delete(ref)
+
 def update_notes(item_id, new_notes, db):
     """Sets the user's specific note per item
     
@@ -428,7 +432,32 @@ def add_item(item_id:str, notes:str, quantity:int, db):
             "quantity" : quantity
             }
         })
+    wishlist = get_collection_wishlisted(CURR_COLL)
+    if fixed_name in wishlist:
+        delete_wishilst_item(fixed_name, CURR_COLL)
     get_collection_items.clear(CURR_COLL)
+
+def wishlist_item(item:str, collection:str) -> bool:
+    """Adds item to collection as wishlisted item
+    
+    item: item id
+    collection: full collection name
+    Return false if error, true if success"""
+    user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
+    coll_type = collection.split("_")[1]
+    fixed_name = item.replace("-", "_")
+    item_ref = db.collection(coll_type).document(item)
+    coll_ref = db.collection("Users").document(user_id).collection("Collections").document(collection)
+
+    coll_items = get_collection_items(collection)
+    if fixed_name in coll_items:
+        return False
+
+    coll_ref.update({f"Wishlist.{fixed_name}" : {
+        "ref" : item_ref
+    }})
+    return True
 
 def delete_reference(item_doc_id, db):
     """Deleted an item from the user's collection
@@ -447,6 +476,17 @@ def delete_reference(item_doc_id, db):
         ammount -= 1
         ref.update({f"items.{item_doc_id}.quantity": ammount })
     get_collection_items.clear(CURR_COLL)
+
+def delete_wishilst_item(item:str, collection:str):
+    """Removes given item from wishlist in given collection
+    
+    item: item id
+    collection: full collection name
+    """
+    user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
+    ref = db.collection("Users").document(user_id).collection("Collections").document(collection)
+    ref.update({f"Wishlist.{item}": firestore.DELETE_FIELD})
 
 def update_collection_views(collection_name:str, views, db):
     """Updates the type views for the collection
@@ -482,7 +522,7 @@ def create_sub_collection(name:str, collection:str, size:int, db):
             # sets preview image 
             "image" : "url to display image",
             # sets a background image when viewing collection
-            "background" : "url to background image",
+            "background" : "",
             # ? way to re-order collections on main page ?
             "order" : "figure out later, way to sort/filter/order on main page",
             # hidden on main page

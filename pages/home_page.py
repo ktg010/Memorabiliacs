@@ -65,17 +65,17 @@ else:
         def edit_collection(coll):
             itemSettings, rename = st.columns([3,2])
             with itemSettings:
-                hidden = st.checkbox(_("Hide Collection"))
-                # TODO
-                # Add things for other setting when we figure out 
-                # how to do it
                 ref = db.collection("Users").document(user_id).collection("Collections").document(coll["id"])
+                hidden = st.checkbox(_("Hide Collection"))
+                new_image_URL = st.text_input(("URL of image to be used for background: "), value=ref.get().to_dict().get("settings").get("background"))
                 ref.update({"settings.hidden" : hidden})
             with rename:
                 st_yled.subheader(f"{_('Rename')} {coll["id"].split('_')[0]}?", text_alignment="center")
                 coll_rename = st.text_input(" ")
             with st.container(horizontal=True, horizontal_alignment="right"):
                 if st.button(_("Save")):
+                    if new_image_URL != "" and "https:" in new_image_URL: 
+                        ref.update({"settings.background" : new_image_URL})
                     if coll_rename != "":
                         if backEnd.rename_collection(coll["id"], coll_rename, db):
                             st_yled.error(_("Collection name already exists"))
@@ -116,15 +116,14 @@ else:
             with st.container(horizontal=True, horizontal_alignment="center"):
                 if st_yled.button(_("Yes"), key="confirmRemove", width="content"):
                     for coll in removedCollections:
-                        ref = db.collection("Users").document(user_id).collection("Collections").document(coll)
-                        coll_type = ref.id.split("_")[1]
-                        ref.delete()
+                        coll_type = coll.split("_")[1]
                         if coll_type == "Custom":
                             db.collection("Custom").document(coll).delete()
+                        backEnd.delete_collection(coll)
                     removedCollections.clear()
-                    backEnd.get_user_collections.clear(user_id)
+                    backEnd.get_user_collections.clear()
                     st.rerun()
-                
+        
                 if st_yled.button(_("No"), key="cancelRemove", width="content"):
                     gfuncs.removeCheck = False
                     st.rerun()
@@ -165,8 +164,10 @@ else:
             else:
                 st.rerun()
 
-        # if st.button("Change data"):
-        #     backEnd.renameData(db)
+        # if st.button("Test"):
+        #     test = backEnd.get_collection_wishlisted("Pokemon_Pokemon")
+        #     for thing in test:
+        #         print(f"{thing} : {test[thing].get("Name")}")
 
     with st.sidebar:
         st.space("small")

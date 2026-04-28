@@ -46,19 +46,25 @@ else:
             st.switch_page(gfuncs.collection_page)
     
     @st.dialog("Add to Collection")
-    def add_item_to_coll(item_id, name):
+    def add_item_to_coll(item, name):
         st.write(name)
         notes = st.text_input("Add notes", value="Enter notes here")
         quantity = st.text_input("How many", value="1")
         if st.button("Save"):
             if quantity.isdigit():
-                backEnd.add_item(item_id, notes, int(quantity), db)
+                backEnd.add_item(item, notes, int(quantity), db)
                 st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
                 st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=name, collection=backEnd.CURR_COLL.split('_')[0]))
                 sleep(.5)
                 st.rerun()
             else:
                 st.error("Quantity must be a whole number")
+    
+    def add_wishlisted_item(item, name):
+        if backEnd.wishlist_item(item, backEnd.CURR_COLL):
+            st_yled.success(_("Wishlisted '{item}' to your {collection} collection!").format(item=name, collection=backEnd.CURR_COLL.split('_')[0]))
+        else:
+            st.error("Item is already in the collection")
 
     st_yled.subheader(_("Search for Collectables!"), text_alignment="center")
     st.space("small")
@@ -232,11 +238,6 @@ else:
                         for idx, item in enumerate(pokemon_results):
                             with cols[idx % 3]:
                                 innercols = st.columns([0.5,4,0.5])
-                                def add_pokemon_button(item_id, Cardname):
-                                    proper_id = str(item_id).replace("-", "_")
-                                    backEnd.add_reference_search(proper_id, item_id, db)
-                                    st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
-                                    st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Cardname, collection=backEnd.CURR_COLL.split('_')[0]))
                                 if item.get("image"):
                                     with innercols[1]:
                                         st.image(item["image"], width="stretch")
@@ -247,9 +248,11 @@ else:
                                     st_yled.write(f"**{_('HP')}: {item.get('hp', 'N/A')}**")
                                     st_yled.write(f"**{_('Flavortext')}: {item.get('flavorText', 'N/A')}**")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item_id": item['id'], "name": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
                                 st.space("small")
 
+            # TODO: broken?
             elif search_type == "Movies":
                 with st_yled.form(key="algolia_search_form", clear_on_submit=False):
                     movies_query = st_yled.text_input(_("Search for a movie"))
@@ -273,11 +276,6 @@ else:
                     if movie_results:
                         st.markdown(_("### Top Movie results"))
                         cols = st.columns(3)
-                        def add_movie_button(item_id, Moviename):
-                                    proper_id = str(item_id).replace("-", "_")
-                                    backEnd.add_reference_search(proper_id, item_id, db)
-                                    st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
-                                    st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Moviename, collection=backEnd.CURR_COLL.split('_')[0]))
                         for idx, item in enumerate(movie_results):
                             with cols[idx % 3]:
                                 innercols = st.columns([0.5,4,0.5])
@@ -294,7 +292,8 @@ else:
                                     if item.get('release_date'):
                                         st_yled.write(f"{_('Release Year')}: {item['release_date'][:4]}")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_movie_button, kwargs={"item_id": item['id'], "Moviename": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
                                 st.space("small")
 
             #TODO: Fix the rebrickable items within the db so image tags are correct, then add to algolia
@@ -329,6 +328,9 @@ else:
                                         st.write(f"{_('Part Count')}: {item['num_parts']}")
                                     if item.get('year'):
                                         st.write(f"{_('Release Year')}: {item['year']}")
+                                    if backEnd.CURR_COLL:
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
                                 st.space("small")
 
             elif search_type == "LegoMinifigs":
@@ -360,6 +362,9 @@ else:
                                                     height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
                                     if item.get('minifig_number'):
                                         st.write(f"{_('Minifig ID')}: {item['minifig_number']}")
+                                    if backEnd.CURR_COLL:
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
                                 st.space("small")
 
             elif search_type == "Dragonball":
@@ -387,12 +392,6 @@ else:
                     if dbz_results:
                         st.markdown(_("### Top Dragonball Z card results"))
                         cols = st.columns(3)
-                        def add_dbz_button(item_id, Cardname):
-                                    proper_id = str(item_id).replace("-", "_")
-                                    backEnd.add_reference_search(proper_id, item_id, db)
-                                    st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
-                                    st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Cardname, collection=backEnd.CURR_COLL.split('_')[0]))
-
                         for idx, item in enumerate(dbz_results):
                             with cols[idx % 3]:
                                 innercols = st.columns([0.5,4,0.5])
@@ -404,9 +403,11 @@ else:
                                                     height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
                                     st_yled.write(f"**{_('Power')}: {item.get('power', 'N/A')}**")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_dbz_button, kwargs={"item_id": item['id'], "Cardname": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
                                 st.space("small")
-
+            
+            # TODO: Pokemon display??
             elif search_type == "Digimon":
                 with st_yled.form(key="digimon_search_form", clear_on_submit=False):
                     digimon_query = st_yled.text_input(_("Search for a Digimon card"))
@@ -432,20 +433,10 @@ else:
                     if digimon_results:
                         st.markdown(_("### Top Digimon card results"))
                         cols = st.columns(3)
-                        def add_digimon_button(item_id, Cardname):
-                                    proper_id = str(item_id).replace("-", "_")
-                                    backEnd.add_reference_search(proper_id, item_id, db)
-                                    st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
-                                    st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Cardname, collection=backEnd.CURR_COLL.split('_')[0]))
-
                         for idx, item in enumerate(digimon_results):
                             with cols[idx % 3]:
                                 if item["image"]:
                                     innercols = st.columns([0.5,4,0.5])
-                                    def add_pokemon_button(item_id, Cardname):
-                                        proper_id = str(item_id).replace("-", "_")
-                                        backEnd.add_reference_search(proper_id, item_id, db)
-                                        st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Cardname, collection=backEnd.CURR_COLL.split('_')[0]))
                                     if item.get("image"):
                                         with innercols[1]:
                                             st.image(item["image"], width="stretch")
@@ -456,55 +447,9 @@ else:
                                         st_yled.write(f"**{_('HP')}: {item.get('hp', 'N/A')}**")
                                         st_yled.write(f"**{_('Flavortext')}: {item.get('flavorText', 'N/A')}**")
                                         if backEnd.CURR_COLL:
-                                            st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item_id": item['id'], "name": item['name']})
+                                            st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
+                                            st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
                                     st.space("small")
-
-            elif search_type == "Movies":
-                with st_yled.form(key="algolia_search_form", clear_on_submit=False):
-                    movies_query = st_yled.text_input(_("Search for a movie"))
-                    movies_search_submitted = st_yled.form_submit_button(_("Search Movies"))
-
-                if movies_search_submitted:
-                    with st.spinner(_("Searching Movies (Algolia)...")):
-                            try:
-                                algolia_conf = st.secrets.get("algolia", {})
-                                app_id = algolia_conf.get("app_id")
-                                search_key = algolia_conf.get("search_key")
-
-                                if not (app_id and search_key):
-                                    raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
-
-                                hits = backEnd.search_algolia(movies_query, index_name="MovieSearchResults", max_results=10)
-                            except Exception as e:
-                                st.error(f"{_('Algolia search failed')}: {e}")
-                                hits = []
-
-                    movie_results = st.session_state.get("movies_results", [])
-                    if movie_results:
-                        st.markdown(_("### Top Movie results"))
-                        cols = st.columns(3)
-                        def add_movie_button(item_id, Moviename):
-                                    proper_id = str(item_id).replace("-", "_")
-                                    backEnd.add_reference_search(proper_id, item_id, db)
-                                    st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Moviename, collection=backEnd.CURR_COLL.split('_')[0]))
-                        for idx, item in enumerate(movie_results):
-                            with cols[idx % 3]:
-                                innercols = st.columns([0.5,4,0.5])
-                                if item.get("image"):
-                                    with innercols[1]:
-                                        st.image(item["image"], width="stretch")
-                                with st_yled.badge_card_one(title=item.get('name', _('No title')), text=f"\n**ID: {item.get('id', '')}**", badge_text=_("Movie"), badge_color="primary",
-                                                    background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", 
-                                                    border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
-                                    if item.get('overview'):
-                                        st_yled.write(f"{_('Description')}: {item['overview']}")
-                                    if item.get('director'):
-                                        st_yled.write(f"{_('Director')}: {item['director']}")
-                                    if item.get('release_date'):
-                                        st_yled.write(f"{_('Release Year')}: {item['release_date'][:4]}")
-                                    if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_movie_button, kwargs={"item_id": item['id'], "Moviename": item['name']})
-                                st.space("small")
 
             elif search_type == "OnePiece":
                 with st_yled.form(key="onepiece_search_form", clear_on_submit=False):
@@ -531,11 +476,6 @@ else:
                     if onepiece_results:
                         st.markdown(_("### Top One Piece card results"))
                         cols = st.columns(3)
-                        def add_onepiece_button(item_id, Cardname):
-                                    proper_id = str(item_id).replace("-", "_")
-                                    backEnd.add_reference_search(proper_id, item_id, db)
-                                    st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=Cardname, collection=backEnd.CURR_COLL.split('_')[0]))
-
                         for idx, item in enumerate(onepiece_results):
                             with cols[idx % 3]:
                                 if item["image"]:
@@ -548,7 +488,8 @@ else:
                                     st_yled.write(f"**{_('Type')}: {item.get('type', 'N/A')}**")
                                     st_yled.write(f"**{_('Rarity')}: {item.get('rarity', 'N/A')}**")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item_id": item['id'], "name": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
                                 st.space("small")
 
             else:

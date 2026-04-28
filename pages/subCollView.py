@@ -33,9 +33,15 @@ else:
     user_id = st.session_state.user_info["localId"]
     user_data_dict = backEnd.get_user_data(user_id)
     gfuncs.page_initialization(user_data_dict)
+    gfuncs.apply_collectionpage_css()
     views = backEnd.collection_views(backEnd.CURR_COLL, db)
     ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
+    subRef = ref.collection("Sub Collections").document(backEnd.SUB_COLL)
     view_mode = ref.get().to_dict()['settings']['collection view']
+
+    background = subRef.get().to_dict().get("settings").get("background")
+    if background != "" and user_data_dict["backgroundImageFlag"]:
+        gfuncs.apply_background_image(background, user_data_dict["gradientBool"])
 
     if st.button("Back"):
         backEnd.set_sub_collection("")
@@ -118,7 +124,7 @@ else:
             if st.button("Save"):
                 for item in itemsToAdd.keys(): 
                     if itemsToAdd[item] != 0:
-                        backEnd.add_item_sub_coll(item, fullItems[item].get("Notes"), itemsToAdd[item], backEnd.SUB_COLL, backEnd.CURR_COLL)
+                        backEnd.add_item_sub_coll(item, fullItems[item].get("notes"), itemsToAdd[item], backEnd.SUB_COLL, backEnd.CURR_COLL)
                 del st.session_state["itemsToAdd"]
                 st.rerun()
     
@@ -130,7 +136,18 @@ else:
                 if key not in ("Name", "Image"):
                     if views[key]:
                         st.write(f"**{key}**: **{items[item]['info'][key]}**")
-            if st.button(_("Remove From Collection")):
+
+            st.divider()
+            st.header("Personal Fields")
+            notes = items[item].get("notes")
+            if notes != "Enter notes here":
+                st.write(f"Notes: {notes}")
+            else:
+                st.write("Notes: ")
+            st.write(f"Number in Sub Collection: {items[item].get("quantity")}")
+            st.divider()
+
+            if st.button(_("Remove From Sub Collection")):
                 backEnd.del_item_sub_coll(item, 1, backEnd.SUB_COLL, backEnd.CURR_COLL)
                 st.rerun()
 
@@ -159,15 +176,16 @@ else:
                     else:
                         st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
 
-                itemCols = st.columns(2, width="stretch")
-                with itemCols[1].container(horizontal_alignment="right"):
-                    if views["Quantity"]:
-                        st.subheader(f"x{curr_item.get("quantity")}", text_alignment="right")
-                with itemCols[0].container(horizontal_alignment="left"):
-                    if views["Notes"]:
-                        notes = curr_item.get("Notes")
-                        if notes != "Enter notes here":
-                            st.subheader(notes)
+                if views["Quantity"]:
+                    st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
+                
+                if views["Notes"]:
+                    notes = curr_item.get("notes")
+                    if notes != "Enter notes here" and notes != "Your notes here":
+                        st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
+                    else:
+                        st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))
+                
                 if st_yled.button("View More", key=f"{curr_item["info"]["Name"]}_{key}_view"):
                     viewItem(key)
                 st.space("medium")
