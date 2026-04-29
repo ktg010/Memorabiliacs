@@ -301,7 +301,7 @@ def apply_collectionpage_icon_animation(key:str):
                         eval(jsCode);
                         waitForMarty(20);
 
-                        const icon = window.parent.document.querySelector('.st-key-{key}');
+                        const icon = document.querySelector('.st-key-{key}');
                         if (icon) {{
                             anime({{
                                 targets: icon,
@@ -331,7 +331,7 @@ def apply_collection_icon_animation(key:str):
                         eval(jsCode);
                         waitForMarty(20);
 
-                        const icon = window.parent.document.querySelector('.st-key-{key}');
+                        const icon = document.querySelector('.st-key-{key}');
                         if (icon) {{
                             anime({{
                                 targets: icon,
