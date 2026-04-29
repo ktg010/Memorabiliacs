@@ -17,8 +17,8 @@ import firebase_admin
 from firebase_admin import credentials, storage
 import os
 
-# from BackendMethods.auth_functions import access_secret_version
-# st.secrets = access_secret_version()
+from BackendMethods.auth_functions import access_secret_version
+st.secrets = access_secret_version()
 
 BASE_API_URL = "https://apitcg.com/api"
 APITCG_API_KEY = st.secrets["APITCG_API_KEY"]
@@ -186,8 +186,6 @@ def get_collection_items(collection_name: str):
             for key in collectionData:
                 actualData = collectionData[key]['ref'].get().to_dict()['items']
                 userData = db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).get().to_dict()['items']
-                # print(f'actual data = {actualData}')
-                # print(f'userData = {userData}')
                 for id in actualData:
                     items[id] = {'info' : actualData[id],
                                 'notes' : userData[id].get('notes'),

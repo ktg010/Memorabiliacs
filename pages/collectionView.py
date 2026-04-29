@@ -43,6 +43,7 @@ else:
     settings_page_flag = False
     viewing_flag = False
     st.session_state.createCustomItemPopup = False
+    st.session_state.viewItemPopup = False
 
     @st.dialog(_("Edit")) 
     def edit_collection(sub):
@@ -52,7 +53,7 @@ else:
                 backEnd.delete_sub_collection(sub, backEnd.CURR_COLL)
                 st.rerun()
             currSize = backEnd.get_sub_coll_size(sub, backEnd.CURR_COLL)
-            newSize = st.text_input("Change size of collection?", value=currSize)
+            newSize = st.text_input("Change size of collection?", value=currSize, key='newSize')
             if newSize.isdigit():
                 if int(newSize) < currSize:
                     st.warning("Cannot change size to be smaller than current size")
@@ -63,7 +64,7 @@ else:
                 st.warning("Size must be a whole number")
         with rename:
             st_yled.subheader(f"{_('Rename')} {sub}?", text_alignment="center")
-            sub_rename = st.text_input(" ")
+            sub_rename = st.text_input(" ", key="sub_rename")
         with st.container(horizontal=True, horizontal_alignment="right"):
             if st.button(_("Save")):
                 if sub_rename != "":
@@ -119,20 +120,46 @@ else:
                 settings_page_flag = True
                 st.rerun(scope="fragment")
     
+    if "viewItemPopup" not in st.session_state:
+        st.session_state.viewItemPopup = False
+
+    if "editItem" not in st.session_state:
+        st.session_state.editItem = False
+
     @st.fragment
     @st.dialog("Item Info")
     def viewItem(item):
         global viewing_flag
-        if viewing_flag:
+        ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
+        if coll_type == "Custom" and st.session_state.editItem:
+            new_info = {}
+            with st_yled.badge_card_one(
+                title=f"Edit {items[item]['info']['Name']}",text="",badge_text="Attributes",width="stretch",badge_color="primary",background_color=gfuncs.read_config_val("backgroundColor"),card_shadow=True,border_style="solid",border_color=gfuncs.read_config_val("textColor"),border_width=1, key=f'Edit {item}'):
+                for key in items[item]['info']:
+                    if views[key]:
+                        value = st.text_input(f"**{key}**:", value=items[item]['info'][key], key=f"{item}_{key}")
+                        new_info[key] = value
+                if st.button(_("Save Changes")):
+                    st.session_state.editItem = False
+                    backEnd.get_collection_items.clear(backEnd.CURR_COLL)
+                    db.collection('Custom').document(backEnd.CURR_COLL).update({f"items.{items[item]['info']['Name']}": new_info})
+                    st.session_state.viewItemPopup = False
+                    st.rerun()
+                if st.button(_("Cancel")):
+                    st.session_state.editItem = False
+                    st.session_state.viewItemPopup = False
+                    st.rerun()
+        elif viewing_flag:
             ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
             note = st.text_input("Item Note", value=ref.get().to_dict()["items"][item].get('notes'), key="notes")
             if st.button("Save"):
                 backEnd.update_notes(item, note, db)
                 viewing_flag = False
+                st.session_state.viewItemPopup = False
                 st.rerun()
         else:
             field_text = ""
-            with st_yled.badge_card_one(title=items[item]['info']["Name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+            with st_yled.badge_card_one(title=items[item]['info']["Name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1, key=f'view {item}'):
                 for key in items[item]['info'].keys():
                     if key not in ("Name", "Image", "Rarity", "id"):
                         if views[key]:
@@ -144,7 +171,15 @@ else:
                     st.audio(gfuncs.DEFAULT_SOUNDS["Delete"], autoplay=True, width=1, start_time=0)
                     time.sleep(1)
                     backEnd.delete_reference(item, db)
+                    st.session_state.viewItemPopup = False
                     st.rerun()
+                if coll_type == "Custom":
+                    if st.button(_("Edit Item")):
+                        st.session_state.editItem = True
+                        st.session_state.viewItemPopup = False
+                        st.rerun()   
+                        viewItem()
+                    
 
     @st.dialog("Create Sub Collection")
     def subColl():
@@ -166,25 +201,38 @@ else:
             settings_page_flag = False
             viewCollSettings()
 
+
+    if "createCustomTemplatePopup" not in st.session_state:
+        st.session_state.createCustomTemplatePopup = False
+    if "numOfFields" not in st.session_state:
+        st.session_state.numOfFields = False
+        
     @st.dialog("Template Info")
-    def createCustomTemplate():
-        template = ["Image", "Name"]
-        with st_yled.badge_card_one(title='Create Custom Template', text='', badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
-            tempName = st.text_input("Enter template name: ", value="here")
-            st.divider()
-            for index in range(0,10):
-                value = (st.text_input("Enter attribute name: ", value="here", key=index))
-                if value != "here":
-                    template.append(value.title())
-        if st.button(_("Create Template"), key='CT'):
-            # Make Template arrays in both locations
-            db.collection('Custom').document(backEnd.CURR_COLL).update({f"templates.{tempName}" : template})
-            for key in template:
-                db.collection('Custom').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
-                db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
-            db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f"templates.{tempName}": template})
-            backEnd.get_template_types.clear()
-            st.rerun()
+    def createCustomTemplate(num=0):
+        if "numOfFields" in st.session_state:
+            with st_yled.badge_card_one(title='Create Custom Template', text='', badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1, key='specifyNumOfFields'):    
+                numOfFields = st.text_input("How many fields? ", value="here", key="fieldinp")
+                st.session_state.numOfFields = False
+                st.session_state.createCustomTemplatePopup = True
+                createCustomTemplate(numOfFields)
+        else:
+            template = ["Image", "Name"]
+            with st_yled.badge_card_one(title='Create Custom Template', text='', badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1, key="templateMake"):
+                tempName = st.text_input("Enter template name: ", value="here", key="textinp")
+                st.divider()
+                for index in range(0,num):
+                    value = (st.text_input("Enter attribute name: ", value="here", key=index))
+                    if value != "here":
+                        template.append(value.title())
+            if st.button(_("Create Template"), key='CT'):
+                # Make Template arrays in both locations
+                db.collection('Custom').document(backEnd.CURR_COLL).update({f"templates.{tempName}" : template})
+                for key in template:
+                    db.collection('Custom').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
+                    db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
+                db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f"templates.{tempName}": template})
+                backEnd.get_template_types.clear()
+                st.rerun()
     
     if "createCustomItemPopup" not in st.session_state:
         st.session_state.createCustomItemPopup = False
@@ -283,6 +331,8 @@ else:
                             
                     
                 if st_yled.button("View More", key=f"{curr_item['info']['Name']}_{key}_view"):
+                    st.session_state.viewItemPopup = True
+                if st.session_state.viewItemPopup == True or st.session_state.editItem == True:
                     viewItem(key)
                 st.space("medium")
     
@@ -301,6 +351,8 @@ else:
             
             st.page_link(page="pages/search.py", label=_("Add Existing Item"), query_params=collection)
             if st_yled.button(_("New Custom Template"), key="NCT"):
+                st.session_state.createCustomItemPopup == True
+            if "createCustomItemPopup" or "numOfFields" in st.session_state:
                 createCustomTemplate()
             # Make function to display list of templates
             if st_yled.button(_("New Custom Item"), key="NCI"):
