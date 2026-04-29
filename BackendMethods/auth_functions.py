@@ -131,7 +131,7 @@ def sign_in(email: str, password: str, db) -> None:
                         'gradientBool' : True
                     }
                     user_ref.set(data)
-                    user_ref.collection('Collections').document('DefaultCollection').set({'name': 'Default'})
+                    user_ref.collection('Collections').document('DefaultCollection').set({'name': 'Default', 'settings': {'hidden': True}})
             except Exception as e:
                 print(f"Failed to add user to Firestore: {e}")
             time.sleep(1)  # Small delay to ensure session state is updated before rerunning
