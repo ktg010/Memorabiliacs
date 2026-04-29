@@ -18,9 +18,8 @@ from firebase_admin import credentials, storage
 import os
 import ast
 from BackendMethods.translations import _
-# from BackendMethods.auth_functions import access_secret_version
 
-# # from BackendMethods.auth_functions import access_secret_version
+# from BackendMethods.auth_functions import access_secret_version
 # st.secrets = access_secret_version()
 
 BASE_API_URL = "https://apitcg.com/api"
