@@ -135,12 +135,33 @@ else:
     def viewItem(item, index):
         global viewing_flag
         if viewing_flag:
-            ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
-            note = st.text_input("Item Note", value=ref.get().to_dict()["items"][item].get('notes'), key="notes")
-            if st.button("Save"):
-                backEnd.update_notes(item, note, db)
-                viewing_flag = False
-                st.rerun()
+            if coll_type == "Custom":
+                new_info = {}
+                itemVals = items[item]['info']["items"][list(items[item]['info']['items'].keys())[index]]
+                custom_name = itemVals["Name"]
+                with st_yled.badge_card_one(
+                    title=f"Edit {custom_name}",text="",badge_text="Attributes",width="stretch",badge_color="primary",background_color=gfuncs.read_config_val("backgroundColor"),card_shadow=True,border_style="solid",border_color=gfuncs.read_config_val("textColor"),border_width=1, key=f'Edit {item}'):
+                    for key in itemVals:
+                        if views[key]:
+                            value = st.text_input(f"**{key}**:", value=itemVals[key], key=f"{item}_{key}")
+                            new_info[key] = value
+                    if st.button(_("Save Changes")):
+                        st.session_state.editItem = False
+                        backEnd.get_collection_items.clear(backEnd.CURR_COLL)
+                        db.collection('Custom').document(backEnd.CURR_COLL).update({f"items.{itemVals['Name']}": new_info})
+                        st.session_state.viewItemPopup = False
+                        st.rerun()
+                    if st.button(_("Cancel")):
+                        st.session_state.editItem = False
+                        st.session_state.viewItemPopup = False
+                        st.rerun()
+            else:
+                ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
+                note = st.text_input("Item Note", value=ref.get().to_dict()["items"][item].get('notes'), key="notes")
+                if st.button("Save"):
+                    backEnd.update_notes(item, note, db)
+                    viewing_flag = False
+                    st.rerun()
         else:
             field_text = ""
             if items[item]['info'].get("items"):
