@@ -66,7 +66,7 @@ def get_firestore_client():
 @st.cache_resource
 def get_cloud_storage():
      """Cached Cloud Storage client to avoid repeated authentication."""
-     firebase_admin.initialize_app(credentials.Certificate(ast.literal_eval(st.secrets["firebase"])), {'storageBucket': "memorabiliacs-ec1bd.firebasestorage.app"})
+     firebase_admin.initialize_app(credentials.Certificate(dict(st.secrets["firebase"])), {'storageBucket': "memorabiliacs-ec1bd.firebasestorage.app"})
      return storage.bucket()
 
 
