@@ -230,9 +230,11 @@ def page_initialization(user_data_dict:dict):
             if st_yled.button(_("Home"), key="home_button"):
                 backEnd.set_collection("")
                 backEnd.set_sub_collection("")
+                backEnd.get_template_types.clear()
                 st.switch_page("pages/home_page.py")
         with st.container(horizontal_alignment="right", vertical_alignment="top"):
             if st_yled.button(_("Search"), key="search_button"):
+                backEnd.get_template_types.clear()
                 st.switch_page("pages/search.py")
 
 def base_theme_threshold(hex_num:str) -> str:
@@ -285,6 +287,66 @@ def apply_collectionpage_css():
 
 def apply_settingspage_css():
     pass
+
+def apply_collectionpage_icon_animation(key:str):
+    st.html(
+        f"""
+        <script>
+            (() => {{
+                console.log('Icon Script running...');
+
+                fetch('app/static/anime.min.js')
+                    .then(response => response.text())
+                    .then(jsCode => {{
+                        eval(jsCode);
+                        waitForMarty(20);
+
+                        const icon = window.parent.document.querySelector('.st-key-{key}');
+                        if (icon) {{
+                            anime({{
+                                targets: icon,
+                                translateX: [0, 10, 0],
+                                translateY: [0, -10, 0],
+                                duration: 1500,
+                                easing: 'easeInOutQuad'
+                            }});
+                        }} else {{
+                            console.warn('Icon not found: .st-key-{key}');
+                        }}
+                    }})
+                    .catch(err => console.error('Fetch failed:', err));
+            }})();
+            </script>""", unsafe_allow_javascript=True)
+
+def apply_collection_icon_animation(key:str):
+    st.html(
+        f"""
+        <script>
+            (() => {{
+                console.log('Icon Script running...');
+
+                fetch('app/static/anime.min.js')
+                    .then(response => response.text())
+                    .then(jsCode => {{
+                        eval(jsCode);
+                        waitForMarty(20);
+
+                        const icon = window.parent.document.querySelector('.st-key-{key}');
+                        if (icon) {{
+                            anime({{
+                                targets: icon,
+                                translateX: [0, 10, 0],
+                                translateY: [0, -10, 0],
+                                duration: 1500,
+                                easing: 'easeInOutQuad'
+                            }});
+                        }} else {{
+                            console.warn('Icon not found: .st-key-{key}');
+                        }}
+                    }})
+                    .catch(err => console.error('Fetch failed:', err));
+            }})();
+            </script>""", unsafe_allow_javascript=True)
 
 def apply_marty_animation():
     st.html(

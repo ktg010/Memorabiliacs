@@ -70,7 +70,7 @@ else:
                 new_image_URL = st.text_input(("URL of image to be used for background: "), value=ref.get().to_dict().get("settings").get("background"))
                 ref.update({"settings.hidden" : hidden})
             with rename:
-                st_yled.subheader(f"{_('Rename')} {coll["id"].split('_')[0]}?", text_alignment="center")
+                st_yled.text(f"{_('Rename')} {coll["id"].split('_')[0]}?", text_alignment="center", font_size="1.25rem")
                 coll_rename = st.text_input(" ")
             with st.container(horizontal=True, horizontal_alignment="right"):
                 if st.button(_("Save")):
@@ -140,7 +140,8 @@ else:
                         if gfuncs.removeCheck:
                             if st.checkbox(" ", key=f"remove_{collInfo[0]}", width="content"):
                                 removedCollections.append(doc['id'])
-                    with st_yled.image_card_one(title=f"{collInfo[0]}", image_path=gfuncs.THUMNAIL_URLS[collInfo[1]], text=f"**{_('Type')}: {collInfo[1]}**", background_color=gfuncs.read_config_val( "backgroundColor"), width=275, height=350, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+                    with st_yled.image_card_one(title=f"{collInfo[0]}", image_path=gfuncs.THUMNAIL_URLS[collInfo[1]], text=f"**{_('Type')}: {collInfo[1]}**", background_color=gfuncs.read_config_val( "backgroundColor"), width=275, height=350, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1, key=f"{collInfo[0]}_card"):
+                        gfuncs.apply_collection_icon_animation(f"{collInfo[0]}_card")
                         if st_yled.button(_("View Collection"), key=f"{collInfo[0]}_link", width="stretch"):
                             backEnd.set_collection(doc['id'])
                             st.switch_page(gfuncs.collection_page)
@@ -173,10 +174,10 @@ else:
         st.space("small")
         st.header(_("All Collections:"))
         for coll in fullCollections:
-            if st.button(f"{coll.split("_")[0]}", type="tertiary"):
+            if st.button(f"{coll.split("_")[0]}", type="tertiary", width="stretch"):
                 backEnd.set_collection(coll)
                 st.switch_page(gfuncs.collection_page)
-        st.space(500)
+        st.space("small")
         if st.button(icon=":material/settings:", label=_("Settings")):
             st.switch_page("pages/settings.py")
         gfuncs.apply_marty_animation()

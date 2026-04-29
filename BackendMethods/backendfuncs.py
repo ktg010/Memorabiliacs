@@ -16,9 +16,11 @@ from pyzbar import pyzbar
 import firebase_admin
 from firebase_admin import credentials, storage
 import os
+from BackendMethods.translations import _
+# from BackendMethods.auth_functions import access_secret_version
 
-from BackendMethods.auth_functions import access_secret_version
-st.secrets = access_secret_version()
+# # from BackendMethods.auth_functions import access_secret_version
+# st.secrets = access_secret_version()
 
 BASE_API_URL = "https://apitcg.com/api"
 APITCG_API_KEY = st.secrets["APITCG_API_KEY"]
@@ -339,6 +341,7 @@ def create_custom_collection(collection_name: str, collection_type: str, db):
     db.collection('Users').document(user_id).collection('Collections').document(fullName).set(baseInfo)
     get_user_collections.clear(user_id)
 
+@st.cache_data(ttl=3600)
 def get_template_types():
     """Fetch collection types, cached globally."""
     db = get_firestore_client()
@@ -349,7 +352,11 @@ def get_template_types():
         if key != "No Custom Template":
             tlist.append(key)
     if not tlist:
-        return ["No Custom Template"]
+        info = db.collection("Users").document(user_id).collection("Collections").document(CURR_COLL).get().to_dict().get("items", None)
+        if info != {} and info != None:
+             return ["UPC ITEMS"]
+        else:
+            return ["No Custom Template"]
     else:
         return tlist
 
@@ -895,7 +902,33 @@ def search_algolia(query: str, index_name: str, max_results: int = 10):
                     "image": getattr(hit, 'Image', None)
                 })
             return results
+        
+        elif index_name == "MagicSearchResults":
+            results = []
+            for hit in hits:
+                results.append({
+                    "id": getattr(hit, 'object_id', None),
+                    "name": getattr(hit, 'Name', None),
+                    "mana_cost": getattr(hit, 'Mana Cost', None),
+                    "type_line": getattr(hit, 'Type', None),
+                    "oracle_text": getattr(hit, 'Set', None),
+                    "image": getattr(hit, 'Image', None)
+                })
+            return results
 
+        elif index_name == "MusicSearchResults":
+            results = []
+            for hit in hits:
+                results.append({
+                    "id": getattr(hit, 'object_id', None),
+                    "name": getattr(hit, 'Name', None),
+                    "artist": getattr(hit, 'Artist', None),
+                    "release_year": getattr(hit, 'Year', None),
+                    "image": getattr(hit, 'Image', None),
+                    "format": getattr(hit, 'Format', None),
+                    "genre": getattr(hit, 'Genre', None)
+                })
+            return results
 
         else:
             return hits
@@ -915,11 +948,11 @@ def test_upc_api(upc_code: str):
     if 'items' in data and len(data['items']) > 0:
         item = data['items'][0]
         results = {
-            'name': item['title'],
-            'description': item['description'],
+            'Name': item['title'],
+            'Description': item['description'],
             # 'publisher': item.get('publisher', None) if item['publisher'] else None,
-            'ean': item['ean'],
-            'image': item['images'][0] if item['images'] else None, # Get the first image if available
+            'id': item['ean'],
+            'Image': item['images'][0] if item['images'] else None, # Get the first image if available
         }
     else:
         raise ValueError("No items found for the provided UPC code.")

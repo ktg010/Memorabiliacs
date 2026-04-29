@@ -35,6 +35,7 @@ else:
     st_yled.init()
     user_data_dict = backEnd.get_user_data(user_id)
     gfuncs.page_initialization(user_data_dict)
+    gfuncs.apply_homepage_css()
     collection = st.query_params
 
     if st.button("Back"):
@@ -66,7 +67,7 @@ else:
         else:
             st.error("Item is already in the collection")
 
-    st_yled.subheader(_("Search for Collectables!"), text_alignment="center")
+    st_yled.text(_("Search for Collectables!"), text_alignment="center", font_size="1.75rem")
     st.space("small")
     outer_cols = st.columns([1, 3, 1])
     with outer_cols[1]:
@@ -86,7 +87,7 @@ else:
         # Collection selector (right column) - list user's collections except DefaultCollection
         try:
             collections_docs = backEnd.get_user_collections(user_id)
-            collections = [doc['id'] for doc in collections_docs if not doc['id'].startswith("DefaultCollection")]
+            collections = [doc['id'] for doc in collections_docs if not doc['id'].startswith("DefaultCollection") and not doc.get('templates')]
             display_collections = [name.split("_")[0] for name in collections if name.split("_")[1]==search_type]
         except Exception:
             collections = []
@@ -180,31 +181,25 @@ else:
                                     item_id = upc_result.get("ean", upc_query)
                                     proper_id = str(item_id).replace("-", "_")
                                     #add UPC object to Custom collection in firestore
-                                    db.collection("Custom").document(proper_id).set(upc_result, merge=True)
-                                    backEnd.add_reference_search(proper_id, item_id, db)
                                     st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
-                                    st_yled.success(
-                                        _("Added '{item}' to your {collection} collection!").format(
-                                            item=upc_result.get("name", _("UPC Item")),
-                                            collection=backEnd.CURR_COLL.split("_")[0],
-                                        )
-                                    )
+                                    db.collection("Custom").document(proper_id).set(upc_result, merge=True)
+                                    add_item_to_coll(item_id, upc_result.get("Name", _("UPC Item")))
 
                                 with cols[0]:
-                                    if upc_result["image"]:
-                                        st.image(upc_result["image"], width="content")
+                                    if upc_result["Image"]:
+                                        st.image(upc_result["Image"], width="content")
                                     else:
                                         st.info(_("No image available for this item."))
-                                    with st_yled.badge_card_one(title=upc_result.get('name', _('No title')), text=f"\n**UPC: {upc_result.get('ean', '')}**", badge_text=_("UPC Result"), badge_color="primary",
+                                    with st_yled.badge_card_one(title=upc_result.get('Name', _('No title')), text=f"\n**UPC: {upc_result.get('id', '')}**", badge_text=_("UPC Result"), badge_color="primary",
                                                         background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, height="content", width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", 
                                                         border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
-                                        if upc_result["description"]:
-                                            st.write(f"{_('Description')}: {upc_result['description']}")
+                                        if upc_result["Description"]:
+                                            st.write(f"{_('Description')}: {upc_result['Description']}")
                                         # if upc_result["publisher"]:
                                         #     st.write(f"{_('Publisher')}: {upc_result['publisher']}")
-                                        st.write(f"{_('Item ean')}: {upc_result['ean']}")
+                                        st.write(f"{_('Item ean')}: {upc_result['id']}")
                                         if backEnd.CURR_COLL:
-                                            st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_upc_{upc_result['ean']}", on_click=add_upc_button, kwargs={"upc_result": upc_result})                           
+                                            st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_upc_{upc_result['id']}", on_click=add_upc_button, kwargs={"upc_result": upc_result})                           
 
                             except Exception as e:
                                 st_yled.error(f"{_('UPC search failed')}: {e}")
@@ -580,4 +575,3 @@ else:
 
             else:
                 st.info(_("Search functionality for this category is coming soon!"), width=1000)
-                print(search_type)

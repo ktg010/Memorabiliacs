@@ -4,6 +4,7 @@ import requests
 import streamlit as st
 import toml
 from BackendMethods.translations import _
+import time
 
 ## -------------------------------------------------------------------------------------------------
 ## Secrets Access --------------------------------------------------------------------------------
@@ -133,7 +134,7 @@ def sign_in(email: str, password: str, db) -> None:
                     user_ref.collection('Collections').document('DefaultCollection').set({'name': 'Default'})
             except Exception as e:
                 print(f"Failed to add user to Firestore: {e}")
-            
+            time.sleep(1)  # Small delay to ensure session state is updated before rerunning
             st.rerun()
 
     except requests.exceptions.HTTPError as error:

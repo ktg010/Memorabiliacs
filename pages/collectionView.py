@@ -132,7 +132,7 @@ else:
     
     @st.fragment
     @st.dialog("Item Info")
-    def viewItem(item):
+    def viewItem(item, index):
         global viewing_flag
         if viewing_flag:
             ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
@@ -143,28 +143,53 @@ else:
                 st.rerun()
         else:
             field_text = ""
-            with st_yled.badge_card_one(title=items[item]['info']["Name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
-                for key in items[item]['info'].keys():
-                    if key not in ("Name", "Image"):
-                        if views[key]:
-                            st.write(f"**{key}**: **{items[item]['info'][key]}**")
-                st.divider()
-                st.header("Personal Fields")
-                notes = items[item].get("notes")
-                if notes != "Enter notes here":
-                    st.write(f"Notes: {notes}")
-                else:
-                    st.write("Notes: ")
-                st.write(f"Number owned: {items[item].get("quantity")}")
-                st.divider()
-                if st.button("Edit Note"):
-                    viewing_flag = True
-                    st.rerun(scope="fragment")
-                if st.button(_("Remove From Collection")):
-                    st.audio(gfuncs.DEFAULT_SOUNDS["Delete"], autoplay=True, width=1, start_time=0)
-                    time.sleep(1)
-                    backEnd.delete_reference(item, db)
-                    st.rerun()
+            if items[item]['info'].get("items"):
+                custom_name = items[item]['info']["items"][list(items[item]['info']['items'].keys())[index]]["Name"]
+                with st_yled.badge_card_one(title=custom_name, text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+                    for key in items[item]['info']['items'][custom_name].keys():
+                        if key not in ("Name", "Image"):
+                            if views[key]:
+                                st.write(f"**{key}**: **{items[item]['info']['items'][custom_name][key]}**")
+                    st.divider()
+                    st.header("Personal Fields")
+                    notes = items[item].get("notes")
+                    if notes != "Enter notes here":
+                        st.write(f"Notes: {notes}")
+                    else:
+                        st.write("Notes: ")
+                    st.write(f"Number owned: {items[item].get('quantity')}")
+                    st.divider()
+                    if st.button("Edit Note"):
+                        viewing_flag = True
+                        st.rerun(scope="fragment")
+                    if st.button(_("Remove From Collection")):
+                        st.audio(gfuncs.DEFAULT_SOUNDS["Delete"], autoplay=True, width=1, start_time=0)
+                        time.sleep(1)
+                        backEnd.delete_reference(item, db)
+                        st.rerun()
+            else:
+                with st_yled.badge_card_one(title=items[item]['info']["Name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+                    for key in items[item]['info'].keys():
+                        if key not in ("Name", "Image"):
+                            if views[key]:
+                                st.write(f"**{key}**: **{items[item]['info'][key]}**")
+                    st.divider()
+                    st.header("Personal Fields")
+                    notes = items[item].get("notes")
+                    if notes != "Enter notes here":
+                        st.write(f"Notes: {notes}")
+                    else:
+                        st.write("Notes: ")
+                    st.write(f"Number owned: {items[item].get("quantity")}")
+                    st.divider()
+                    if st.button("Edit Note"):
+                        viewing_flag = True
+                        st.rerun(scope="fragment")
+                    if st.button(_("Remove From Collection")):
+                        st.audio(gfuncs.DEFAULT_SOUNDS["Delete"], autoplay=True, width=1, start_time=0)
+                        time.sleep(1)
+                        backEnd.delete_reference(item, db)
+                        st.rerun()
 
     @st.dialog("Create Sub Collection")
     def subColl():
@@ -244,16 +269,18 @@ else:
                         
             if st_yled.button(_("Create"), key="CreateKey"):
                 new_item_id = db.collection('Custom').document(backEnd.CURR_COLL)
-                db.collection('Custom').document(backEnd.CURR_COLL).update({
+                db.collection('Custom').document(backEnd.CURR_COLL).set({
                     "items": {name: attributes}
-                })
-                db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({
-                    f"items.{name}": {
-                        "notes": "Your notes here",
-                        "ref": new_item_id,
-                        'quantity' : quantity  # Default to 1 if quantity is not set   
-                        }
-                    })
+                }, merge=True)
+                db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).set({
+                    "items":
+                            {name: {
+                            "notes": "Your notes here",
+                            "ref": new_item_id,
+                            'quantity' : quantity  # Default to 1 if quantity is not set   
+                            }
+                            }
+                    }, merge=True)
                 st.session_state.createCustomItemPopup = False
                 backEnd.get_collection_items.clear(backEnd.CURR_COLL)
                 st.rerun()
@@ -270,7 +297,7 @@ else:
                             edit_collection(subCollection)
 
     st.space("large")
-    # all items
+    # all items for custom
     with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
         cols = st.columns(3, width="stretch") 
         for i, key in enumerate(items.keys()):
@@ -280,52 +307,90 @@ else:
             else: 
                 col = cols[1]
             curr_item = items[key]
-            with col.container(horizontal_alignment="center", vertical_alignment="center"):
-                if views["Name"]:
-                    st_yled.text(f"{curr_item['info'].get('Name', list(curr_item["info"]["items"].keys())[0])}", text_alignment="center", font_size="1.75rem")
+            if curr_item["info"].get("items"):
+                with col.container(horizontal_alignment="center", key=f"{key.replace(' ', '-')}_container"):
+                    if views["Name"]:
+                        st_yled.text(f"{curr_item['info'].get('Name', list(curr_item["info"]["items"].keys())[i])}", text_alignment="center", font_size="1.75rem")
 
-                if views["Image"]:
-                    if backEnd.CURR_COLL.split("_")[1] == "Custom":
-                        if curr_item["info"].get("items"):
-                            st.image(backEnd.get_cloud_storage_image(curr_item["info"]["items"][list(curr_item["info"]["items"].keys())[0]]["Image"]), width=200)
+                    if views["Image"]:
+                        if backEnd.CURR_COLL.split("_")[1] == "Custom":
+                            if curr_item["info"].get("items"):
+                                st.image(backEnd.get_cloud_storage_image(curr_item["info"]["items"][list(curr_item["info"]["items"].keys())[i]]["Image"]), width=200)
+                            else:
+                                #UPC Item
+                                st.image((curr_item["info"]["Image"]), width=200)
                         else:
-                             #UPC Item
-                            st.image((curr_item["info"]["Image"]), width=200)
-                    else:
-                        try:
-                            st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
-                        except Exception:
-                            st.image(curr_item["info"]["Image"], width=200)
+                            try:
+                                st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
+                            except Exception:
+                                st.image(curr_item["info"]["Image"], width=200)
 
-                if views["Quantity"]:
-                    st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
+                    if views["Quantity"]:
+                        st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
+                    
+                    if views["Notes"]:
+                        notes = curr_item.get("notes")
+                        if notes != "Enter notes here" and notes != "Your notes here":
+                            st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
+                        else:
+                            st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))    
+
+                    if st_yled.button("View More", key=f"{curr_item['info'].get('Name', key)}_{key}_view"):
+                        viewItem(key, i)
+                    gfuncs.apply_collectionpage_icon_animation(f"{key.replace(' ', '-')}_container")
+            else:
                 
-                if views["Notes"]:
-                    notes = curr_item.get("notes")
-                    if notes != "Enter notes here" and notes != "Your notes here":
-                        st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
-                    else:
-                        st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))    
+                with col.container(horizontal_alignment="center", key=f"{key}_container"):
+                    if views["Name"]:
+                        st_yled.text(f"{curr_item['info'].get('Name')}"[:15], text_alignment="center", font_size="1.75rem")
 
-                if st_yled.button("View More", key=f"{curr_item['info'].get('Name', key)}_{key}_view"):
-                    viewItem(key)
+                    if views["Image"]:
+                        if backEnd.CURR_COLL.split("_")[1] == "Custom":
+                            if curr_item["info"].get("items"):
+                                st.image(backEnd.get_cloud_storage_image(curr_item["info"]["items"][list(curr_item["info"]["items"].keys())[i]]["Image"]), width=200)
+                            else:
+                                #UPC Item
+                                st.image((curr_item["info"]["Image"]), width=200)
+                        else:
+                            try:
+                                st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
+                            except Exception:
+                                st.image(curr_item["info"]["Image"], width=200)
+
+                    if views["Quantity"]:
+                        st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
+                    
+                    if views["Notes"]:
+                        notes = curr_item.get("notes")
+                        if notes != "Enter notes here" and notes != "Your notes here":
+                            st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
+                        else:
+                            st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))
+                    
+
+                    if st_yled.button("View More", key=f"{curr_item["info"]["Name"]}_{key}_view"):
+                        viewItem(key, i)
+                    gfuncs.apply_collectionpage_icon_animation(f"{key}_container")
+                    st.space("medium")
     
     st.space("large")
-    st.divider()
-    st.subheader("Wishlisted Items", text_alignment="center")
-    with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
+    wishlist = backEnd.get_collection_wishlisted(backEnd.CURR_COLL)
+    if wishlist != {}:
+        st.divider()
+        st.subheader("Wishlisted Items", text_alignment="center")
         st.space("small")
-        wishCols = st.columns(3, width="stretch") 
-        wishlist = backEnd.get_collection_wishlisted(backEnd.CURR_COLL)
-        for i, key in enumerate(wishlist.keys()):
-            if view_mode == _("grid"):
-                col = wishCols[i % 3]
-            else: 
-                col = wishCols[1]
-            with col.container(horizontal_alignment="center"):
-                st.header(wishlist[key].get("Name"),text_alignment="center")
-                st.image(gfuncs.image_grayscale(wishlist[key].get("Image")))
-                st_yled.text(f"{key.replace("_", "-")}", text_alignment="center", font_size="1rem")
+        with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
+            st.space("small")
+            wishCols = st.columns(3, width="stretch") 
+            for i, key in enumerate(wishlist.keys()):
+                if view_mode == _("grid"):
+                    col = wishCols[i % 3]
+                else: 
+                    col = wishCols[1]
+                with col.container(horizontal_alignment="center"):
+                    st_yled.text(wishlist[key].get("Name"),text_alignment="center", font_size="1.75rem")
+                    st.image(gfuncs.image_grayscale(wishlist[key].get("Image")))
+                    st_yled.text(f"{key.replace("_", "-")}", text_alignment="center", font_size="1rem")
     
 
     # Container in bottom right for add button
@@ -337,9 +402,7 @@ else:
 
         if coll_type == "Custom":
             types = backEnd.get_template_types()
-            print(types)
-            if types:     
-                st.page_link(page="pages/search.py", label=_("Add Existing Item"), query_params=collection)
+            if types != ['UPC ITEMS']:     
                 template = st.selectbox(_("Type"), types, key="template_select")
                 if st_yled.button(_("New Custom Template"), key="NCT"):
                     createCustomTemplate()
@@ -355,6 +418,7 @@ else:
             st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
         
         if st.button("Create Sub Collection"):
+            backEnd.get_template_types.clear()
             subColl()
             
 # Uncomment below code to test GCS/firestore image upload and retrieval, leaving here for others to mess with as needed

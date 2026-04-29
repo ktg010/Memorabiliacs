@@ -12,7 +12,6 @@ import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 import st_yled
 
-
 #st.secrets = authFuncs.access_secret_version()
 # st_yled.init(css_path=".streamlit/st-styled.css")
 # st_yled.init(backEnd.CURR_THEME)
@@ -22,10 +21,8 @@ background_image = "https://gamewardbound.com/wp-content/uploads/2020/11/ikea-ka
 css = f'''
     <style>
         .stApp {{
-            background-image: linear-gradient(to top, {gfuncs.read_config_val( "textColor")}, transparent),
-            url({background_image});
+            background-image: url({background_image});
             background-size: cover;
-
         }}
         .stApp > header {{
             background-color: transparent;
