@@ -33,7 +33,7 @@ else:
     user_data_dict = backEnd.get_user_data(user_id)
     collections_docs = backEnd.get_user_collections(user_id)
     backEnd.set_collection("")
-    fullCollections = []
+    fullCollections = [doc['id'] for doc in collections_docs if doc['id'].split("_")[0] != "DefaultCollection"]
     removedCollections = []
     user_lang = user_data_dict.get('language', 'en')
     set_language(user_lang)
@@ -43,7 +43,18 @@ else:
     gfuncs.apply_homepage_css()
     # st_yled.init(css_path=backEnd.CURR_THEME)
 
-    # Set language from database
+    #Sidebar
+    with st.sidebar:
+        st.space("small")
+        st.header(_("All Collections:"))
+        for coll in fullCollections:
+            if st.button(f"{coll.split("_")[0]}", type="tertiary", width="stretch"):
+                backEnd.set_collection(coll)
+                st.switch_page(gfuncs.collection_page)
+        st.space("small")
+        if st.button(icon=":material/settings:", label=_("Settings")):
+            st.switch_page("pages/settings.py")
+        gfuncs.apply_marty_animation()
 
     ## -------------------------------------------------------------------------------------------------
     ## Main Page Setup ---------------------------------------------------------------------------------
@@ -170,16 +181,6 @@ else:
         #     for thing in test:
         #         print(f"{thing} : {test[thing].get("Name")}")
 
-    with st.sidebar:
-        st.space("small")
-        st.header(_("All Collections:"))
-        for coll in fullCollections:
-            if st.button(f"{coll.split("_")[0]}", type="tertiary", width="stretch"):
-                backEnd.set_collection(coll)
-                st.switch_page(gfuncs.collection_page)
-        st.space("small")
-        if st.button(icon=":material/settings:", label=_("Settings")):
-            st.switch_page("pages/settings.py")
-        gfuncs.apply_marty_animation()
+
 
 
