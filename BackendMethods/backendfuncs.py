@@ -16,6 +16,7 @@ from pyzbar import pyzbar
 import firebase_admin
 from firebase_admin import credentials, storage
 import os
+import ast
 from BackendMethods.translations import _
 # from BackendMethods.auth_functions import access_secret_version
 
@@ -65,7 +66,7 @@ def get_firestore_client():
 @st.cache_resource
 def get_cloud_storage():
      """Cached Cloud Storage client to avoid repeated authentication."""
-     firebase_admin.initialize_app(credentials.Certificate(st.secrets["firebase"]), {'storageBucket': "memorabiliacs-ec1bd.firebasestorage.app"})
+     firebase_admin.initialize_app(credentials.Certificate(ast.literal_eval(st.secrets["firebase"])), {'storageBucket': "memorabiliacs-ec1bd.firebasestorage.app"})
      return storage.bucket()
 
 
