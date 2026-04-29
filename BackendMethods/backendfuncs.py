@@ -15,9 +15,6 @@ from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 from pyzbar import pyzbar
 import firebase_admin
 from firebase_admin import credentials, storage
-import os
-import ast
-from BackendMethods.translations import _
 # from BackendMethods.auth_functions import access_secret_version
 
 # # from BackendMethods.auth_functions import access_secret_version
@@ -199,7 +196,7 @@ def get_collection_wishlisted(collection:str):
     data = coll_ref.get().to_dict().get("Wishlist", None)
 
     items = {}
-    if data != None:
+    if data is not None:
         for item in data:
             items[item] = data[item].get("ref").get().to_dict()
     return items
@@ -354,7 +351,7 @@ def get_template_types():
             tlist.append(key)
     if not tlist:
         info = db.collection("Users").document(user_id).collection("Collections").document(CURR_COLL).get().to_dict().get("items", None)
-        if info != {} and info != None:
+        if info != {} and info is not None:
              return ["UPC ITEMS"]
         else:
             return ["No Custom Template"]
@@ -1079,7 +1076,6 @@ def upload_user_image(uploaded_file, user_id: str, db, firestore_field: str = "p
     Returns blob_name.
     """
     bucket = get_cloud_storage()
-    ext = os.path.splitext(uploaded_file.name or "")[1].lower() or ".bin"
     blob_name = f"user_uploads/{user_id}/{uploaded_file.name}"
     blob = bucket.blob(blob_name)
 

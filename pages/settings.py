@@ -187,7 +187,7 @@ else:
                 sleep(0.25)
                 st.rerun()
     with st.popover(_("Background Image Settings")):
-        new_image_URL = st.text_input(("URL of image to be used for background: "), value=db_settings["backgroundImageURL"])
+        new_image_URL = st.text_input(_("URL of image to be used for background: "), value=db_settings["backgroundImageURL"])
 
         if st.checkbox(_("Display Background Image"), value=db_settings["backgroundImageFlag"], key="toggle_background"):
             newdb.collection("Users").document(user_id).set({"backgroundImageFlag" : True}, merge=True)

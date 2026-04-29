@@ -5,7 +5,6 @@ from BackendMethods.translations import _
 import st_yled
 import os
 import time
-import numpy as np
 
 
 # Connects to db
@@ -57,17 +56,17 @@ else:
         subRef = ref.collection("Sub Collections").document(sub)
         itemSettings, rename = st.columns([3,2])
         with itemSettings:
-            new_image_URL = st.text_input(("URL of image to be used for background: "), value=subRef.get().to_dict().get("settings").get("background"))
+            new_image_URL = st.text_input(_("URL of image to be used for background: "), value=subRef.get().to_dict().get("settings").get("background"))
             currSize = backEnd.get_sub_coll_size(sub, backEnd.CURR_COLL)
-            newSize = st.text_input("Change size of collection?", value=currSize)
+            newSize = st.text_input(_("Change size of collection?"), value=currSize)
             if newSize.isdigit():
                 if int(newSize) < currSize:
-                    st.warning("Cannot change size to be smaller than current size")
+                    st.warning(_("Cannot change size to be smaller than current size"))
                 elif int(newSize) > currSize:
                     subRef.update({"settings.size": int(newSize)})
             else:
-                st.warning("Size must be a whole number")
-            if st.button("Remove Sub Collection"):
+                st.warning(_("Size must be a whole number"))
+            if st.button(_("Remove Sub Collection")):
                 backEnd.delete_sub_collection(sub, backEnd.CURR_COLL)
                 st.rerun()
         with rename:
@@ -87,34 +86,34 @@ else:
                     st.rerun()
     
     @st.fragment
-    @st.dialog("Collection Setting")
+    @st.dialog(_("Collection Setting"))
     def viewCollSettings():
         global settings_page_flag
         if settings_page_flag:
-            st.header("Settings", text_alignment="center")
-            st.subheader("New page", text_alignment="center")
+            st.header(_("Settings"), text_alignment="center")
+            st.subheader(_("New page"), text_alignment="center")
             global ref
             view_mode = st.radio(_("Display mode"), [_("grid"), _("column")], horizontal=True)
             hidden = st.checkbox(_("Hide Collection"), value=ref.get().to_dict()['settings']['hidden'])
-            if st.button("Save"):
+            if st.button(_("Save")):
                 ref.update({"settings.hidden" : hidden})
                 ref.set({"settings" : {"collection view" : view_mode}}, merge=True)
                 st.rerun()
         else: 
-            st.header("Collection Views", text_alignment="center")
+            st.header(_("Collection Views"), text_alignment="center")
             with st.container(horizontal_alignment="center"):
-                st.subheader("Main Page View", text_alignment="center")
+                st.subheader(_("Main Page View"), text_alignment="center")
                 for name in ["Name", "Image", "Quantity" , "Notes"]:
                     st.checkbox(f"Hide {name}", key=name, value=(not views[name]))
                 st.divider()
 
-                st.subheader("Additional Data", text_alignment="center")
+                st.subheader(_("Additional Data"), text_alignment="center")
                 for view in views.keys():
                     if view not in ["Name", "Image", "Quantity" , "Notes"]:
                         st.checkbox(f"Hide {view}", key=view, value=(not views[view]))
 
             with st.container(horizontal_alignment="right"):
-                if st.button("Save"):
+                if st.button(_("Save")):
                     newViews = {}
                     for view in views.keys():
                         newViews[view] = not st.session_state[view]
@@ -131,7 +130,7 @@ else:
                 st.rerun(scope="fragment")
     
     @st.fragment
-    @st.dialog("Item Info")
+    @st.dialog(_("Item Info"))
     def viewItem(item, index):
         global viewing_flag
         if viewing_flag:
@@ -157,8 +156,8 @@ else:
                         st.rerun()
             else:
                 ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
-                note = st.text_input("Item Note", value=ref.get().to_dict()["items"][item].get('notes'), key="notes")
-                if st.button("Save"):
+                note = st.text_input(_("Item Note"), value=ref.get().to_dict()["items"][item].get('notes'), key="notes")
+                if st.button(_("Save")):
                     backEnd.update_notes(item, note, db)
                     viewing_flag = False
                     st.rerun()
@@ -172,15 +171,15 @@ else:
                             if views[key]:
                                 st.write(f"**{key}**: **{items[item]['info']['items'][custom_name][key]}**")
                     st.divider()
-                    st.header("Personal Fields")
+                    st.header(_("Personal Fields"))
                     notes = items[item].get("notes")
                     if notes != "Enter notes here":
                         st.write(f"Notes: {notes}")
                     else:
-                        st.write("Notes: ")
+                        st.write(_("Notes: "))
                     st.write(f"Number owned: {items[item].get('quantity')}")
                     st.divider()
-                    if st.button("Edit Note"):
+                    if st.button(_("Edit Note")):
                         viewing_flag = True
                         st.rerun(scope="fragment")
                     if st.button(_("Remove From Collection")):
@@ -195,15 +194,15 @@ else:
                             if views[key]:
                                 st.write(f"**{key}**: **{items[item]['info'][key]}**")
                     st.divider()
-                    st.header("Personal Fields")
+                    st.header(_("Personal Fields"))
                     notes = items[item].get("notes")
                     if notes != "Enter notes here":
                         st.write(f"Notes: {notes}")
                     else:
-                        st.write("Notes: ")
+                        st.write(_("Notes: "))
                     st.write(f"Number owned: {items[item].get("quantity")}")
                     st.divider()
-                    if st.button("Edit Note"):
+                    if st.button(_("Edit Note")):
                         viewing_flag = True
                         st.rerun(scope="fragment")
                     if st.button(_("Remove From Collection")):
@@ -212,11 +211,11 @@ else:
                         backEnd.delete_reference(item, db)
                         st.rerun()
 
-    @st.dialog("Create Sub Collection")
+    @st.dialog(_("Create Sub Collection"))
     def subColl():
-        name = st.text_input("Name your sub collection")
-        size = st.text_input("What is the size of the collection")
-        if st.button("Save"):
+        name = st.text_input(_("Name your sub collection"))
+        size = st.text_input(_("What is the size of the collection"))
+        if st.button(_("Save")):
             if size.isdigit():
                 backEnd.create_sub_collection(name, backEnd.CURR_COLL, size, db)
                 st.rerun()
@@ -224,22 +223,22 @@ else:
                 backEnd.create_sub_collection(name, backEnd.CURR_COLL, 999, db)
                 st.rerun()
             else:
-                st.error("Size needs to be a whole number")
+                st.error(_("Size needs to be a whole number"))
 
     st_yled.text(f"{backEnd.CURR_COLL.split('_')[0]}", text_alignment="center", font_size="1.75rem")
     with st.container(horizontal_alignment="right"):
-        if st.button("Collection Settings", icon=":material/settings:", type="tertiary"):
+        if st.button(_("Collection Settings"), icon=":material/settings:", type="tertiary"):
             settings_page_flag = False
             viewCollSettings()
 
-    @st.dialog("Template Info")
+    @st.dialog(_("Template Info"))
     def createCustomTemplate():
         template = ["Image", "Name"]
-        with st_yled.badge_card_one(title='Create Custom Template', text='', badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
-            tempName = st.text_input("Enter template name: ", value="here")
+        with st_yled.badge_card_one(title=_('Create Custom Template'), text='', badge_text=_("Attributes"), width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+            tempName = st.text_input(_("Enter template name: "), value="here")
             st.divider()
             for index in range(0,10):
-                value = (st.text_input("Enter attribute name: ", value="here", key=index))
+                value = (st.text_input(_("Enter attribute name: "), value="here", key=index))
                 if value != "here":
                     template.append(value.title())
         if st.button(_("Create Template"), key='CT'):
@@ -256,18 +255,18 @@ else:
         st.session_state.createCustomItemPopup = False
     # Make function give popup based on selected template with text inputs
     
-    @st.dialog("Item Info")
+    @st.dialog(_("Item Info"))
     def createCustomItem(template):
         attributes = {}
         db = backEnd.get_firestore_client()
         user_id = st.session_state.user_info["localId"]
         template = db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).get().to_dict()['templates'][template]
        
-        with st_yled.badge_card_one(title="Enter values", text='', badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
-            if ("name" in template) == False and ("Name" in template) == False:
-                name = st.text_input("Name", value="", key="force_name")
-            if ("quantity" in template) == False and ("Quantity" in template) == False:
-                quantity = st.text_input("Quantity", value=1, key="force_quantity") # value default to 1
+        with st_yled.badge_card_one(title=_("Enter values"), text='', badge_text=_("Attributes"), width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+            if "name" not in template and "Name" not in template:
+                name = st.text_input(_("Name"), value="", key="force_name")
+            if "quantity" not in template and "Quantity" not in template:
+                quantity = st.text_input(_("Quantity"), value=1, key="force_quantity") # value default to 1
             for i in range(len(template)):
                 attribute = st.text_input(_(template[i]), value="", key=i)
                 if template[i] == "name" or template[i] == "Name":
@@ -281,7 +280,7 @@ else:
                     if uploaded:
                         blob_name = backEnd.upload_user_image(uploaded, user_id, db)
                         attribute= blob_name
-                        st.success("Image uploaded.")
+                        st.success(_("Image uploaded."))
                         attribute = blob_name
                     else:
                         attribute = ''
@@ -354,9 +353,9 @@ else:
                         if notes != "Enter notes here" and notes != "Your notes here":
                             st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
                         else:
-                            st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))    
+                            st_yled.text(_("Enter notes here"), text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))    
 
-                    if st_yled.button("View More", key=f"{curr_item['info'].get('Name', key)}_{key}_view"):
+                    if st_yled.button(_("View More"), key=f"{curr_item['info'].get('Name', key)}_{key}_view"):
                         viewItem(key, i)
                     gfuncs.apply_collectionpage_icon_animation(f"{key.replace(' ', '-')}_container")
             else:
@@ -386,10 +385,10 @@ else:
                         if notes != "Enter notes here" and notes != "Your notes here":
                             st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
                         else:
-                            st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))
+                            st_yled.text(_("Enter notes here"), text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))
                     
 
-                    if st_yled.button("View More", key=f"{curr_item["info"]["Name"]}_{key}_view"):
+                    if st_yled.button(_("View More"), key=f"{curr_item["info"]["Name"]}_{key}_view"):
                         viewItem(key, i)
                     gfuncs.apply_collectionpage_icon_animation(f"{key}_container")
                     st.space("medium")
@@ -398,7 +397,7 @@ else:
     wishlist = backEnd.get_collection_wishlisted(backEnd.CURR_COLL)
     if wishlist != {}:
         st.divider()
-        st.subheader("Wishlisted Items", text_alignment="center")
+        st.subheader(_("Wishlisted Items"), text_alignment="center")
         st.space("small")
         with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
             st.space("small")
@@ -438,7 +437,7 @@ else:
         else:    
             st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
         
-        if st.button("Create Sub Collection"):
+        if st.button(_("Create Sub Collection")):
             backEnd.get_template_types.clear()
             subColl()
             

@@ -299,6 +299,158 @@ msgstr "Enregistrer"
 msgid "Collection name already exists"
 msgstr "Le nom de la collection existe déjà"
 
+#: pages/collectionView.py:59
+msgid "URL of image to be used for background: "
+msgstr "URL de l'image à utiliser comme arrière-plan : "
+
+#: pages/collectionView.py:61
+msgid "Change size of collection?"
+msgstr "Changer la taille de la collection ?"
+
+#: pages/collectionView.py:64
+msgid "Cannot change size to be smaller than current size"
+msgstr "Impossible de changer la taille pour qu'elle soit plus petite que la taille actuelle"
+
+#: pages/collectionView.py:68
+msgid "Size must be a whole number"
+msgstr "La taille doit être un nombre entier"
+
+#: pages/collectionView.py:69
+msgid "Remove Sub Collection"
+msgstr "Supprimer la sous-collection"
+
+#: pages/collectionView.py:89
+msgid "Collection Setting"
+msgstr "Paramètre de collection"
+
+#: pages/collectionView.py:93
+msgid "Settings"
+msgstr "Paramètres"
+
+#: pages/collectionView.py:94
+msgid "New page"
+msgstr "Nouvelle page"
+
+#: pages/collectionView.py:97
+msgid "Hide Collection"
+msgstr "Masquer la collection"
+
+#: pages/collectionView.py:103
+msgid "Collection Views"
+msgstr "Vues de collection"
+
+#: pages/collectionView.py:105
+msgid "Main Page View"
+msgstr "Vue de la page principale"
+
+#: pages/collectionView.py:110
+msgid "Additional Data"
+msgstr "Données supplémentaires"
+
+#: pages/collectionView.py:133
+msgid "Item Info"
+msgstr "Info article"
+
+#: pages/collectionView.py:159
+msgid "Item Note"
+msgstr "Note d'article"
+
+#: pages/collectionView.py:174
+msgid "Personal Fields"
+msgstr "Champs personnels"
+
+#: pages/collectionView.py:179
+msgid "Notes: "
+msgstr "Notes : "
+
+#: pages/collectionView.py:182
+msgid "Edit Note"
+msgstr "Modifier la note"
+
+#: pages/collectionView.py:214
+msgid "Create Sub Collection"
+msgstr "Créer une sous-collection"
+
+#: pages/collectionView.py:216
+msgid "Name your sub collection"
+msgstr "Nommez votre sous-collection"
+
+#: pages/collectionView.py:217
+msgid "What is the size of the collection"
+msgstr "Quelle est la taille de la collection"
+
+#: pages/collectionView.py:226
+msgid "Size needs to be a whole number"
+msgstr "La taille doit être un nombre entier"
+
+#: pages/collectionView.py:234
+msgid "Template Info"
+msgstr "Info modèle"
+
+#: pages/collectionView.py:238
+msgid "Enter template name: "
+msgstr "Entrez le nom du modèle : "
+
+#: pages/collectionView.py:241
+msgid "Enter attribute name: "
+msgstr "Entrez le nom de l'attribut : "
+
+#: pages/collectionView.py:237
+msgid "Create Custom Template"
+msgstr "Créer un modèle personnalisé"
+
+#: pages/collectionView.py:237
+msgid "Attributes"
+msgstr "Attributs"
+
+#: pages/collectionView.py:265
+msgid "Enter values"
+msgstr "Entrez les valeurs"
+
+#: pages/collectionView.py:267
+msgid "Name"
+msgstr "Nom"
+
+#: pages/collectionView.py:269
+msgid "Quantity"
+msgstr "Quantité"
+
+#: pages/collectionView.py:283
+msgid "Image uploaded."
+msgstr "Image téléchargée."
+
+#: pages/collectionView.py:356
+msgid "Enter notes here"
+msgstr "Entrez les notes ici"
+
+#: pages/collectionView.py:358
+msgid "View More"
+msgstr "Voir plus"
+
+#: pages/collectionView.py:400
+msgid "Wishlisted Items"
+msgstr "Articles en liste de souhaits"
+
+#: pages/collectionView.py:427
+msgid "New Custom Template"
+msgstr "Nouveau modèle personnalisé"
+
+#: pages/collectionView.py:430
+msgid "New Custom Item"
+msgstr "Nouvel article personnalisé"
+
+#: pages/collectionView.py:435
+msgid "Add to Collection"
+msgstr "Ajouter à la collection"
+
+#: pages/collectionView.py:230
+msgid "Collection Settings"
+msgstr "Paramètres de collection"
+
+#: pages/subCollView.py:46
+msgid "Back"
+msgstr "Retour"
+
 #: pages/home_page.py:100
 #: pages/home_page.py:142
 #: pages/search.py:427

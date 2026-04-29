@@ -299,6 +299,158 @@ msgstr "yIpol"
 msgid "Collection name already exists"
 msgstr "collection pong tu'lu'ta'"
 
+#: pages/collectionView.py:59
+msgid "URL of image to be used for background: "
+msgstr "URL of image to be used for background: "
+
+#: pages/collectionView.py:61
+msgid "Change size of collection?"
+msgstr "Change size of collection?"
+
+#: pages/collectionView.py:64
+msgid "Cannot change size to be smaller than current size"
+msgstr "Cannot change size to be smaller than current size"
+
+#: pages/collectionView.py:68
+msgid "Size must be a whole number"
+msgstr "Size must be a whole number"
+
+#: pages/collectionView.py:69
+msgid "Remove Sub Collection"
+msgstr "Remove Sub Collection"
+
+#: pages/collectionView.py:89
+msgid "Collection Setting"
+msgstr "Collection Setting"
+
+#: pages/collectionView.py:93
+msgid "Settings"
+msgstr "Settings"
+
+#: pages/collectionView.py:94
+msgid "New page"
+msgstr "New page"
+
+#: pages/collectionView.py:97
+msgid "Hide Collection"
+msgstr "Hide Collection"
+
+#: pages/collectionView.py:103
+msgid "Collection Views"
+msgstr "Collection Views"
+
+#: pages/collectionView.py:105
+msgid "Main Page View"
+msgstr "Main Page View"
+
+#: pages/collectionView.py:110
+msgid "Additional Data"
+msgstr "Additional Data"
+
+#: pages/collectionView.py:133
+msgid "Item Info"
+msgstr "Item Info"
+
+#: pages/collectionView.py:159
+msgid "Item Note"
+msgstr "Item Note"
+
+#: pages/collectionView.py:174
+msgid "Personal Fields"
+msgstr "Personal Fields"
+
+#: pages/collectionView.py:179
+msgid "Notes: "
+msgstr "Notes: "
+
+#: pages/collectionView.py:182
+msgid "Edit Note"
+msgstr "Edit Note"
+
+#: pages/collectionView.py:214
+msgid "Create Sub Collection"
+msgstr "Create Sub Collection"
+
+#: pages/collectionView.py:216
+msgid "Name your sub collection"
+msgstr "Name your sub collection"
+
+#: pages/collectionView.py:217
+msgid "What is the size of the collection"
+msgstr "What is the size of the collection"
+
+#: pages/collectionView.py:226
+msgid "Size needs to be a whole number"
+msgstr "Size needs to be a whole number"
+
+#: pages/collectionView.py:234
+msgid "Template Info"
+msgstr "Template Info"
+
+#: pages/collectionView.py:238
+msgid "Enter template name: "
+msgstr "Enter template name: "
+
+#: pages/collectionView.py:241
+msgid "Enter attribute name: "
+msgstr "Enter attribute name: "
+
+#: pages/collectionView.py:237
+msgid "Create Custom Template"
+msgstr "Create Custom Template"
+
+#: pages/collectionView.py:237
+msgid "Attributes"
+msgstr "Attributes"
+
+#: pages/collectionView.py:265
+msgid "Enter values"
+msgstr "Enter values"
+
+#: pages/collectionView.py:267
+msgid "Name"
+msgstr "Name"
+
+#: pages/collectionView.py:269
+msgid "Quantity"
+msgstr "Quantity"
+
+#: pages/collectionView.py:283
+msgid "Image uploaded."
+msgstr "Image uploaded."
+
+#: pages/collectionView.py:356
+msgid "Enter notes here"
+msgstr "Enter notes here"
+
+#: pages/collectionView.py:358
+msgid "View More"
+msgstr "View More"
+
+#: pages/collectionView.py:400
+msgid "Wishlisted Items"
+msgstr "Wishlisted Items"
+
+#: pages/collectionView.py:427
+msgid "New Custom Template"
+msgstr "New Custom Template"
+
+#: pages/collectionView.py:430
+msgid "New Custom Item"
+msgstr "New Custom Item"
+
+#: pages/collectionView.py:435
+msgid "Add to Collection"
+msgstr "Add to Collection"
+
+#: pages/collectionView.py:230
+msgid "Collection Settings"
+msgstr "Collection Settings"
+
+#: pages/subCollView.py:46
+msgid "Back"
+msgstr "Back"
+
 #: pages/home_page.py:100
 #: pages/home_page.py:142
 #: pages/search.py:427

@@ -299,6 +299,158 @@ msgstr "保存"
 msgid "Collection name already exists"
 msgstr "收藏名称已存在"
 
+#: pages/collectionView.py:59
+msgid "URL of image to be used for background: "
+msgstr "用作背景的图像URL： "
+
+#: pages/collectionView.py:61
+msgid "Change size of collection?"
+msgstr "更改收藏大小？"
+
+#: pages/collectionView.py:64
+msgid "Cannot change size to be smaller than current size"
+msgstr "无法将大小更改为小于当前大小"
+
+#: pages/collectionView.py:68
+msgid "Size must be a whole number"
+msgstr "大小必须是整数"
+
+#: pages/collectionView.py:69
+msgid "Remove Sub Collection"
+msgstr "删除子收藏"
+
+#: pages/collectionView.py:89
+msgid "Collection Setting"
+msgstr "收藏设置"
+
+#: pages/collectionView.py:93
+msgid "Settings"
+msgstr "设置"
+
+#: pages/collectionView.py:94
+msgid "New page"
+msgstr "新页面"
+
+#: pages/collectionView.py:97
+msgid "Hide Collection"
+msgstr "隐藏收藏"
+
+#: pages/collectionView.py:103
+msgid "Collection Views"
+msgstr "收藏视图"
+
+#: pages/collectionView.py:105
+msgid "Main Page View"
+msgstr "主页视图"
+
+#: pages/collectionView.py:110
+msgid "Additional Data"
+msgstr "附加数据"
+
+#: pages/collectionView.py:133
+msgid "Item Info"
+msgstr "物品信息"
+
+#: pages/collectionView.py:159
+msgid "Item Note"
+msgstr "物品备注"
+
+#: pages/collectionView.py:174
+msgid "Personal Fields"
+msgstr "个人字段"
+
+#: pages/collectionView.py:179
+msgid "Notes: "
+msgstr "备注： "
+
+#: pages/collectionView.py:182
+msgid "Edit Note"
+msgstr "编辑备注"
+
+#: pages/collectionView.py:214
+msgid "Create Sub Collection"
+msgstr "创建子收藏"
+
+#: pages/collectionView.py:216
+msgid "Name your sub collection"
+msgstr "命名你的子收藏"
+
+#: pages/collectionView.py:217
+msgid "What is the size of the collection"
+msgstr "收藏的大小是多少"
+
+#: pages/collectionView.py:226
+msgid "Size needs to be a whole number"
+msgstr "大小需要是整数"
+
+#: pages/collectionView.py:234
+msgid "Template Info"
+msgstr "模板信息"
+
+#: pages/collectionView.py:238
+msgid "Enter template name: "
+msgstr "输入模板名称： "
+
+#: pages/collectionView.py:241
+msgid "Enter attribute name: "
+msgstr "输入属性名称： "
+
+#: pages/collectionView.py:237
+msgid "Create Custom Template"
+msgstr "创建自定义模板"
+
+#: pages/collectionView.py:237
+msgid "Attributes"
+msgstr "属性"
+
+#: pages/collectionView.py:265
+msgid "Enter values"
+msgstr "输入值"
+
+#: pages/collectionView.py:267
+msgid "Name"
+msgstr "名称"
+
+#: pages/collectionView.py:269
+msgid "Quantity"
+msgstr "数量"
+
+#: pages/collectionView.py:283
+msgid "Image uploaded."
+msgstr "图像已上传。"
+
+#: pages/collectionView.py:356
+msgid "Enter notes here"
+msgstr "在此输入备注"
+
+#: pages/collectionView.py:358
+msgid "View More"
+msgstr "查看更多"
+
+#: pages/collectionView.py:400
+msgid "Wishlisted Items"
+msgstr "愿望清单物品"
+
+#: pages/collectionView.py:427
+msgid "New Custom Template"
+msgstr "新自定义模板"
+
+#: pages/collectionView.py:430
+msgid "New Custom Item"
+msgstr "新自定义物品"
+
+#: pages/collectionView.py:435
+msgid "Add to Collection"
+msgstr "添加到收藏"
+
+#: pages/collectionView.py:230
+msgid "Collection Settings"
+msgstr "收藏设置"
+
+#: pages/subCollView.py:46
+msgid "Back"
+msgstr "返回"
+
 #: pages/home_page.py:100
 #: pages/home_page.py:142
 #: pages/search.py:427

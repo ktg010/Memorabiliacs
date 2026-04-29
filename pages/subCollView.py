@@ -43,7 +43,7 @@ else:
     if background != "" and user_data_dict["backgroundImageFlag"]:
         gfuncs.apply_background_image(background, user_data_dict["gradientBool"])
 
-    if st.button("Back"):
+    if st.button(_("Back")):
         backEnd.set_sub_collection("")
         st.switch_page(gfuncs.collection_page)
 

@@ -78,7 +78,7 @@ else:
             with itemSettings:
                 ref = db.collection("Users").document(user_id).collection("Collections").document(coll["id"])
                 hidden = st.checkbox(_("Hide Collection"))
-                new_image_URL = st.text_input(("URL of image to be used for background: "), value=ref.get().to_dict().get("settings").get("background"))
+                new_image_URL = st.text_input(_("URL of image to be used for background: "), value=ref.get().to_dict().get("settings").get("background"))
                 ref.update({"settings.hidden" : hidden})
             with rename:
                 st_yled.text(f"{_('Rename')} {coll["id"].split('_')[0]}?", text_alignment="center", font_size="1.25rem")
