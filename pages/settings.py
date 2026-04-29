@@ -36,9 +36,11 @@ else:
     # Specifies the config file that will be read from and written to
     conf_file = os.path.join(os.path.dirname(__file__), '..',  '.streamlit', 'config.toml')
     #conf_file = ".streamlit/config.toml"
-
+    user_data_dict = backEnd.get_user_data(st.session_state.user_info["localId"])
     user_id = st.session_state.user_info["localId"]
-
+    gfuncs.apply_global_css()
+    if user_data_dict["backgroundImageFlag"] is True:
+        gfuncs.apply_background_image(user_data_dict["backgroundImageURL"], user_data_dict["gradientBool"])
     # Creates header with Home and Logout options
     # This is separate from the usual page initialization because settings 
     # does not need a link to settings and we instead want to logout from settings

@@ -28,10 +28,11 @@ THUMNAIL_URLS = {
     "Movies": os.path.join(thumbnails_path, "movies.jpeg"),
     "OnePiece": os.path.join(thumbnails_path, "luffy.jpeg"),
     "Custom": os.path.join(thumbnails_path, "barcode.jpeg"),
-    "Music": os.path.join(thumbnails_path, "vinyl.jpeg"),
     "Marty": os.path.join(thumbnails_path, "Marty.png"),
     "LegoSets": os.path.join(thumbnails_path, "legoFlat.png"),
-    "LegoMinifigs": os.path.join(thumbnails_path, "legoFlat.png")
+    "LegoMinifigs": os.path.join(thumbnails_path, "legoFlat.png"),
+    "Magic The Gathering": os.path.join(thumbnails_path, "Magic.png"),
+    "Music": os.path.join(thumbnails_path, "music.png")
 }
 
 DEFAULT_SOUNDS = {
@@ -133,6 +134,10 @@ def apply_global_css():
             .stApp > header {{
                 background-color: transparent;
             }}
+                
+            .stAppToolbar {{
+                background-color: {read_config_val( "backgroundColor")};
+            }}
 
             .stAudio {{
                 display: none;
@@ -152,7 +157,7 @@ def apply_global_css():
             # }}
 
             [data-testid="stHeadingWithActionElements"]:has(h1) {{
-                padding-left:20%;
+                padding-left:25%;
                 padding-right:25%;
             }}
 

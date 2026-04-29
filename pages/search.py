@@ -267,10 +267,12 @@ else:
 
                                 if not (app_id and search_key):
                                     raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
-
+                                hits = backEnd.search_algolia(movies_query, index_name="MovieSearchResults", max_results=10)
                             except Exception as e:
                                 st.error(f"{_('Algolia search failed')}: {e}")
                                 hits = []
+
+                    st.session_state["movies_results"] = hits
 
                     movie_results = st.session_state.get("movies_results", [])
                     if movie_results:
@@ -492,5 +494,90 @@ else:
                                         st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
                                 st.space("small")
 
+            elif search_type == "Magic The Gathering":
+                with st_yled.form(key="mtg_search_form", clear_on_submit=False):
+                    mtg_query = st_yled.text_input(_("Search for a Magic The Gathering card"))
+                    mtg_search_submitted = st_yled.form_submit_button(_("Search MTG Cards"))
+
+                if mtg_search_submitted:
+                    with st.spinner(_("Searching Magic The Gathering cards (Algolia)...")):
+                        try:
+                            algolia_conf = st.secrets.get("algolia", {})
+                            app_id = algolia_conf.get("app_id")
+                            search_key = algolia_conf.get("search_key")
+
+                            if not (app_id and search_key):
+                                raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
+
+                            hits = backEnd.search_algolia(mtg_query, index_name="MagicSearchResults", max_results=10)
+                        except Exception as e:
+                            st.error(f"{_('Algolia search failed')}: {e}")
+                            hits = []
+
+                    st.session_state["mtg_results"] = hits
+                    mtg_results = st.session_state.get("mtg_results", [])
+                    if mtg_results:
+                        st.markdown(_("### Top Magic The Gathering card results"))
+                        cols = st.columns(3)
+                        for idx, item in enumerate(mtg_results):
+                            with cols[idx % 3]:
+                                if item["image"]:
+                                    innercols = st.columns([0.5,4,0.5])
+                                    with innercols[1]:
+                                        st.image(gfuncs.get_image_from_URL(item["image"]), width="stretch")
+                                with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val( "backgroundColor"), 
+                                                    card_shadow=True, badge_text=_("MTG Card"), badge_color="primary", text=f"\n**ID: {item.get('id', '')}**",
+                                                    height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+                                    st_yled.write(f"**{_('Mana Cost')}: {item.get('mana_cost', 'N/A')}**")
+                                    st_yled.write(f"**{_('Type')}: {item.get('type_line', 'N/A')}**")
+                                    st_yled.write(f"**{_('Set')}: {item.get('rarity', 'N/A')}**")
+                                    if backEnd.CURR_COLL:
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
+            
+            elif search_type == "Music":
+                with st_yled.form(key="music_search_form", clear_on_submit=False):
+                    music_query = st_yled.text_input(_("Search for a music album"))
+                    music_search_submitted = st_yled.form_submit_button(_("Search Music"))
+
+                if music_search_submitted:
+                    with st.spinner(_("Searching for music albums...")):
+                        try:
+                            algolia_conf = st.secrets.get("algolia", {})
+                            app_id = algolia_conf.get("app_id")
+                            search_key = algolia_conf.get("search_key")
+
+                            if not (app_id and search_key):
+                                raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
+
+                            hits = backEnd.search_algolia(music_query, index_name="MusicSearchResults", max_results=10)
+                        except Exception as e:
+                            st.error(f"{_('Music search failed')}: {e}")
+                            hits = []
+
+                    st.session_state["music_results"] = hits
+                    music_results = st.session_state.get("music_results", [])
+                    if music_results:
+                        st.markdown(_("### Top music album results"))
+                        cols = st.columns(3)
+                        for idx, item in enumerate(music_results):
+                            with cols[idx % 3]:
+                                if item.get("image"):
+                                    innercols = st.columns([0.5,4,0.5])
+                                    with innercols[1]:
+                                        st.image(item["image"], width="stretch")
+                                with st_yled.badge_card_one(title=item.get('name', _('No name')), background_color=gfuncs.read_config_val( "backgroundColor"), 
+                                                    card_shadow=True, badge_text=_("Music Album"), badge_color="primary", text=f"\n**ID: {item.get('id', '')}**",
+                                                    height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+                                    st_yled.write(f"**{_('Artist')}: {item.get('artist', 'N/A')}**")
+                                    st_yled.write(f"**{_('Release Year')}: {item.get('release_year', 'N/A')}**")
+                                    st_yled.write(f"**{_('Genre')}: {item.get('genre', 'N/A')}**")
+                                    st_yled.write(f"**{_('Format')}: {item.get('format', 'N/A')}**")
+                                    if backEnd.CURR_COLL:
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
+
+
             else:
                 st.info(_("Search functionality for this category is coming soon!"), width=1000)
+                print(search_type)

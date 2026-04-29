@@ -92,7 +92,7 @@ else:
                 col = cols[i % 3]
                 curr_item = fullItems[key]
                 with col.container(horizontal_alignment="center"):
-                    st_yled.subheader(f"{curr_item['info'].get('Name')}", text_alignment="center")
+                    st_yled.text(f"{curr_item['info'].get('Name')}", text_alignment="center", font_size="1.75rem")
                     if key not in itemsToAdd:
                         itemsToAdd[key] = 0
 
@@ -152,7 +152,7 @@ else:
                 st.rerun()
 
 
-    st.subheader(backEnd.SUB_COLL, text_alignment="center")
+    st_yled.text(f"{backEnd.SUB_COLL}", text_alignment="center", font_size="1.75rem")
 
     with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
         cols = st.columns(3, width="stretch") 
@@ -165,7 +165,7 @@ else:
             curr_item = items[key]
             with col.container(horizontal_alignment="center"):
                 if views["Name"]:
-                    st_yled.subheader(f"{curr_item['info'].get('Name')}", text_alignment="center")
+                    st_yled.text(f"{curr_item['info'].get('Name')}", text_alignment="center", font_size="1.75rem")
 
                 if views["Image"]:
                     if backEnd.CURR_COLL.split("_")[1] == "Custom":
@@ -186,6 +186,7 @@ else:
                     else:
                         st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))
                 
+
                 if st_yled.button("View More", key=f"{curr_item["info"]["Name"]}_{key}_view"):
                     viewItem(key)
                 st.space("medium")

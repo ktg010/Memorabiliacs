@@ -282,16 +282,20 @@ else:
             curr_item = items[key]
             with col.container(horizontal_alignment="center", vertical_alignment="center"):
                 if views["Name"]:
-                    st_yled.text(f"{curr_item['info'].get('Name')}", text_alignment="center", font_size="1.75rem")
+                    st_yled.text(f"{curr_item['info'].get('Name', list(curr_item["info"]["items"].keys())[0])}", text_alignment="center", font_size="1.75rem")
 
                 if views["Image"]:
                     if backEnd.CURR_COLL.split("_")[1] == "Custom":
-                        if curr_item["info"]["Image"] is not (None or ""):
-                            st.image(backEnd.get_cloud_storage_image(curr_item["info"]["Image"]), width=200)
+                        if curr_item["info"].get("items"):
+                            st.image(backEnd.get_cloud_storage_image(curr_item["info"]["items"][list(curr_item["info"]["items"].keys())[0]]["Image"]), width=200)
                         else:
-                            st.image(gfuncs.THUMNAIL_URLS["Custom"], width=200)
+                             #UPC Item
+                            st.image((curr_item["info"]["Image"]), width=200)
                     else:
-                        st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
+                        try:
+                            st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
+                        except Exception:
+                            st.image(curr_item["info"]["Image"], width=200)
 
                 if views["Quantity"]:
                     st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
@@ -302,8 +306,8 @@ else:
                         st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
                     else:
                         st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))    
-                    
-                if st_yled.button("View More", key=f"{curr_item['info']['Name']}_{key}_view"):
+
+                if st_yled.button("View More", key=f"{curr_item['info'].get('Name', key)}_{key}_view"):
                     viewItem(key)
     
     st.space("large")
@@ -332,17 +336,21 @@ else:
         }
 
         if coll_type == "Custom":
-            types = backEnd.get_template_types()     
-            template = st.selectbox(_("Type"), types) 
-            
-            st.page_link(page="pages/search.py", label=_("Add Existing Item"), query_params=collection)
-            if st_yled.button(_("New Custom Template"), key="NCT"):
-                createCustomTemplate()
-            # Make function to display list of templates
-            if st_yled.button(_("New Custom Item"), key="NCI"):
-                st.session_state.createCustomItemPopup = True
-            if st.session_state.createCustomItemPopup == True:
-                createCustomItem(template)
+            types = backEnd.get_template_types()
+            print(types)
+            if types:     
+                st.page_link(page="pages/search.py", label=_("Add Existing Item"), query_params=collection)
+                template = st.selectbox(_("Type"), types, key="template_select")
+                if st_yled.button(_("New Custom Template"), key="NCT"):
+                    createCustomTemplate()
+                # Make function to display list of templates
+                if st_yled.button(_("New Custom Item"), key="NCI"):
+                    st.session_state.createCustomItemPopup = True
+                if st.session_state.createCustomItemPopup:
+                    createCustomItem(template)
+            else:    
+                st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
+
         else:    
             st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
         
