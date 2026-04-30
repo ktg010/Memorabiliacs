@@ -231,25 +231,35 @@ else:
             settings_page_flag = False
             viewCollSettings()
 
+    num_of_fields = 0
+    @st.fragment
     @st.dialog(_("Template Info"))
     def createCustomTemplate():
+        global num_of_fields
         template = ["Image", "Name"]
-        with st_yled.badge_card_one(title=_('Create Custom Template'), text='', badge_text=_("Attributes"), width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
-            tempName = st.text_input(_("Enter template name: "), value="here")
-            st.divider()
-            for index in range(0,10):
-                value = (st.text_input(_("Enter attribute name: "), value="here", key=index))
-                if value != "here":
-                    template.append(value.title())
-        if st.button(_("Create Template"), key='CT'):
-            # Make Template arrays in both locations
-            db.collection('Custom').document(backEnd.CURR_COLL).update({f"templates.{tempName}" : template})
-            for key in template:
-                db.collection('Custom').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
-                db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
-            db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f"templates.{tempName}": template})
-            backEnd.get_template_types.clear()
-            st.rerun()
+        if num_of_fields == 0:
+            with st_yled.badge_card_one(title=_('Create Custom Template'), text='', badge_text=_("Attributes"), width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+                num_of_fields = st.number_input(_("Enter number of attributes: "), value=num_of_fields, key="numoffields")
+                if st.button(_("Create"), key='Create'):
+                    st.rerun(scope='fragment')
+        elif num_of_fields > 0:
+            with st_yled.badge_card_one(title=_('Create Custom Template'), text='', badge_text=_("Attributes"), width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+                tempName = st.text_input(_("Enter template name: "), value="here")
+                st.divider()
+                for index in range(0,num_of_fields):
+                    value = (st.text_input(_("Enter attribute name: "), value="here", key=index))
+                    if value != "here" and value != "Name" and value != "name":
+                        template.append(value.title())
+            if st.button(_("Create Template"), key='CT'):
+                # Make Template arrays in both locations
+                db.collection('Custom').document(backEnd.CURR_COLL).update({f"templates.{tempName}" : template})
+                for key in template:
+                    db.collection('Custom').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
+                    db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f'settings.views.{key}': 'True'})
+                db.collection('Users').document(user_id).collection('Collections').document(backEnd.CURR_COLL).update({f"templates.{tempName}": template})
+                backEnd.get_template_types.clear()
+                num_of_fields = 0
+                st.rerun()
     
     if "createCustomItemPopup" not in st.session_state:
         st.session_state.createCustomItemPopup = False

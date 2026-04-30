@@ -16,8 +16,6 @@ from pyzbar import pyzbar
 import firebase_admin
 from firebase_admin import credentials, storage
 # from BackendMethods.auth_functions import access_secret_version
-
-# # from BackendMethods.auth_functions import access_secret_version
 # st.secrets = access_secret_version()
 
 BASE_API_URL = "https://apitcg.com/api"
