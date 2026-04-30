@@ -424,13 +424,17 @@ else:
             types = backEnd.get_template_types()
             if types != ['UPC ITEMS']:     
                 template = st.selectbox(_("Type"), types, key="template_select")
+                print(template)
                 if st_yled.button(_("New Custom Template"), key="NCT"):
                     createCustomTemplate()
                 # Make function to display list of templates
                 if st_yled.button(_("New Custom Item"), key="NCI"):
                     st.session_state.createCustomItemPopup = True
                 if st.session_state.createCustomItemPopup:
-                    createCustomItem(template)
+                    if template != "No Custom Template":
+                        createCustomItem(template)
+                    else:
+                        st.warning(_("Please select (or create) a template to create an item"))
             else:    
                 st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
 
