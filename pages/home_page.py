@@ -64,7 +64,7 @@ else:
     st_yled.init()
     with st.container( horizontal_alignment="center"):
         st_yled.text(f"{_('Your Collections')}", text_alignment="center", font_size="1.75rem")
-        st_yled.text(f"{_('Hello')}, {st.session_state.user_info['email'].split('@')[0]}!", text_alignment="center", font_size="1.25rem")
+        st_yled.text(f"{_('Hello')}, {st.session_state.user_info['email']}!", text_alignment="center", font_size="1rem")
         # DEGUB:{st.session_state.user_info}
     st.space("small")
 

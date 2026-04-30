@@ -12,7 +12,7 @@ import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 import st_yled
 
-#st.secrets = authFuncs.access_secret_version()
+st.secrets = authFuncs.access_secret_version()
 # st_yled.init(css_path=".streamlit/st-styled.css")
 # st_yled.init(backEnd.CURR_THEME)
 st_yled.init()

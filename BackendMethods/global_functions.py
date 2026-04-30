@@ -148,6 +148,10 @@ def apply_global_css():
                 background-color: {read_config_val( "backgroundColor")};
             }}
 
+            button[aria-label="Fullscreen"] {{
+                display: none !important;
+            }}
+
             .stHeading {{
                 border-radius: 15px;
             }}
@@ -276,6 +280,9 @@ def apply_collectionpage_css():
                 width: 200px;
             }}
             
+            button[aria-label="Fullscreen"] {{
+                display: none !important;
+            }}
 
             h3 {{
                 color: {read_config_val( "textColor")};
