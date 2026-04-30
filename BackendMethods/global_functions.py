@@ -100,32 +100,50 @@ def db_settings_to_config(user_data_dict:dict):
 def apply_background_image(background_image_url:str, gradient_bool:bool) -> None:
     # valid_url_response = requests.head(background_image_url)
     # if valid_url_response.headers.get('Content-Type', '').startswith('image/'):
-    if gradient_bool:
-        css = f'''
+    
+    if "user_uploads" in background_image_url:
+        background_image_url = backEnd.get_cloud_storage_image(background_image_url)
+        st.markdown(
+            f"""
             <style>
-                .stApp {{
-                    background-image: linear-gradient(to top, {read_config_val("textColor")}, transparent),
-                    url({background_image_url});
-                    background-size: cover;
-                    background-color: {read_config_val( "backgroundColor")};
-                    color: {read_config_val( "textColor")} !important;
-                    font-family: {read_config_val( "font")};
-                }}
+            .stApp {{
+                background-image: url("{background_image_url}");
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }}
             </style>
-            '''
+            """,
+            unsafe_allow_html=True
+        )
     else:
-        css = f'''
-            <style>
-                .stApp {{
-                    background-image: url({background_image_url});
-                    background-size: cover;
-                    background-color: {read_config_val( "backgroundColor")};
-                    color: {read_config_val( "textColor")} !important;
-                    font-family: {read_config_val( "font")};
-                }}
-            </style>
-            '''
-    st.markdown(css, unsafe_allow_html=True)
+        if gradient_bool:
+            css = f'''
+                <style>
+                    .stApp {{
+                        background-image: linear-gradient(to top, {read_config_val("textColor")}, transparent),
+                        url({background_image_url});
+                        background-size: cover;
+                        background-color: {read_config_val( "backgroundColor")};
+                        color: {read_config_val( "textColor")} !important;
+                        font-family: {read_config_val( "font")};
+                    }}
+                </style>
+                '''
+        else:
+            css = f'''
+                <style>
+                    .stApp {{
+                        background-image: url({background_image_url});
+                        background-size: cover;
+                        background-color: {read_config_val( "backgroundColor")};
+                        color: {read_config_val( "textColor")} !important;
+                        font-family: {read_config_val( "font")};
+                    }}
+                </style>
+                '''
+        st.markdown(css, unsafe_allow_html=True)
 
 
 def apply_global_css():
