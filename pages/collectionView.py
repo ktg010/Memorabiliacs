@@ -142,11 +142,10 @@ else:
                 with st_yled.badge_card_one(
                     title=f"Edit {custom_name}",text="",badge_text="Attributes",width="stretch",badge_color="primary",background_color=gfuncs.read_config_val("backgroundColor"),card_shadow=True,border_style="solid",border_color=gfuncs.read_config_val("textColor"),border_width=1, key=f'Edit {item}'):
                     if backEnd.CURR_COLL.split("_")[1] != "Custom":
-                            if curr_item["info"].get("items"):
-                                try:
-                                    st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
-                                except Exception:
-                                    st.image(curr_item["info"]["Image"], width=200)
+                        try:
+                            st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
+                        except Exception:
+                            st.image(curr_item["info"]["Image"], width="stretch")
                     for key in itemVals:
                         if views[key]:
                             value = st.text_input(f"**{key}**:", value=itemVals[key], key=f"{item}_{key}")
