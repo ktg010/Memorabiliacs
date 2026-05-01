@@ -189,7 +189,7 @@ def apply_global_css():
             }}
 
             h1 {{
-                color: {read_config_val( "textColor")};
+                color: {read_config_val( "textColor")} !important;
                 background-color: {read_config_val( "backgroundColor")};
                 border-radius: 15px;
             }}
@@ -202,6 +202,15 @@ def apply_global_css():
             }}
 
             .stText span{{
+                color: {read_config_val( "textColor")} !important;
+            }}
+
+            h3 {{
+                color: {read_config_val( "textColor")} !important;
+
+            }}
+
+            span{{
                 color: {read_config_val( "textColor")} !important;
             }}
 
