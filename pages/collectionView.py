@@ -141,11 +141,6 @@ else:
                 custom_name = itemVals["Name"]
                 with st_yled.badge_card_one(
                     title=f"Edit {custom_name}",text="",badge_text="Attributes",width="stretch",badge_color="primary",background_color=gfuncs.read_config_val("backgroundColor"),card_shadow=True,border_style="solid",border_color=gfuncs.read_config_val("textColor"),border_width=1, key=f'Edit {item}'):
-                    if backEnd.CURR_COLL.split("_")[1] != "Custom":
-                        try:
-                            st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
-                        except Exception:
-                            st.image(curr_item["info"]["Image"], width="stretch")
                     for key in itemVals:
                         if views[key]:
                             value = st.text_input(f"**{key}**:", value=itemVals[key], key=f"{item}_{key}")
@@ -172,6 +167,10 @@ else:
             if items[item]['info'].get("items"):
                 custom_name = items[item]['info']["items"][list(items[item]['info']['items'].keys())[index]]["Name"]
                 with st_yled.badge_card_one(title=custom_name, text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+                    try:
+                        st.image(gfuncs.get_image_from_URL(items[item]['info']["Image"]), width=200)
+                    except Exception:
+                        st.image(items[item]['info']["Image"], width="stretch")
                     for key in items[item]['info']['items'][custom_name].keys():
                         if key not in ("Name", "Image"):
                             if views[key]:
