@@ -56,7 +56,8 @@ else:
         subRef = ref.collection("Sub Collections").document(sub)
         itemSettings, rename = st.columns([3,2])
         with itemSettings:
-            new_image_URL = st.text_input(_("URL of image to be used for background: "), value=subRef.get().to_dict().get("settings").get("background"))
+            background = subRef.get().to_dict().get("settings").get("background")
+            new_image_URL = st.text_input(_("URL of image to be used for background: "), value=background)
             currSize = backEnd.get_sub_coll_size(sub, backEnd.CURR_COLL)
             newSize = st.text_input(_("Change size of collection?"), value=currSize)
             if newSize.isdigit():
@@ -140,6 +141,12 @@ else:
                 custom_name = itemVals["Name"]
                 with st_yled.badge_card_one(
                     title=f"Edit {custom_name}",text="",badge_text="Attributes",width="stretch",badge_color="primary",background_color=gfuncs.read_config_val("backgroundColor"),card_shadow=True,border_style="solid",border_color=gfuncs.read_config_val("textColor"),border_width=1, key=f'Edit {item}'):
+                    if backEnd.CURR_COLL.split("_")[1] != "Custom":
+                            if curr_item["info"].get("items"):
+                                try:
+                                    st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
+                                except Exception:
+                                    st.image(curr_item["info"]["Image"], width=200)
                     for key in itemVals:
                         if views[key]:
                             value = st.text_input(f"**{key}**:", value=itemVals[key], key=f"{item}_{key}")
