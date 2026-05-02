@@ -5,6 +5,7 @@ from BackendMethods.translations import _
 from BackendMethods.translations import set_language
 import st_yled
 import os
+from time import sleep
 # Connects to db
 try:
     db = backEnd.get_firestore_client()
@@ -50,6 +51,7 @@ else:
         for coll in fullCollections:
             if st.button(f"{coll.split("_")[0]}", type="tertiary", width="stretch"):
                 backEnd.set_collection(coll)
+                sleep(0.5)
                 st.switch_page(gfuncs.collection_page)
         st.space("small")
         if st.button(icon=":material/settings:", label=_("Settings")):
@@ -155,6 +157,7 @@ else:
                         gfuncs.apply_collection_icon_animation(f"{collInfo[0].replace(' ', '')}_card")
                         if st_yled.button(_("View Collection"), key=f"{collInfo[0].replace(' ', '')}_link", width="stretch"):
                             backEnd.set_collection(doc['id'])
+                            sleep(0.5)
                             st.switch_page(gfuncs.collection_page)
                         st_yled.space("small")
                         if st_yled.button(_("Edit"), key=f"edit_{collInfo[0].replace(' ', '')}", width="stretch"):

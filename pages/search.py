@@ -44,6 +44,7 @@ else:
             backEnd.set_sub_collection("")
             st.switch_page(gfuncs.home_page)
         else:
+            sleep(0.5)
             st.switch_page(gfuncs.collection_page)
     
     @st.dialog("Add to Collection")

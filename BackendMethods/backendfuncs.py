@@ -835,10 +835,10 @@ def search_algolia(query: str, index_name: str, max_results: int = 10):
             for hit in hits:
                 results.append({
                     "id": getattr(hit, 'object_id', None),
-                    "name": getattr(hit, 'name', None),
-                    "release_date": getattr(hit, 'release_date', None),
-                    "overview": getattr(hit, 'overview', None),
-                    "image": getattr(hit, 'image', None)
+                    "name": getattr(hit, 'Name', None),
+                    "release_date": getattr(hit, 'Release Date', None),
+                    "overview": getattr(hit, 'Overview', None),
+                    "image": getattr(hit, 'Image', None)
                 })
             return results
         
@@ -847,9 +847,9 @@ def search_algolia(query: str, index_name: str, max_results: int = 10):
             for hit in hits:
                 results.append({
                     "id": getattr(hit, 'object_id', None),
-                    "name": getattr(hit, 'name', None),
-                    "power": getattr(hit, 'power', None),
-                    "image": getattr(hit, 'image', None)
+                    "name": getattr(hit, 'Name', None),
+                    "power": getattr(hit, 'Power', None),
+                    "image": getattr(hit, 'Image', None)
                 })
             return results
         
@@ -858,9 +858,9 @@ def search_algolia(query: str, index_name: str, max_results: int = 10):
             for hit in hits:
                 results.append({
                     "id": getattr(hit, 'object_id', None),
-                    "name": getattr(hit, 'name', None),
-                    "cardType": getattr(hit, 'cardType', None),
-                    "image": getattr(hit, 'image', None)
+                    "name": getattr(hit, 'Name', None),
+                    "cardType": getattr(hit, 'Card Type', None),
+                    "image": getattr(hit, 'Image', None)
                 })
             return results
         
@@ -869,10 +869,10 @@ def search_algolia(query: str, index_name: str, max_results: int = 10):
             for hit in hits:
                 results.append({
                     "id": getattr(hit, 'object_id', None),
-                    "name": getattr(hit, 'name', None),
-                    "type": getattr(hit, 'type', None),
-                    "image": getattr(hit, 'image', None),
-                    "rarity": getattr(hit, 'rarity', None)
+                    "name": getattr(hit, 'Name', None),
+                    "type": getattr(hit, 'Type', None),
+                    "image": getattr(hit, 'Image', None),
+                    "rarity": getattr(hit, 'Rarity', None)
                 })
             return results
         
