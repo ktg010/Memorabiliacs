@@ -220,7 +220,7 @@ else:
                             if not (app_id and search_key):
                                 raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
 
-                            hits = backEnd.search_algolia(pokemon_query, index_name="PokemonSearchResults", max_results=10)
+                            hits = backEnd.search_algolia(pokemon_query, index_name="PokemonSearchResults", max_results=20)
                         except Exception as e:
                             st.error(f"{_('Algolia search failed')}: {e}")
                             hits = []
@@ -263,7 +263,7 @@ else:
 
                                 if not (app_id and search_key):
                                     raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
-                                hits = backEnd.search_algolia(movies_query, index_name="MovieSearchResults", max_results=10)
+                                hits = backEnd.search_algolia(movies_query, index_name="MovieSearchResults", max_results=20)
                             except Exception as e:
                                 st.error(f"{_('Algolia search failed')}: {e}")
                                 hits = []
@@ -303,7 +303,7 @@ else:
                 if lego_search_submitted:
                     with st.spinner(_("Searching for Lego sets (Algolia)...")):
                         try:
-                            results = backEnd.search_algolia(lego_query, index_name="LegoSetSearchResults", max_results=10)
+                            results = backEnd.search_algolia(lego_query, index_name="LegoSetSearchResults", max_results=20)
                         except Exception as e:
                             st.error(f"{_('Lego search failed')}: {e}")
                             results = []
@@ -339,7 +339,7 @@ else:
                 if minifig_search_submitted:
                     with st.spinner(_("Searching for Lego minifigs (Algolia)...")):
                         try:
-                            results = backEnd.search_algolia(minifig_query, index_name="LegoMinifigSearchResults", max_results=10)
+                            results = backEnd.search_algolia(minifig_query, index_name="LegoMinifigSearchResults", max_results=20)
                         except Exception as e:
                             st.error(f"{_('Lego minifig search failed')}: {e}")
                             results = []
@@ -380,7 +380,7 @@ else:
                             if not (app_id and search_key):
                                 raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
 
-                            hits = backEnd.search_algolia(dbz_query, index_name="DragonballSearchResults", max_results=10)
+                            hits = backEnd.search_algolia(dbz_query, index_name="DragonballSearchResults", max_results=20)
                         except Exception as e:
                             st.error(f"{_('Algolia search failed')}: {e}")
                             hits = []
@@ -421,7 +421,7 @@ else:
                             if not (app_id and search_key):
                                 raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
 
-                            hits = backEnd.search_algolia(digimon_query, index_name="DigimonSearchResults", max_results=10)
+                            hits = backEnd.search_algolia(digimon_query, index_name="DigimonSearchResults", max_results=20)
                         except Exception as e:
                             st.error(f"{_('Algolia search failed')}: {e}")
                             hits = []
@@ -464,7 +464,7 @@ else:
                             if not (app_id and search_key):
                                 raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
 
-                            hits = backEnd.search_algolia(onepiece_query, index_name="OnepieceSearchResults", max_results=10)
+                            hits = backEnd.search_algolia(onepiece_query, index_name="OnepieceSearchResults", max_results=20)
                         except Exception as e:
                             st.error(f"{_('Algolia search failed')}: {e}")
                             hits = []
@@ -505,7 +505,7 @@ else:
                             if not (app_id and search_key):
                                 raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
 
-                            hits = backEnd.search_algolia(mtg_query, index_name="MagicSearchResults", max_results=10)
+                            hits = backEnd.search_algolia(mtg_query, index_name="MagicSearchResults", max_results=20)
                         except Exception as e:
                             st.error(f"{_('Algolia search failed')}: {e}")
                             hits = []
@@ -546,7 +546,7 @@ else:
                             if not (app_id and search_key):
                                 raise ValueError("Algolia credentials (app_id, search_key, index_name) missing in Streamlit secrets")
 
-                            hits = backEnd.search_algolia(music_query, index_name="MusicSearchResults", max_results=10)
+                            hits = backEnd.search_algolia(music_query, index_name="MusicSearchResults", max_results=20)
                         except Exception as e:
                             st.error(f"{_('Music search failed')}: {e}")
                             hits = []
