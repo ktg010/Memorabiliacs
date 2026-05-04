@@ -83,7 +83,7 @@ else:
                 new_image_URL = st.text_input(_("URL of image to be used for background: "), value=ref.get().to_dict().get("settings").get("background"))
                 ref.update({"settings.hidden" : hidden})
             with rename:
-                st_yled.text(f"{_('Rename')} {coll["id"].split('_')[0]}?", text_alignment="center", font_size="1.25rem")
+                st_yled.write(f"{_('Rename')} {coll["id"].split('_')[0]}?") #, text_alignment="center", font_size="1.25rem")
                 coll_rename = st.text_input(" ")
             with st.container(horizontal=True, horizontal_alignment="right"):
                 if st.button(_("Save")):
@@ -153,7 +153,26 @@ else:
                         if gfuncs.removeCheck:
                             if st.checkbox(" ", key=f"remove_{collInfo[0].replace(' ', '')}", width="content"):
                                 removedCollections.append(doc['id'])
-                    with st_yled.image_card_one(title=f"{collInfo[0]}", image_path=gfuncs.THUMNAIL_URLS[collInfo[1]], text=f"**{_('Type')}: {collInfo[1]}**", background_color=gfuncs.read_config_val( "backgroundColor"), width=275, height=350, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1, key=f"{collInfo[0].replace(' ', '')}_card"):
+                    # with st_yled.image_card_one(title=f"{collInfo[0]}", image_path=gfuncs.THUMNAIL_URLS[collInfo[1]], text=f"**{_('Type')}: {collInfo[1]}**", background_color=gfuncs.read_config_val( "backgroundColor"), width=275, height=350, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1, key=f"{collInfo[0].replace(' ', '')}_card"):
+                    with st_yled.image_card_one(
+                                                title=f"{collInfo[0]}",
+                                                image_path=gfuncs.THUMNAIL_URLS[collInfo[1]],
+                                                text=f"**{_('Type')}: {collInfo[1]}**",
+                                                background_color=gfuncs.read_config_val("backgroundColor"),
+                                                width=275,
+                                                height=350,
+                                                border_style="solid",
+                                                border_color=gfuncs.read_config_val("textColor"),
+                                                border_width=1,
+                                                card_shadow=True,                                        # adds drop shadow
+                                                title_font_size=18,                                      # larger title
+                                                title_font_weight="bold",
+                                                title_color=gfuncs.read_config_val("textColor"),         # explicit title color
+                                                text_font_size=13,                                       # smaller type label
+                                                text_font_weight="normal",
+                                                text_color=gfuncs.read_config_val("textColor"),          # explicit text color
+                                                key=f"{collInfo[0].replace(' ', '')}_card"
+                                            ):
                         gfuncs.apply_collection_icon_animation(f"{collInfo[0].replace(' ', '')}_card")
                         if st_yled.button(_("View Collection"), key=f"{collInfo[0].replace(' ', '')}_link", width="stretch"):
                             backEnd.set_collection(doc['id'])

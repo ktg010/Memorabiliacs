@@ -168,14 +168,17 @@ else:
             if items[item]['info'].get("items"):
                 custom_name = items[item]['info']["items"][list(items[item]['info']['items'].keys())[index]]["Name"]
                 with st_yled.badge_card_one(title=custom_name, text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
-                    # try:
-                    #     st.image(gfuncs.get_image_from_URL(items[item]['info']["Image"]), width=200)
-                    # except Exception:
-                    #     st.image(items[item]['info']["Image"], width="stretch")
+                    dataframe_dict = {}
                     for key in items[item]['info']['items'][custom_name].keys():
                         if key not in ("Name", "Image"):
                             if views[key]:
-                                st.write(f"**{key}**: **{items[item]['info']['items'][custom_name][key]}**")
+                                if isinstance(items[item]['info']['items'][custom_name][key], list):
+                                        dataframe_dict[key] = "".join(str(items[item]['info']['items'][custom_name][key])).replace("[", "").replace("]", "").replace("{", "").replace("}", "\n").replace(",", "\n")
+                                elif isinstance(items[item]['info']['items'][custom_name][key], dict):
+                                        dataframe_dict[key] = "".join(str(items[item]['info']['items'][custom_name][key])).replace("{", "").replace("}", "\n").replace(",", "\n")
+                                else:
+                                    dataframe_dict[key] = items[item]['info']['items'][custom_name][key]
+                    st.dataframe(dataframe_dict, height=500, width="stretch", row_height=(500//len(dataframe_dict)) if len(dataframe_dict) > 0 else 500)
                     st.divider()
                     st.header(_("Personal Fields"))
                     notes = items[item].get("notes")
@@ -195,13 +198,20 @@ else:
                         st.rerun()
             else:
                 with st_yled.badge_card_one(title=items[item]['info']["Name"], text=field_text, badge_text="Attributes", width="stretch", badge_color="primary", background_color=gfuncs.read_config_val( "backgroundColor"), card_shadow=True, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+                    dataframe_dict = {}
                     for key in items[item]['info'].keys():
                         if key not in ("Name", "Image", 'id'):
                             if coll_type == "Custom":
-                                st.write(f"**{key}**: **{items[item]['info'][key]}**")
+                                dataframe_dict[key] = items[item]['info'][key]
                             else:
                                 if views[key]:
-                                    st.write(f"**{key}**: **{items[item]['info'][key]}**")
+                                    if isinstance(items[item]['info'][key], list):
+                                        dataframe_dict[key] = "".join(str(items[item]['info'][key])).replace("[", "").replace("]", "").replace("{", "").replace("}", "\n").replace(",", "\n")
+                                    elif isinstance(items[item]['info'][key], dict):
+                                        dataframe_dict[key] = "".join(str(items[item]['info'][key])).replace("{", "").replace("}", "\n").replace(",", "\n")
+                                    else:
+                                        dataframe_dict[key] = items[item]['info'][key]
+                    st.dataframe(dataframe_dict, height=500, width="stretch", row_height=(500//len(dataframe_dict)) if len(dataframe_dict) > 0 else 500)
                     st.divider()
                     st.header(_("Personal Fields"))
                     notes = items[item].get("notes")

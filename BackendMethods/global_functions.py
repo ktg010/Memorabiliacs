@@ -162,15 +162,48 @@ def apply_background_image(background_image_url:str, background_image_flag:bool,
             pass
 
 
+def apply_homepage_css():
+    bg = read_config_val("backgroundColor")
+    text = read_config_val("textColor")
+    
+    st.markdown(f"""
+        <style>
+            /* ── Frosted overlay behind card grid ── */
+            [data-testid="stVerticalBlock"]:has([class*="_card"]) {{
+                background: color-mix(in srgb, {bg} 40%, transparent 60%);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                border-radius: 15px;
+                padding: 20px;
+            }}
+
+            /* ── Existing homepage layout ── */
+            .stElementContainer:has(.stText) {{
+                padding-left: 40%;
+                padding-right: 40%;
+            }}
+
+            .stText {{
+                width: 250px;
+            }}
+        </style>
+    """, unsafe_allow_html=True)
+
+
 def apply_global_css():
+    bg = read_config_val("backgroundColor")
+    text = read_config_val("textColor")
+    font = read_config_val("font").split(":")[0]
+
     st.markdown(f"""
         <style>
             .stApp > header {{
                 background-color: transparent;
             }}
-                
+
             .stAppToolbar {{
-                background-color: {read_config_val( "backgroundColor")};
+                background-color: {bg};
+                border-bottom: 2px solid {text};
             }}
 
             .stAudio {{
@@ -178,8 +211,8 @@ def apply_global_css():
             }}
 
             .stPageLink {{
-                color: {read_config_val( "textColor")};
-                background-color: {read_config_val( "backgroundColor")};
+                color: {text};
+                background-color: {bg};
             }}
 
             button[aria-label="Fullscreen"] {{
@@ -190,59 +223,70 @@ def apply_global_css():
                 border-radius: 15px;
             }}
 
-            # .stElementContainer:has(.stHeading > h1) {{
-
-            # }}
-
             [data-testid="stHeadingWithActionElements"]:has(h1) {{
-                padding-left:25%;
-                padding-right:25%;
+                padding-left: 25%;
+                padding-right: 25%;
             }}
 
             .stSidebar {{
-                color: {read_config_val( "textColor")} !important;
-                background-color: {read_config_val( "backgroundColor")};
+                color: {text} !important;
+                background-color: {bg};
+                border-right: solid {text};
+            }}
+
+            [data-testid="stSidebarHeader"] {{
+                margin-bottom: -50px !important;
+                height: 50px !important;
+            }}
+
+            /* ── Sidebar hover effect ── */
+            .stSidebar [data-testid="stPageLink"] {{
+                margin-bottom: 4px;
+                border-radius: 10px;
+                transition: background-color 0.2s;
+            }}
+
+            .stSidebar [data-testid="stPageLink"]:hover {{
+                background-color: color-mix(in srgb, {bg} 70%, white 30%) !important;
             }}
 
             h1 {{
-                color: {read_config_val( "textColor")} !important;
-                background-color: {read_config_val( "backgroundColor")};
+                color: {text} !important;
+                background-color: {bg};
                 border-radius: 15px;
             }}
 
-            .stText{{
-                background-color: {read_config_val( "backgroundColor")};
+            .stText {{
+                background-color: {bg};
                 border-radius: 15px;
-                font-family: {read_config_val( "font")};
+                font-family: {font};
                 font-weight: bolder;
             }}
 
-            .stText span{{
-                color: {read_config_val( "textColor")} !important;
+            .stText span {{
+                color: {text} !important;
             }}
 
             h3 {{
-                color: {read_config_val( "textColor")} !important;
-
+                color: {text} !important;
             }}
 
-            span{{
-                color: {read_config_val( "textColor")} !important;
+            span {{
+                color: {text} !important;
             }}
-
-            
 
             p {{
-                color: {read_config_val( "textColor")};
+                color: {text};
             }}
 
             button {{
-                background-color: {read_config_val( "backgroundColor")} !important;
-                font-family: {read_config_val( "font")};
-                border: 2px solid {read_config_val( "textColor")} !important;
+                background-color: {bg} !important;
+                font-family: {font};
+                border: 2px solid {text} !important;
                 border-radius: 15px;
             }}
-        </style>""", unsafe_allow_html=True)
+        </style>
+    """, unsafe_allow_html=True)
 
 # Sets the page width, title, and buttons for home, search, settings
 # To be used at the start of any page
@@ -291,21 +335,21 @@ def base_theme_threshold(hex_num:str) -> str:
     return "dark" if brightness >= 128 else "light"
 
 
-def apply_homepage_css():
-    st.markdown("""
-                <style>
+# def apply_homepage_css():
+#     st.markdown("""
+#                 <style>
                 
-                .stElementContainer:has(.stText) {
-                    padding-left:40%;
-                    padding-right:40%;
-                }
+#                 .stElementContainer:has(.stText) {
+#                     padding-left:40%;
+#                     padding-right:40%;
+#                 }
                 
-                .stText {
-                    width: 250px;
-                }
+#                 .stText {
+#                     width: 250px;
+#                 }
                 
-                </style>
-                """, unsafe_allow_html=True)
+#                 </style>
+#                 """, unsafe_allow_html=True)
 
   
 
