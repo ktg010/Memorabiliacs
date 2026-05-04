@@ -352,9 +352,9 @@ def apply_collectionpage_css():
     st.markdown(f"""
             <style>
             
-            .stElementContainer:has(.stText) {{
-                padding-left: calc(50% - 100px);
-                padding-right: calc(50% - 100px);
+            /* ── Frosted overlay behind card grid ── */
+            [data-testid="stVerticalBlock"]:has([class*="_card"]) {{
+                scrollbar-width: none !important; /* Firefox */
             }}
 
             .stText {{
@@ -369,6 +369,25 @@ def apply_collectionpage_css():
                 color: {read_config_val( "textColor")};
                 background-color: {read_config_val( "backgroundColor")};
                 border-radius: 15px;
+            }}
+
+            [data-testid="stImageContainer"] {{
+                display: flex;
+                justify-content: center;
+            }}
+
+            [data-testid="stFullScreenFrame"] {{
+                    display: flex !important;
+                    justify-content: center !important;
+            }}
+
+            img {{
+                height: 35vh !important;
+                width: auto !important;
+            }}
+            .stElementContainer:has(.stText) {{
+                padding-left: 40%;
+                padding-right: 40%;
             }}
             </style>
             """, unsafe_allow_html=True)

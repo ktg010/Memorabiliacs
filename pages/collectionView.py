@@ -335,7 +335,7 @@ else:
     with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
         for subCollection in backEnd.get_sub_collections(backEnd.CURR_COLL):
             with st.container(width="content", horizontal_alignment="center"):
-                with st_yled.image_card_one(title=f"{subCollection}", image_path=gfuncs.THUMNAIL_URLS[coll_type], text=f"**{_('Type')}: {coll_type}**", background_color=gfuncs.read_config_val( "backgroundColor"), width=250, height=350, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
+                with st_yled.badge_card_one(badge_text="Sub Collection", title=f"{subCollection}", text=f"**{_('Type')}: {coll_type}**", background_color=gfuncs.read_config_val( "backgroundColor"), width=250, height=350, border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
                     if st_yled.button(_("View Collection"), border_width=5, key=f"{subCollection}_link", width="stretch"):
                         backEnd.set_sub_collection(subCollection)
                         st.switch_page(gfuncs.sub_coll_page)
@@ -343,7 +343,7 @@ else:
                             edit_collection(subCollection)
 
     st.space("large")
-    # all items for custom
+    # all items
     with st.container(horizontal=True, horizontal_alignment="center", width="stretch"):
         cols = st.columns(3, width="stretch") 
         for i, key in enumerate(items.keys()):
@@ -356,68 +356,102 @@ else:
             if curr_item["info"].get("items"):
                 with col.container(horizontal_alignment="center", key=f"{key.replace(' ', '-')}_container"):
                     if views["Name"]:
-                        st_yled.text(f"{curr_item['info'].get('Name', list(curr_item["info"]["items"].keys())[i])}", text_alignment="center", font_size="1.75rem")
-
+                        name = f"{curr_item['info'].get('Name', list(curr_item["info"]["items"].keys())[i])}"
                     if views["Image"]:
                         if backEnd.CURR_COLL.split("_")[1] == "Custom":
                             if curr_item["info"].get("items"):
-                                st.image(backEnd.get_cloud_storage_image(curr_item["info"]["items"][list(curr_item["info"]["items"].keys())[i]]["Image"]), width=200)
+                                image = backEnd.get_cloud_storage_image(curr_item["info"]["items"][list(curr_item["info"]["items"].keys())[i]]["Image"])
                             else:
                                 #UPC Item
-                                st.image((curr_item["info"]["Image"]), width=200)
+                                image = curr_item["info"]["Image"]
                         else:
                             try:
-                                st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
+                                image = gfuncs.get_image_from_URL(curr_item["info"]["Image"])
                             except Exception:
-                                st.image(curr_item["info"]["Image"], width=200)
+                                image = curr_item["info"]["Image"]
 
                     if views["Quantity"]:
-                        st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
+                        quantity = f"x{curr_item.get("quantity")}"
                     
                     if views["Notes"]:
                         notes = curr_item.get("notes")
-                        if notes != "Enter notes here" and notes != "Your notes here":
-                            st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
-                        else:
-                            st_yled.text(_("Enter notes here"), text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))    
-
-                    if st_yled.button(_("View More"), key=f"{curr_item['info'].get('Name', key)}_{key}_view"):
-                        viewItem(key, i)
-                    gfuncs.apply_collectionpage_icon_animation(f"{key.replace(' ', '-')}_container")
+                        # if notes != "Enter notes here" and notes != "Your notes here":
+                        #     st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
+                        # else:
+                        #     st_yled.text(_("Enter notes here"), text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))    
+                    with st_yled.image_card_one(
+                                                    title=f"{name}",
+                                                    image_path=image,
+                                                    text=f"**Notes:** {notes} | **Quantity:** {quantity}",
+                                                    background_color=gfuncs.read_config_val("backgroundColor"),
+                                                    width=275,
+                                                    height="content",
+                                                    border_style="solid",
+                                                    border_color=gfuncs.read_config_val("textColor"),
+                                                    border_width=1,
+                                                    card_shadow=True,                                        # adds drop shadow
+                                                    title_font_size=18,                                      # larger title
+                                                    title_font_weight="bold",
+                                                    title_color=gfuncs.read_config_val("textColor"),         # explicit title color
+                                                    text_font_size=13,                                       # smaller type label
+                                                    text_font_weight="normal",
+                                                    text_color=gfuncs.read_config_val("textColor"),          # explicit text color
+                                                    key=f"{key.replace(' ', '-')}_card"
+                                                ):
+                        if st_yled.button(_("View More"), key=f"{curr_item['info'].get('Name', key)}_{key}_view", width="stretch"):
+                            viewItem(key, i)
+                        gfuncs.apply_collectionpage_icon_animation(f"{key.replace(' ', '-')}_card")
+                    st.space("medium")
             else:
                 
                 with col.container(horizontal_alignment="center", key=f"{key}_container"):
                     if views["Name"]:
-                        st_yled.text(f"{curr_item['info'].get('Name')}"[:15], text_alignment="center", font_size="1.75rem")
+                        name = curr_item['info'].get('Name')
 
                     if views["Image"]:
                         if backEnd.CURR_COLL.split("_")[1] == "Custom":
                             if curr_item["info"].get("items"):
-                                st.image(backEnd.get_cloud_storage_image(curr_item["info"]["items"][list(curr_item["info"]["items"].keys())[i]]["Image"]), width=200)
+                                image = backEnd.get_cloud_storage_image(curr_item["info"]["items"][list(curr_item["info"]["items"].keys())[i]]["Image"])
                             else:
                                 #UPC Item
-                                st.image((curr_item["info"]["Image"]), width=200)
+                                image = curr_item["info"]["Image"]
                         else:
                             try:
-                                st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
+                                image = gfuncs.get_image_from_URL(curr_item["info"]["Image"])
                             except Exception:
-                                st.image(curr_item["info"]["Image"], width=200)
+                                image = curr_item["info"]["Image"]
 
                     if views["Quantity"]:
-                        st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
+                        quantity = f"x{curr_item.get('quantity')}"
                     
                     if views["Notes"]:
                         notes = curr_item.get("notes")
-                        if notes != "Enter notes here" and notes != "Your notes here":
-                            st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
-                        else:
-                            st_yled.text(_("Enter notes here"), text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))
-                    
 
-                    if st_yled.button(_("View More"), key=f"{curr_item["info"]["Name"]}_{key}_view"):
-                        viewItem(key, i)
-                    gfuncs.apply_collectionpage_icon_animation(f"{key}_container")
+                    with st_yled.image_card_one(
+                                                    title=f"{name}",
+                                                    image_path=image,
+                                                    text=f"**Notes:** {notes} | **Quantity:** {quantity}",
+                                                    background_color=gfuncs.read_config_val("backgroundColor"),
+                                                    width=275,
+                                                    height="content",
+                                                    border_style="solid",
+                                                    border_color=gfuncs.read_config_val("textColor"),
+                                                    border_width=1,
+                                                    card_shadow=True,                                        # adds drop shadow
+                                                    title_font_size=18,                                      # larger title
+                                                    title_font_weight="bold",
+                                                    title_color=gfuncs.read_config_val("textColor"),         # explicit title color
+                                                    text_font_size=13,                                       # smaller type label
+                                                    text_font_weight="normal",
+                                                    text_color=gfuncs.read_config_val("textColor"),          # explicit text color
+                                                    key=f"{key.replace(' ', '-')}_card"
+                                                ):
+                        if st_yled.button(_("View More"), key=f"{curr_item["info"]["Name"]}_{key}_view", width="stretch"):
+                            viewItem(key, i)
+                        gfuncs.apply_collectionpage_icon_animation(f"{key}_card")
                     st.space("medium")
+            #st.space("small")
+        st.space("medium")
     
     st.space("large")
     wishlist = backEnd.get_collection_wishlisted(backEnd.CURR_COLL)

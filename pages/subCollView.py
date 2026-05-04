@@ -162,30 +162,38 @@ else:
             curr_item = items[key]
             with col.container(horizontal_alignment="center"):
                 if views["Name"]:
-                    st_yled.text(f"{curr_item['info'].get('Name')}", text_alignment="center", font_size="1.75rem")
+                    name = curr_item['info'].get('Name')
 
                 if views["Image"]:
                     if backEnd.CURR_COLL.split("_")[1] == "Custom":
                         if curr_item["info"]["image"] is not None:
-                            st.image(curr_item["info"]["image"], width=200)
+                            image = curr_item["info"]["image"]
                         else:
-                            st.image(gfuncs.THUMNAIL_URLS["Custom"], width=200)
+                            image = gfuncs.THUMNAIL_URLS["Custom"]
                     else:
-                        st.image(gfuncs.get_image_from_URL(curr_item["info"]["Image"]), width=200)
+                        image = gfuncs.get_image_from_URL(curr_item["info"]["Image"])
 
                 if views["Quantity"]:
-                    st_yled.text(f"x{curr_item.get("quantity")}", text_alignment="center", font_size="1rem")
+                    quantity = f"x{curr_item.get('quantity')}"
                 
                 if views["Notes"]:
                     notes = curr_item.get("notes")
-                    if notes != "Enter notes here" and notes != "Your notes here":
-                        st_yled.text(f"{notes}", text_alignment="center", font_size="1rem")
-                    else:
-                        st_yled.text("Enter notes here", text_alignment="center", font_size="1rem" , color=gfuncs.read_config_val("backgroundColor"))
-                
-
-                if st_yled.button("View More", key=f"{curr_item["info"]["Name"]}_{key}_view"):
-                    viewItem(key)
+                with st_yled.image_card_one(
+                                                image_path=image,
+                                                title=name,
+                                                text=f"**Notes:** {notes} | **Quantity:** {quantity}",
+                                                background_color=gfuncs.read_config_val("backgroundColor"),
+                                                width=275,
+                                                height="content",
+                                                border_style="solid",
+                                                border_color=gfuncs.read_config_val("textColor"),
+                                                border_width=1,
+                                                card_shadow=True,
+                                                key=f"{key.replace(' ', '-')}_card"
+                                            ):
+                    gfuncs.apply_collection_icon_animation(f"{key.replace(' ', '-')}_card")
+                    if st_yled.button("View More", key=f"{curr_item["info"]["Name"]}_{key.replace(' ', '-')}_view", width="stretch"):
+                        viewItem(key)
                 st.space("medium")
 
 
