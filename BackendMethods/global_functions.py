@@ -97,7 +97,7 @@ def db_settings_to_config(user_data_dict:dict):
     if config_data != db_data:
         st.rerun()
 
-def apply_background_image(background_image_url:str, gradient_bool:bool) -> None:
+def apply_background_image(background_image_url:str, background_image_flag:bool, gradient_bool:bool) -> None:
     # valid_url_response = requests.head(background_image_url)
     # if valid_url_response.headers.get('Content-Type', '').startswith('image/'):
     
@@ -118,7 +118,7 @@ def apply_background_image(background_image_url:str, gradient_bool:bool) -> None
             unsafe_allow_html=True
         )
     else:
-        if gradient_bool:
+        if gradient_bool and background_image_flag:
             css = f'''
                 <style>
                     .stApp {{
@@ -131,7 +131,8 @@ def apply_background_image(background_image_url:str, gradient_bool:bool) -> None
                     }}
                 </style>
                 '''
-        else:
+            st.markdown(css, unsafe_allow_html=True)
+        elif background_image_flag and not gradient_bool:
             css = f'''
                 <style>
                     .stApp {{
@@ -143,7 +144,22 @@ def apply_background_image(background_image_url:str, gradient_bool:bool) -> None
                     }}
                 </style>
                 '''
-        st.markdown(css, unsafe_allow_html=True)
+            st.markdown(css, unsafe_allow_html=True)
+        elif gradient_bool and not background_image_flag:
+            css = f'''
+                <style>
+                    .stApp {{
+                        background-image: linear-gradient(to top, {read_config_val("textColor")}, transparent);
+                        background-size: cover;
+                        background-color: {read_config_val( "backgroundColor")};
+                        color: {read_config_val( "textColor")} !important;
+                        font-family: {read_config_val( "font")};
+                    }}
+                </style>
+                '''
+            st.markdown(css, unsafe_allow_html=True)
+        else: 
+            pass
 
 
 def apply_global_css():
@@ -252,8 +268,7 @@ def page_initialization(user_data_dict:dict):
 
     st.set_page_config(layout="wide")
     apply_global_css()
-    if user_data_dict["backgroundImageFlag"] is True:
-        apply_background_image(user_data_dict["backgroundImageURL"], user_data_dict["gradientBool"])
+    apply_background_image(user_data_dict["backgroundImageURL"], user_data_dict["backgroundImageFlag"], user_data_dict["gradientBool"])
     st_yled.init()
     st_yled.title(_("Memorabiliacs"), text_alignment="center", width="stretch")
     with st.container(horizontal=True, vertical_alignment="top"):

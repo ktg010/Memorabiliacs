@@ -39,8 +39,7 @@ else:
     user_data_dict = backEnd.get_user_data(st.session_state.user_info["localId"])
     user_id = st.session_state.user_info["localId"]
     gfuncs.apply_global_css()
-    if user_data_dict["backgroundImageFlag"] is True:
-        gfuncs.apply_background_image(user_data_dict["backgroundImageURL"], user_data_dict["gradientBool"])
+    gfuncs.apply_background_image(user_data_dict["backgroundImageURL"], user_data_dict["backgroundImageFlag"], user_data_dict["gradientBool"])
     # Creates header with Home and Logout options
     # This is separate from the usual page initialization because settings 
     # does not need a link to settings and we instead want to logout from settings
