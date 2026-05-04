@@ -103,63 +103,58 @@ def apply_background_image(background_image_url:str, background_image_flag:bool,
     
     if "user_uploads" in background_image_url:
         background_image_url = backEnd.get_cloud_storage_image(background_image_url)
-        st.markdown(
-            f"""
+
+    if gradient_bool and background_image_flag:
+        css = f'''
             <style>
-            .stApp {{
-                background-image: url("{background_image_url}");
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-            }}
+                .stApp {{
+                    background-image: linear-gradient(to top, {read_config_val("textColor")}, transparent),
+                    url({background_image_url});
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    background-attachment: fixed;
+                    background-color: {read_config_val( "backgroundColor")};
+                    color: {read_config_val( "textColor")} !important;
+                    font-family: {read_config_val( "font")};
+                }}
             </style>
-            """,
-            unsafe_allow_html=True
-        )
-    else:
-        if gradient_bool and background_image_flag:
-            css = f'''
-                <style>
-                    .stApp {{
-                        background-image: linear-gradient(to top, {read_config_val("textColor")}, transparent),
-                        url({background_image_url});
-                        background-size: cover;
-                        background-color: {read_config_val( "backgroundColor")};
-                        color: {read_config_val( "textColor")} !important;
-                        font-family: {read_config_val( "font")};
-                    }}
-                </style>
-                '''
-            st.markdown(css, unsafe_allow_html=True)
-        elif background_image_flag and not gradient_bool:
-            css = f'''
-                <style>
-                    .stApp {{
-                        background-image: url({background_image_url});
-                        background-size: cover;
-                        background-color: {read_config_val( "backgroundColor")};
-                        color: {read_config_val( "textColor")} !important;
-                        font-family: {read_config_val( "font")};
-                    }}
-                </style>
-                '''
-            st.markdown(css, unsafe_allow_html=True)
-        elif gradient_bool and not background_image_flag:
-            css = f'''
-                <style>
-                    .stApp {{
-                        background-image: linear-gradient(to top, {read_config_val("textColor")}, transparent);
-                        background-size: cover;
-                        background-color: {read_config_val( "backgroundColor")};
-                        color: {read_config_val( "textColor")} !important;
-                        font-family: {read_config_val( "font")};
-                    }}
-                </style>
-                '''
-            st.markdown(css, unsafe_allow_html=True)
-        else: 
-            pass
+            '''
+        st.markdown(css, unsafe_allow_html=True)
+    elif background_image_flag and not gradient_bool:
+        css = f'''
+            <style>
+                .stApp {{
+                    background-image: url({background_image_url});
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    background-attachment: fixed;
+                    background-color: {read_config_val( "backgroundColor")};
+                    color: {read_config_val( "textColor")} !important;
+                    font-family: {read_config_val( "font")};
+                }}
+            </style>
+            '''
+        st.markdown(css, unsafe_allow_html=True)
+    elif gradient_bool and not background_image_flag:
+        css = f'''
+            <style>
+                .stApp {{
+                    background-image: linear-gradient(to top, {read_config_val("textColor")}, transparent);
+                    background-size: cover;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    background-attachment: fixed;
+                    background-color: {read_config_val( "backgroundColor")};
+                    color: {read_config_val( "textColor")} !important;
+                    font-family: {read_config_val( "font")};
+                }}
+            </style>
+            '''
+        st.markdown(css, unsafe_allow_html=True)
+    else: 
+        pass
 
 
 def apply_homepage_css():
