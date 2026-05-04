@@ -289,7 +289,8 @@ def page_initialization(user_data_dict:dict):
     # Check if running in test mode (AppTest sets a marker)
     if is_test_mode:
         user_data_dict = {"backgroundImageURL": "https://i.ytimg.com/vi/DE6wyfsTfFI/maxresdefault.jpg",
-                          "backgroundImageFlag": False}
+                          "backgroundImageFlag": False,
+                          "gradientBool": True}
     
     icon_cols = st.columns([1, 1, 1], width=100)
     with icon_cols[0]:
