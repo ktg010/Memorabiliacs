@@ -143,17 +143,18 @@ else:
                     title=f"Edit {custom_name}",text="",badge_text="Attributes",width="stretch",badge_color="primary",background_color=gfuncs.read_config_val("backgroundColor"),card_shadow=True,border_style="solid",border_color=gfuncs.read_config_val("textColor"),border_width=1, key=f'Edit {item}'):
                     for key in itemVals:
                         if views[key]:
-                            value = st.text_input(f"**{key}**:", value=itemVals[key], key=f"{item}_{key}")
+                            if 'user_uploads' in itemVals[key]:
+                                value = st.text_input(f"**{key}**:", value='Uploaded Image', key=f"{item}_{key}")
+                            else:
+                                value = st.text_input(f"**{key}**:", value=itemVals[key], key=f"{item}_{key}")
                             new_info[key] = value
+                    notes = st.text_input("Notes: ", value=items[item]['notes'], key=f"{item}_{key}notes")
                     if st.button(_("Save Changes")):
-                        st.session_state.editItem = False
                         backEnd.get_collection_items.clear(backEnd.CURR_COLL)
                         db.collection('Custom').document(backEnd.CURR_COLL).update({f"items.{itemVals['Name']}": new_info})
-                        st.session_state.viewItemPopup = False
+                        db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL).update({f"items.{item}.notes": notes})
                         st.rerun()
                     if st.button(_("Cancel")):
-                        st.session_state.editItem = False
-                        st.session_state.viewItemPopup = False
                         st.rerun()
             else:
                 ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
@@ -442,7 +443,6 @@ else:
             types = backEnd.get_template_types()
             if types != ['UPC ITEMS']:     
                 template = st.selectbox(_("Type"), types, key="template_select")
-                print(template)
                 if st_yled.button(_("New Custom Template"), key="NCT"):
                     createCustomTemplate()
                 # Make function to display list of templates
