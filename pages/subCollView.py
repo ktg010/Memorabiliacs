@@ -39,9 +39,6 @@ else:
     subRef = ref.collection("Sub Collections").document(backEnd.SUB_COLL)
     view_mode = ref.get().to_dict()['settings']['collection view']
 
-    background = subRef.get().to_dict().get("settings").get("background")
-    if background != "" and user_data_dict["backgroundImageFlag"]:
-        gfuncs.apply_background_image(background, user_data_dict["gradientBool"])
 
     if st.button(_("Back")):
         backEnd.set_sub_collection("")
