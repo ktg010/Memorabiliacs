@@ -159,7 +159,6 @@ def apply_background_image(background_image_url:str, background_image_flag:bool,
 
 def apply_homepage_css():
     bg = read_config_val("backgroundColor")
-    text = read_config_val("textColor")
     
     st.markdown(f"""
         <style>
