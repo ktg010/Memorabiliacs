@@ -401,6 +401,7 @@ def delete_collection(collection:str):
 
     ref = db.collection("Users").document(user_id).collection("Collections").document(collection)
     db.recursive_delete(ref)
+    get_collection_items.clear()
 
 def update_notes(item:str, new_notes:str, collection:str):
     """Sets the user's specific note per item
