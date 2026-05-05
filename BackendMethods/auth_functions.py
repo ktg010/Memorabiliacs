@@ -29,7 +29,7 @@ def access_secret_version():
     payload_dict = toml.loads(payload)
     return payload_dict
 
-st.secrets = access_secret_version()
+# st.secrets = access_secret_version()
 
 
 ## -------------------------------------------------------------------------------------------------
