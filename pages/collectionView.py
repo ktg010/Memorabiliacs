@@ -131,7 +131,7 @@ else:
                 st.subheader(_("Main Item View"), text_alignment="center")
                 st.space("small")
                 for name in ["Quantity" , "Notes"]:
-                    st.checkbox(f"Hide {name}", key=name, value=(not views[name]))
+                    st.checkbox(f"Hide {name}", key=f"{name}_view", value=(not views[name]))
                 st.divider()
 
                 # views for more data
@@ -139,14 +139,14 @@ else:
                 st.space("small")
                 for view in views.keys():
                     if view not in ["Name", "Image", "Quantity" , "Notes"]:
-                        st.checkbox(f"Hide {view}", key=view, value=(not views[view]))
+                        st.checkbox(f"Hide {view}", key=f"{view}_view", value=(not views[view]))
 
             with st.container(horizontal_alignment="right"):
                 # updates settings
                 if st.button(_("Save")):
                     newViews = {}
                     for view in views.keys():
-                        newViews[view] = not st.session_state[view]
+                        newViews[view] = not st.session_state.get(f"{view}_view")
                     backEnd.update_collection_views(backEnd.CURR_COLL, newViews)
                     st.rerun()
 
