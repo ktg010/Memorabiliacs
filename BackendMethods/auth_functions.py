@@ -189,7 +189,6 @@ def reset_password(email:str) -> None:
 
 def sign_out() -> None:
     st.session_state.clear()
-    st.cache_data.clear()
     st.session_state.auth_success = 'You have successfully signed out'
 
 
