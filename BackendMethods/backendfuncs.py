@@ -377,7 +377,7 @@ def rename_collection(collection:str, new_name:str):
     coll_Info = collection_ref_OLD.get().id.split("_")
 
     # checks if new name already exists in the database
-    if check_for_coll_name(new_name.title(), db):
+    if check_for_coll_name(new_name.title()):
         return True
 
     # created new collection to move data to
