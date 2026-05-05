@@ -34,7 +34,7 @@ else:
     user_data_dict = backEnd.get_user_data(user_id)
     gfuncs.page_initialization(user_data_dict)
     gfuncs.apply_collectionpage_css()
-    views = backEnd.collection_views(backEnd.CURR_COLL, db)
+    views = backEnd.collection_views(backEnd.CURR_COLL)
     ref = db.collection("Users").document(user_id).collection("Collections").document(backEnd.CURR_COLL)
     subRef = ref.collection("Sub Collections").document(backEnd.SUB_COLL)
     view_mode = ref.get().to_dict()['settings']['collection view']
@@ -61,7 +61,7 @@ else:
                 newViews = {}
                 for view in views.keys():
                     newViews[view] = not st.session_state[view]
-                backEnd.update_collection_views(backEnd.CURR_COLL, newViews, db)
+                backEnd.update_collection_views(backEnd.CURR_COLL, newViews)
                 st.rerun()
     
     @st.fragment

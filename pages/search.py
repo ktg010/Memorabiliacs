@@ -48,23 +48,23 @@ else:
             st.switch_page(gfuncs.collection_page)
     
     @st.dialog("Add to Collection")
-    def add_item_to_coll(item, name):
+    def add_item_to_coll(item, name, collection):
         st.write(name)
         notes = st.text_input("Add notes", value="Enter notes here")
         quantity = st.text_input("How many", value="1")
         if st.button("Save"):
             if quantity.isdigit():
-                backEnd.add_item(item, notes, int(quantity), db)
+                backEnd.add_item(item, notes, int(quantity), collection)
                 st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
-                st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=name, collection=backEnd.CURR_COLL.split('_')[0]))
+                st_yled.success(_("Added '{item}' to your {collection} collection!").format(item=name, collection=collection.split('_')[0]))
                 sleep(.5)
                 st.rerun()
             else:
                 st.error("Quantity must be a whole number")
     
-    def add_wishlisted_item(item, name):
-        if backEnd.wishlist_item(item, backEnd.CURR_COLL):
-            st_yled.success(_("Wishlisted '{item}' to your {collection} collection!").format(item=name, collection=backEnd.CURR_COLL.split('_')[0]))
+    def add_wishlisted_item(item, name, collection):
+        if backEnd.wishlist_item(item, collection):
+            st_yled.success(_("Wishlisted '{item}' to your {collection} collection!").format(item=name, collection=collection.split('_')[0]))
         else:
             st.error("Item is already in the collection")
 
@@ -244,8 +244,8 @@ else:
                                     st_yled.write(f"**{_('HP')}: {item.get('hp', 'N/A')}**")
                                     st_yled.write(f"**{_('Flavortext')}: {item.get('flavorText', 'N/A')}**")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
-                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
                                 st.space("small")
 
             # TODO: broken?
@@ -290,11 +290,10 @@ else:
                                     if item.get('release_date'):
                                         st_yled.write(f"{_('Release Year')}: {item['release_date'][:4]}")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
-                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
                                 st.space("small")
 
-            #TODO: Fix the rebrickable items within the db so image tags are correct, then add to algolia
             elif search_type == "LegoSets":
                 with st_yled.form(key="lego_search_form", clear_on_submit=False):
                     lego_query = st_yled.text_input(_("Search for a Lego set"))
@@ -327,8 +326,8 @@ else:
                                     if item.get('year'):
                                         st.write(f"{_('Release Year')}: {item['year']}")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
-                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
                                 st.space("small")
 
             elif search_type == "LegoMinifigs":
@@ -361,8 +360,8 @@ else:
                                     if item.get('minifig_number'):
                                         st.write(f"{_('Minifig ID')}: {item['minifig_number']}")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
-                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
                                 st.space("small")
 
             elif search_type == "Dragonball":
@@ -401,8 +400,8 @@ else:
                                                     height=300, width=400, text_font_size=17, title_font_size=30, title_font_weight="bold", border_style="solid", border_color=gfuncs.read_config_val( "textColor"), border_width=1):
                                     st_yled.write(f"**{_('Power')}: {item.get('power', 'N/A')}**")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
-                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
                                 st.space("small")
             
             # TODO: Pokemon display??
@@ -445,8 +444,8 @@ else:
                                         st_yled.write(f"**{_('HP')}: {item.get('hp', 'N/A')}**")
                                         st_yled.write(f"**{_('Flavortext')}: {item.get('flavorText', 'N/A')}**")
                                         if backEnd.CURR_COLL:
-                                            st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
-                                            st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
+                                            st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
+                                            st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
                                     st.space("small")
 
             elif search_type == "OnePiece":
@@ -486,8 +485,8 @@ else:
                                     st_yled.write(f"**{_('Type')}: {item.get('type', 'N/A')}**")
                                     st_yled.write(f"**{_('Rarity')}: {item.get('rarity', 'N/A')}**")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
-                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
                                 st.space("small")
 
             elif search_type == "Magic The Gathering":
@@ -528,8 +527,8 @@ else:
                                     st_yled.write(f"**{_('Type')}: {item.get('type_line', 'N/A')}**")
                                     st_yled.write(f"**{_('Set')}: {item.get('rarity', 'N/A')}**")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
-                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
             
             elif search_type == "Music":
                 with st_yled.form(key="music_search_form", clear_on_submit=False):
@@ -570,8 +569,8 @@ else:
                                     st_yled.write(f"**{_('Genre')}: {item.get('genre', 'N/A')}**")
                                     st_yled.write(f"**{_('Format')}: {item.get('format', 'N/A')}**")
                                     if backEnd.CURR_COLL:
-                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name']})
-                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name']})
+                                        st_yled.button(_("Add to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"add_{item['id']}", on_click=add_item_to_coll, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
+                                        st_yled.button(_("Wishlist to {collection} Collection").format(collection=backEnd.CURR_COLL.split('_')[0]), key=f"wishlist_{item['id']}", on_click=add_wishlisted_item, kwargs={"item": item['id'], "name": item['name'], "collection": backEnd.CURR_COLL})
 
 
             else:

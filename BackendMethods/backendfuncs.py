@@ -15,8 +15,8 @@ from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 from pyzbar import pyzbar
 import firebase_admin
 from firebase_admin import credentials, storage
-# from BackendMethods.auth_functions import access_secret_version
-# st.secrets = access_secret_version()
+from BackendMethods.auth_functions import access_secret_version
+st.secrets = access_secret_version()
 
 BASE_API_URL = "https://apitcg.com/api"
 APITCG_API_KEY = st.secrets["APITCG_API_KEY"]
@@ -41,12 +41,13 @@ def set_collection(collection:str):
     CURR_COLL = collection
     SUB_COLL = ""
 
-def set_sub_collection(subCollection:str):
+def set_sub_collection(sub_coll:str):
     """Sets the sub collection name for reference across pages
     
-    subCollection: name of the sub collection"""
+    subCollection: name of the sub collection
+    """
     global SUB_COLL
-    SUB_COLL = subCollection
+    SUB_COLL = sub_coll
 
 def setTheme(theme:str):
     global CURR_THEME
@@ -60,14 +61,14 @@ def get_firestore_client():
 
 @st.cache_resource
 def get_cloud_storage():
-     """Cached Cloud Storage client to avoid repeated authentication."""
-     firebase_admin.initialize_app(credentials.Certificate(dict(st.secrets["firebase"])), {'storageBucket': "memorabiliacs-ec1bd.firebasestorage.app"})
-     return storage.bucket()
+    """Cached Cloud Storage client to avoid repeated authentication."""
+    firebase_admin.initialize_app(credentials.Certificate(dict(st.secrets["firebase"])), {'storageBucket': "memorabiliacs-ec1bd.firebasestorage.app"})
+    return storage.bucket()
 
 
 @st.cache_data(ttl=3600)  # Cache for 1 hour
 def get_collection_types():
-    """Fetch collection types, cached globally."""
+    """Fetch collection types."""
     db = get_firestore_client()
     res = []
     types = db.collections()
@@ -81,7 +82,7 @@ def get_collection_types():
 
 @st.cache_data(ttl=3600)
 def type_fields(coll_type: str):
-    """Get fields for a collection type, cached per type."""
+    """Get fields for a collection type."""
     db = get_firestore_client()
     typeRef = db.collection(coll_type)
     fields = typeRef.document("#TEMPLATE").get().to_dict()
@@ -89,46 +90,47 @@ def type_fields(coll_type: str):
     fields["Quantity"] = True
     return fields
 
-# Cache??
-def coll_visability(collection_name: str, db) -> bool:
+
+def coll_visability(collection: str) -> bool:
     """Checks if the collection is visable for main page
     
-    coll_name: full id name of collection
-    db: Firestore database
+    collection: name of collection
     Returns bool of visabliy
     """
     user_id = st.session_state.user_info['localId']
-    collection_ref = db.collection('Users').document(user_id).collection('Collections').document(collection_name)
+    db = get_firestore_client()
+
+    collection_ref = db.collection('Users').document(user_id).collection('Collections').document(collection)
     contents = collection_ref.get().to_dict()
     return not contents["settings"]["hidden"]
 
-def check_for_coll_name(collection_name:str, db) -> bool:
+def check_for_coll_name(collection:str) -> bool:
     """Checks if the provided name is in the database
     
-    collection_name: name checking for
-    db: database
+    collection: name checking for
     """
     user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
 
     collections = db.collection("Users").document(user_id).collection("Collections")
     for doc in collections.stream():
         collName = doc.id.split("_")
-        if collName[0] == collection_name:
+        if collName[0] == collection:
             return True
     return False
 
-def check_for_sub_name(collection:str, sub_name:str, db):
+def check_for_sub_name(collection:str, sub_coll:str):
     """Checks if name for subcollection exists
     
     collection: source collection
-    sub_name: name checking for existance
-    db: Firestore database
+    sub_coll: name checking for 
     """
     user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
 
     collections = db.collection("Users").document(user_id).collection("Collections").document(collection).collection("Sub Collections")
     for doc in collections.stream():
-        if doc.id == sub_name:
+        if doc.id == sub_coll:
             return True
     return False
 
@@ -136,7 +138,10 @@ def check_for_sub_name(collection:str, sub_name:str, db):
 ######################################### [Getting Data] ##########################################
 @st.cache_data(ttl=3600)  # Cache for 1 hour
 def get_cloud_storage_image(blob_name: str):
-    """Fetch a signed URL for a blob in Cloud Storage, cached to reduce repeated calls."""
+    """Fetch a signed URL for a blob in Cloud Storage
+    
+    blob_name: name to retreave data
+    """
     bucket = get_cloud_storage()
     blob = bucket.blob(blob_name)
     return blob.generate_signed_url(version="v4", expiration=3600)
@@ -160,6 +165,7 @@ def get_collection_items(collection: str):
     """Fetch and process all items in a collection - cached to avoid repeated DB reads"""
     db = get_firestore_client()
     user_id = st.session_state.user_info['localId']
+
     collection_ref = db.collection('Users').document(user_id).collection('Collections').document(collection)
     data = collection_ref.get().to_dict()["items"]
     items = {}
@@ -170,17 +176,16 @@ def get_collection_items(collection: str):
                     }
     return items
 
-def collection_views(collection_name:str, db):
+def collection_views(collection:str):
     """Gets the collection type views
 
-    collection_name: name of the collection
-    db: Firebase database
+    collection: name of the collection
     Returns list map(dict) of views
     """
     user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
 
-    collection_ref = db.collection("Users").document(user_id).collection("Collections").document(collection_name)
-
+    collection_ref = db.collection("Users").document(user_id).collection("Collections").document(collection)
     return collection_ref.get().to_dict()["settings"]["views"]
 
 def get_collection_wishlisted(collection:str):
@@ -205,28 +210,28 @@ def get_sub_collections(collection:str):
     """Cached function for getting all subcollections in a given collection
     
     collection: name of collection getting from
-    db: firestore database
     returns a list of all subcollections
     """
     user_id = st.session_state.user_info['localId']
     db = get_firestore_client()
+
     res = []
     for subColl in db.collection("Users").document(user_id).collection("Collections").document(collection).collection("Sub Collections").stream():
         res.append(subColl.id)
     return res
 
 @st.cache_data(ttl=3600)
-def get_sub_collection_items(collection_name:str, sub_collection_name: str):
+def get_sub_collection_items(collection:str, sub_collection: str):
     """Gets all items in a sub collection from the database.
 
-    collection_name: Name of the collection sub collection is in
-    sub_collection_name: Name of the sub collection to retrieve
-    db: Firestore database instance
+    collection: Name of the collection sub collection is in
+    sub_collection: Name of the sub collection to retrieve
     Returns a list of items (data dictionaries) referenced in the specified sub collection
     """
-    db = get_firestore_client()  # Use cached client
     user_id = st.session_state.user_info['localId']
-    collection = db.collection('Users').document(user_id).collection('Collections').document(collection_name).collection("Sub Collections").document(sub_collection_name).get()
+    db = get_firestore_client() 
+
+    collection = db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(sub_collection).get()
     data = collection.to_dict()["items"]
     items = {}
     for item in data:
@@ -236,36 +241,37 @@ def get_sub_collection_items(collection_name:str, sub_collection_name: str):
                     }
     return items
 
-def get_sub_coll_size(name:str, collection:str) -> int:
+def get_sub_coll_size(sub_coll:str, collection:str) -> int:
     """Gets the size of the given sub collection
     
-    name: name of sub collection
+    sub_coll: name of sub collection
     collection: parent collection
     """
-    db = get_firestore_client()  # Use cached client
     user_id = st.session_state.user_info['localId']
-    sub_collection = db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(name)
+    db = get_firestore_client() 
+
+    sub_collection = db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(sub_coll)
     return int(sub_collection.get().to_dict()["settings"]["size"])
 
 
 ###################################################################################################
 ######################################### [Setting Data] ##########################################
 ## Main Coll ##
-def create_collection(collection_name: str, collection_type: str, db):
+def create_collection(collection: str, collection_type: str):
     """Create a collection of items in the database with the specified name and type.
 
-    collection_name: Name of the collection to create
+    collection: Name of the collection to create
     collection_type: Type of the collection (e.g., "Pokemon", "Movies", etc.)
-    db: Firestore database instance
     Returns true if collection already exits, else sets collection
     """
     user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
 
     # generates db collection name
-    fullName = collection_name.title() + f"_{collection_type}"
+    fullName = collection.title() + f"_{collection_type}"
 
     # check if name already exists in the database
-    if check_for_coll_name(collection_name.title(), db):
+    if check_for_coll_name(collection.title()):
         return True
     
     # created new collection
@@ -292,21 +298,21 @@ def create_collection(collection_name: str, collection_type: str, db):
     db.collection('Users').document(user_id).collection('Collections').document(fullName).set(baseInfo)
     get_user_collections.clear(user_id)
     
-def create_custom_collection(collection_name: str, collection_type: str, db):
+def create_custom_collection(collection: str, collection_type: str):
     """Create a custom collection of items in the database with the specified name and type.
 
     collection_name: Name of the collection to create
     collection_type: Type of the collection (e.g., "Pokemon", "Movies", etc.)
-    db: Firestore database instance
     Returns true if collection already exits, else sets collection
     """
     user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
 
     # generates db collection name
-    fullName = collection_name.title() + f"_{collection_type}"
+    fullName = collection.title() + f"_{collection_type}"
 
     # check if name already exists in the database
-    if check_for_coll_name(collection_name.title(), db):
+    if check_for_coll_name(collection.title()):
         return True
     
     # created new collection
@@ -340,8 +346,9 @@ def create_custom_collection(collection_name: str, collection_type: str, db):
 @st.cache_data(ttl=3600)
 def get_template_types():
     """Fetch collection types, cached globally."""
-    db = get_firestore_client()
     user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
+
     types = db.collection("Users").document(user_id).collection("Collections").document(CURR_COLL).get().to_dict()['templates']
     tlist = []
     for key in types.keys():
@@ -356,30 +363,30 @@ def get_template_types():
     else:
         return tlist
 
-def rename_collection(collection_name:str, new_collection:str, db):
+def rename_collection(collection:str, new_name:str):
     """Renames a collection, by use of creating a new collection and moving the data
     
-    collection_name: name of original collection
-    new_collection: new name for collection
-    db: database
+    collection_: name of original collection
+    new_name: new name for collection
     """
     user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
     
     # gets reference and type of collection
-    collection_ref_OLD = db.collection('Users').document(user_id).collection('Collections').document(collection_name)
+    collection_ref_OLD = db.collection('Users').document(user_id).collection('Collections').document(collection)
     coll_Info = collection_ref_OLD.get().id.split("_")
 
     # checks if new name already exists in the database
-    if check_for_coll_name(new_collection.title(), db):
+    if check_for_coll_name(new_name.title(), db):
         return True
 
     # created new collection to move data to
-    fullName = f"{new_collection.title()}_{coll_Info[1]}"
+    fullName = f"{new_name.title()}_{coll_Info[1]}"
     
     new_coll = db.collection('Users').document(user_id).collection('Collections').document(fullName)
     new_coll.set(collection_ref_OLD.get().to_dict())
-    for sub in get_sub_collections(collection_name):
-        data = get_sub_collection_items(collection_name, sub)
+    for sub in get_sub_collections(collection):
+        data = get_sub_collection_items(collection, sub)
         new_coll.collection("Sub Collections").document(sub).set(data)
     collection_ref_OLD.delete()
     get_user_collections.clear(user_id)
@@ -395,33 +402,37 @@ def delete_collection(collection:str):
     ref = db.collection("Users").document(user_id).collection("Collections").document(collection)
     db.recursive_delete(ref)
 
-def update_notes(item_id, new_notes, db):
+def update_notes(item:str, new_notes:str, collection:str):
     """Sets the user's specific note per item
     
-    item_id: name of the item
+    item: name of the item
     new_notes: note for item
-    db: Firestore database
+    collection: name of collection item is in
     """
     user_id = st.session_state.user_info['localId']
-    db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL).update(
-            {f"items.{item_id}.notes": new_notes}
-        )
-    get_collection_items.clear(CURR_COLL)  # Clear cache for this collection to reflect updated notes
+    db = get_firestore_client()
 
-def add_item(item_id:str, notes:str, quantity:int, db):
+    db.collection('Users').document(user_id).collection('Collections').document(collection).update(
+            {f"items.{item}.notes": new_notes}
+        )
+    get_collection_items.clear(collection)  # Clear cache for this collection to reflect updated notes
+
+def add_item(item:str, notes:str, quantity:int, collection:str):
     """Adds an Item to a users collection, does not rerun
 
-    item_id: the id/name of the item
+    item: the id/name of the item
     notes: specific per user note for item
     quantitiy: how many to add
-    db: Firestore database
+    collection: collection to add item to
     """
     user_id = st.session_state.user_info['localId']
-    coll_type = CURR_COLL.split("_")[1]
-    item_ref = db.collection(coll_type).document(item_id)
+    db = get_firestore_client()
+    coll_type = collection.split("_")[1]
+
+    item_ref = db.collection(coll_type).document(item)
     fixed_name = item_ref.get().id.replace("-", "_")
-    ref = db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL)
-    items = get_collection_items(CURR_COLL)
+    ref = db.collection('Users').document(user_id).collection('Collections').document(collection)
+    items = get_collection_items(collection)
     if fixed_name in items:
         ammount = int(ref.get().to_dict()["items"][fixed_name]["quantity"])
         ammount += quantity
@@ -435,10 +446,10 @@ def add_item(item_id:str, notes:str, quantity:int, db):
             "quantity" : quantity
             }
         })
-    wishlist = get_collection_wishlisted(CURR_COLL)
+    wishlist = get_collection_wishlisted(collection)
     if fixed_name in wishlist:
-        delete_wishilst_item(fixed_name, CURR_COLL)
-    get_collection_items.clear(CURR_COLL)
+        delete_wishilst_item(fixed_name, collection)
+    get_collection_items.clear(collection)
 
 def wishlist_item(item:str, collection:str) -> bool:
     """Adds item to collection as wishlisted item
@@ -449,6 +460,7 @@ def wishlist_item(item:str, collection:str) -> bool:
     user_id = st.session_state.user_info['localId']
     db = get_firestore_client()
     coll_type = collection.split("_")[1]
+
     fixed_name = item.replace("-", "_")
     item_ref = db.collection(coll_type).document(item)
     coll_ref = db.collection("Users").document(user_id).collection("Collections").document(collection)
@@ -462,23 +474,25 @@ def wishlist_item(item:str, collection:str) -> bool:
     }})
     return True
 
-def delete_reference(item_doc_id, db):
+def delete_reference(item:str, collection:str):
     """Deleted an item from the user's collection
 
-    item_doc_id: the fixed name (removed '-') of the item, version stored in user's collection
-    db: Firebase database
+    item: the name of item in user's collection
+    collection: collection item in
     """
     user_id = st.session_state.user_info['localId']
-    ref = db.collection('Users').document(user_id).collection('Collections').document(CURR_COLL)
-    ammount = int(ref.get().to_dict()["items"][item_doc_id]["quantity"])
+    db = get_firestore_client()
+
+    ref = db.collection('Users').document(user_id).collection('Collections').document(collection)
+    ammount = int(ref.get().to_dict()["items"][item]["quantity"])
     if ammount == 1:
         ref.update({
-            f"items.{item_doc_id}": firestore.DELETE_FIELD
+            f"items.{item}": firestore.DELETE_FIELD
         })
     else:
         ammount -= 1
-        ref.update({f"items.{item_doc_id}.quantity": ammount })
-    get_collection_items.clear(CURR_COLL)
+        ref.update({f"items.{item}.quantity": ammount })
+    get_collection_items.clear(collection)
 
 def delete_wishilst_item(item:str, collection:str):
     """Removes given item from wishlist in given collection
@@ -488,31 +502,51 @@ def delete_wishilst_item(item:str, collection:str):
     """
     user_id = st.session_state.user_info['localId']
     db = get_firestore_client()
+
     ref = db.collection("Users").document(user_id).collection("Collections").document(collection)
     ref.update({f"Wishlist.{item}": firestore.DELETE_FIELD})
 
-def update_collection_views(collection_name:str, views, db):
+def update_collection_views(collection:str, views:dict):
     """Updates the type views for the collection
 
     collection_name: name of collection
     views: dictonary of fields and booleans per item type
-    db: Firebase database 
     """
     user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
 
-    collection_ref = db.collection("Users").document(user_id).collection("Collections").document(collection_name)
+    collection_ref = db.collection("Users").document(user_id).collection("Collections").document(collection)
     collection_ref.update({"settings.views": views})
 
+def upload_user_image(uploaded_file, firestore_field: str = "profile_image_blob") -> str:
+    """Uploads Streamlit UploadedFile to GCS, stores blob path in Firestore.
+
+    uploaded_file: file of image
+    Returns blob_name.
+    """
+    bucket = get_cloud_storage()
+    user_id = st.session_state.user_info['localId']
+
+    blob_name = f"user_uploads/{user_id}/{uploaded_file.name}"
+    blob = bucket.blob(blob_name)
+
+    blob.upload_from_string(
+        uploaded_file.getvalue(),
+        content_type=(uploaded_file.type or "application/octet-stream")
+    )
+
+    return blob_name
+
 ## Sub Coll ##
-def create_sub_collection(name:str, collection:str, size:int, db):
+def create_sub_collection(sub_coll:str, collection:str, size:int):
     """Creates a subcollection in a given collection
     
-    name: name of subcolleciton
+    sub_coll: name of sub colleciton
     collection: name of parent collection
     size: size of sub collection
-    db: firestore database
     """
     user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
 
     baseInfo = {
         # list of items per collection
@@ -521,7 +555,7 @@ def create_sub_collection(name:str, collection:str, size:int, db):
         # collection settings
         "settings": {
             # sets what fields are viewed via item type
-            "views" : collection_views(collection, db),
+            "views" : collection_views(collection),
             # sets preview image 
             "image" : "url to display image",
             # sets a background image when viewing collection
@@ -534,34 +568,34 @@ def create_sub_collection(name:str, collection:str, size:int, db):
             "size" : size
         }
     }
-    db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(name.title()).set(baseInfo)
+    db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(sub_coll.title()).set(baseInfo)
     get_sub_collections.clear(collection)
 
-def rename_sub_collection(collection_name:str, original_sub_name:str, new_sub_name:str, db):
+def rename_sub_collection(collection:str, sub_coll:str, new_name:str):
     """Renames a sub collection, by use of creating a new collection and moving the data
     
     collection_name: name of source collection
-    original_sub_name: name for sub collection
-    new_sub_name: new name for sub collection
-    db: database
+    sub_coll: name for sub collection
+    new_name: new name for sub collection
     """
     user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
     
     # gets reference and type of collection
-    collection_ref = db.collection('Users').document(user_id).collection('Collections').document(collection_name)
-    old_sub = collection_ref.collection("Sub Collections").document(original_sub_name)
+    collection_ref = db.collection('Users').document(user_id).collection('Collections').document(collection)
+    old_sub = collection_ref.collection("Sub Collections").document(sub_coll)
 
     # checks if new name already exists in the database
-    new_name = new_sub_name.title()
-    if check_for_sub_name(collection_name, new_name, db):
+    new_name = new_name.title()
+    if check_for_sub_name(collection, new_name, db):
         return True
 
     # created new collection to move data to
     collection_ref.collection("Sub Collections").document(new_name).set(old_sub.get().to_dict())
     old_sub.delete()
-    get_sub_collection_items.clear(collection_name, new_name)
+    get_sub_collection_items.clear(collection, new_name)
 
-def delete_sub_collection(name:str, collection:str):
+def delete_sub_collection(sub_coll:str, collection:str):
     """Removes subcollection from collection
     
     name: name of subcollection
@@ -569,14 +603,15 @@ def delete_sub_collection(name:str, collection:str):
     """
     user_id = st.session_state.user_info['localId']
     db = get_firestore_client()
-    sub_ref = db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(name)
+
+    sub_ref = db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(sub_coll)
     sub_ref.delete()
     get_sub_collections.clear(collection)
 
-def add_item_sub_coll(item_id:str, notes:str, quantity:int, sub_coll:str, collection:str):
+def add_item_sub_coll(item:str, notes:str, quantity:int, sub_coll:str, collection:str):
     """Adds an item to a users sub collection
 
-    item_id: the id/name of the item
+    item: the id/name of the item
     notes: specific per user note for item
     quantitiy: how many to add
     sub_coll: name of sub collection
@@ -584,13 +619,14 @@ def add_item_sub_coll(item_id:str, notes:str, quantity:int, sub_coll:str, collec
     """
     user_id = st.session_state.user_info['localId']
     db = get_firestore_client()
+
     coll_type = collection.split("_")[1]
-    fixed_name = item_id.replace("_", "-")
+    fixed_name = item.replace("_", "-")
     item_ref = db.collection(coll_type).document(fixed_name)
 
     sub_ref = db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(sub_coll)
     sub_ref.update({
-    f"items.{item_id}": {
+    f"items.{item}": {
         "notes": notes,
         "ref": item_ref,
         "quantity" : quantity
@@ -598,10 +634,10 @@ def add_item_sub_coll(item_id:str, notes:str, quantity:int, sub_coll:str, collec
     })
     get_sub_collection_items.clear(collection, sub_coll)
 
-def del_item_sub_coll(item_id:str, quantity:int, sub_coll:str, collection:str):
+def del_item_sub_coll(item:str, quantity:int, sub_coll:str, collection:str):
     """Removes an item to a users sub collection
 
-    item_id: the id/name of the item
+    item: the id/name of the item
     quantitiy: how many to remove
     sub_coll: name of sub collection
     collection: name of parent collection
@@ -609,12 +645,12 @@ def del_item_sub_coll(item_id:str, quantity:int, sub_coll:str, collection:str):
     user_id = st.session_state.user_info['localId']
     db = get_firestore_client()
     sub_ref = db.collection('Users').document(user_id).collection('Collections').document(collection).collection("Sub Collections").document(sub_coll)
-    ammount = int(sub_ref.get().to_dict()["items"][item_id]['quantity'])
+    ammount = int(sub_ref.get().to_dict()["items"][item]['quantity'])
     if ammount - quantity <= 0:
-        sub_ref.update({f"items.{item_id}" : firestore.DELETE_FIELD})
+        sub_ref.update({f"items.{item}" : firestore.DELETE_FIELD})
     else:
         ammount -= quantity
-        sub_ref.update({f"items.{item_id}.quantity": ammount})
+        sub_ref.update({f"items.{item}.quantity": ammount})
     get_sub_collection_items.clear(collection, sub_coll)
 
 ###################################################################################################
@@ -1055,34 +1091,8 @@ def _load_image(uploaded_file: st.runtime.uploaded_file_manager.UploadedFile) ->
 	data = uploaded_file.getvalue()
 	return Image.open(io.BytesIO(data)).convert("RGB")
 
-def renameData(db):
-    name = "Digimon"
-    coll = db.collection(name)
-    for single in coll.stream():
-        item = single.to_dict()
-        if "Notes" in item:
-            newItem = {
-                "Item Notes" : item["Notes"],
-            }
-            db.collection(name).document(single.id).set(newItem, merge=True)
-            db.collection(name).document(single.id).set({"Notes": firestore.DELETE_FIELD}, merge=True)
-            # return
 
-def upload_user_image(uploaded_file, user_id: str, db, firestore_field: str = "profile_image_blob") -> str:
-    """
-    Uploads Streamlit UploadedFile to GCS, stores blob path in Firestore.
-    Returns blob_name.
-    """
-    bucket = get_cloud_storage()
-    blob_name = f"user_uploads/{user_id}/{uploaded_file.name}"
-    blob = bucket.blob(blob_name)
 
-    blob.upload_from_string(
-        uploaded_file.getvalue(),
-        content_type=(uploaded_file.type or "application/octet-stream")
-    )
-
-    return blob_name
 
 def get_user_image_names(user_id: str, db) -> list[str]:
     docs = (
