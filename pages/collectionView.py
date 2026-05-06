@@ -179,7 +179,10 @@ else:
                     for key in itemVals:
                         if views[key]:
                             if 'user_uploads' in itemVals[key]:
-                                value = st.text_input(f"**{key}**:", value='Uploaded Image', key=f"{item}_{key}")
+                                image = st.text_input(f"**{key}**:", value='Uploaded Image', key=f"{item}_{key}")
+                                value = itemVals[key]
+                                if 'http' in value:
+                                    value = image
                             else:
                                 value = st.text_input(f"**{key}**:", value=itemVals[key], key=f"{item}_{key}")
                             new_info[key] = value
