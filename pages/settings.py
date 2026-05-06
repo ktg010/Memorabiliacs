@@ -213,7 +213,7 @@ else:
         uploaded = st.file_uploader("Upload image to GCS", type=["png", "jpg", "jpeg", "webp"])
         db = backEnd.get_firestore_client()
         if uploaded:
-            blob_name = backEnd.upload_user_image(uploaded, user_id, db)
+            blob_name = backEnd.upload_user_image(uploaded)
             st.success(_("Image uploaded."))
             newdb.collection("Users").document(user_id).set({"backgroundImageURL" : blob_name}, merge=True)
             newdb.collection("Users").document(user_id).set({"backgroundImageFlag" : 'true'}, merge=True)
