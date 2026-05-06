@@ -184,7 +184,7 @@ else:
                                     #add UPC object to Custom collection in firestore
                                     st.audio(gfuncs.DEFAULT_SOUNDS["add"], autoplay=True, width=1, start_time=0)
                                     db.collection("Custom").document(proper_id).set(upc_result, merge=True)
-                                    add_item_to_coll(item_id, upc_result.get("Name", _("UPC Item")))
+                                    add_item_to_coll(item_id, upc_result.get("Name", _("UPC Item")), backEnd.CURR_COLL)
 
                                 with cols[0]:
                                     if upc_result["Image"]:
