@@ -89,7 +89,7 @@ else:
                 col = cols[i % 3]
                 curr_item = fullItems[key]
                 with col.container(horizontal_alignment="center"):
-                    st_yled.text(f"{curr_item['info'].get('Name')}", text_alignment="center", font_size="1.75rem")
+                    st.write(f"{curr_item['info'].get('Name')}")
                     if key not in itemsToAdd:
                         itemsToAdd[key] = 0
 
