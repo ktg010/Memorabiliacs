@@ -218,7 +218,7 @@ def apply_global_css():
             }}
 
             [data-testid="stHeadingWithActionElements"]:has(h1) {{
-                padding-left: 25%;
+                padding-left: 22%;
                 padding-right: 25%;
             }}
 
