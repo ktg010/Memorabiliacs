@@ -173,7 +173,7 @@ def apply_homepage_css():
 
             /* ── Existing homepage layout ── */
             .stElementContainer:has(.stText) {{
-                padding-left: 40%;
+                padding-left: 37%;
                 padding-right: 40%;
             }}
 
