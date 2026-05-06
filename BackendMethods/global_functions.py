@@ -205,8 +205,10 @@ def apply_global_css():
             }}
 
             .stPageLink {{
-                color: {text};
-                background-color: {bg};
+                background-color: {bg} !important;
+                font-family: {font};
+                border: 2px solid {text} !important;
+                border-radius: 15px;
             }}
 
             button[aria-label="Fullscreen"] {{
