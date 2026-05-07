@@ -9,18 +9,17 @@ from PIL import Image
 from io import BytesIO
 import numpy as np
 
+# page and path constants
 conf_file = os.path.join(os.path.dirname(__file__), '..', '.streamlit', 'config.toml')
+thumbnails_path = os.path.join(os.path.dirname(__file__), 'thumbnails')
+sounds_path = os.path.join(os.path.dirname(__file__), 'sounds')
 collection_page = "pages/collectionView.py"
 sub_coll_page = "pages/subCollView.py"
 home_page = "pages/home_page.py"
 
-#st_yled.init(css_path=backEnd.CURR_THEME)
 removeCheck = False
 
-thumbnails_path = os.path.join(os.path.dirname(__file__), 'thumbnails')
-
-sounds_path = os.path.join(os.path.dirname(__file__), 'sounds')
-
+# default images and sounds
 THUMNAIL_URLS = {
     "Pokemon": os.path.join(thumbnails_path, "pikachu.jpeg"),
     "Digimon": os.path.join(thumbnails_path, "agumon.jpeg"),
@@ -40,7 +39,7 @@ DEFAULT_SOUNDS = {
     "add" : os.path.join(sounds_path, "add.wav"),
 }
 
-
+### functions ###
 # Opens file and writes new value for specified variable
 def update_config_val(conf:str, var:str, new:str) -> None:
     with open(conf, "r") as f:
@@ -562,6 +561,7 @@ def get_image_from_URL(url:str):
     r = requests.get(url)
     return Image.open(BytesIO(r.content))
 
+# grayscale for wishlist items
 def image_grayscale(image:str):
     r = requests.get(image)
     img = np.asarray(Image.open(BytesIO(r.content)).convert("RGB"))

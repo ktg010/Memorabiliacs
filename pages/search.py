@@ -176,7 +176,7 @@ else:
                             try:
                                 st.markdown(_("UPC search results:"))
                                 cols = st.columns(2)
-                                upc_result = backEnd.test_upc_api(upc_query)
+                                upc_result = backEnd.upc_api(upc_query)
                                 
                                 def add_upc_button(upc_result):
                                     item_id = upc_result.get("ean", upc_query)

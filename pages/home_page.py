@@ -129,7 +129,10 @@ else:
                         st_yled.error(_("Collection name already exists"))
                     else:
                         backEnd.get_user_collections.clear(user_id)
-                        st.rerun()
+                        coll_name = f"{name.title()}_{collType}"
+                        backEnd.set_collection(coll_name)
+                        sleep(.5)
+                        st.switch_page(gfuncs.collection_page)
             else: 
                 st_yled.error(_("Invalid character in name: '_', '-', '\\', '/'"))
 

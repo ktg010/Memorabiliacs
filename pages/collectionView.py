@@ -4,7 +4,7 @@ import BackendMethods.backendfuncs as backEnd
 from BackendMethods.translations import _
 import st_yled
 import os
-import time
+from time import sleep
 
 # Connects to db
 try:
@@ -30,6 +30,10 @@ if 'user_info' not in st.session_state:
 ## Logged in ---------------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------
 else:
+    # backend collection check
+    if backEnd.CURR_COLL == "":
+        st.switch_page(gfuncs.home_page)
+
     # local variables
     user_id = st.session_state.user_info["localId"]
     user_data_dict = backEnd.get_user_data(user_id)
@@ -48,6 +52,7 @@ else:
     st_yled.init()
     gfuncs.page_initialization(user_data_dict)
     gfuncs.apply_collectionpage_css()
+
 
     ### Dialog Popups ###
     # editing sub collections
@@ -263,7 +268,7 @@ else:
 
                     # removes item
                     if st.button(_("Remove From Collection")):
-                        time.sleep(1)
+                        sleep(1)
                         backEnd.delete_reference(item, backEnd.CURR_COLL)
                         st.rerun()
             
@@ -318,7 +323,7 @@ else:
 
                     # removes item
                     if st.button(_("Remove From Collection")):
-                        time.sleep(1)
+                        sleep(1)
                         backEnd.delete_reference(item, backEnd.CURR_COLL)
                         st.rerun()
 
@@ -333,10 +338,16 @@ else:
         if st.button(_("Save")):
             if size.isdigit():
                 backEnd.create_sub_collection(name, backEnd.CURR_COLL, size)
-                st.rerun()
+                backEnd.set_sub_collection(name.title())
+                sleep(.5)
+                st.switch_page(gfuncs.sub_coll_page)
+
             elif size == "":
                 backEnd.create_sub_collection(name, backEnd.CURR_COLL, 999)
-                st.rerun()
+                backEnd.set_sub_collection(name.title())
+                sleep(.5)
+                st.switch_page(gfuncs.sub_coll_page)
+                
             else:
                 st.error(_("Size needs to be a whole number"))
 
@@ -716,8 +727,9 @@ else:
             # switches to search page with pre-filled fields
             st.page_link(page="pages/search.py", label=_("Add to Collection"), query_params=collection)
         
-        # sub collection creation
-        if st.button(_("Create Sub Collection")):
-            backEnd.get_template_types.clear()
-            subColl()
+        # sub collection creation, if not custom items
+        if coll_type != "Custom":
+            if st.button(_("Create Sub Collection")):
+                backEnd.get_template_types.clear()
+                subColl()
             

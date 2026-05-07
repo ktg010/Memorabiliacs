@@ -146,7 +146,6 @@ def get_cloud_storage_image(blob_name: str):
     blob = bucket.blob(blob_name)
     return blob.generate_signed_url(version="v4", expiration=3600)
 
-
 @st.cache_data(ttl=300)  # Cache for 5 minutes
 def get_user_data(user_id: str):
     """Fetch user data from Firestore, cached to reduce DB calls."""
@@ -655,176 +654,7 @@ def del_item_sub_coll(item:str, quantity:int, sub_coll:str, collection:str):
     get_sub_collection_items.clear(collection, sub_coll)
 
 ###################################################################################################
-############################################ [Other] ##############################################
-# Faster version of get_cards using asynchronous gets and future responses
-@app.get("/{game}/cards")
-def get_cards2(
-    game: str = Path(..., description="Game type: one-piece, pokemon, yugioh, etc."),
-    id: list[str] = Query(..., description="Card name(s) to search")
-):
-    url = f"{BASE_API_URL}/{game}/cards"
-
-    headers = {
-        "x-api-key": APITCG_API_KEY
-    }
-
-
-    futureList = []
-
-    responseList = []
-    session = FuturesSession()
-    # first request is started in background
-    for i in range(len(id)-1):
-        params = {
-        "id": id[i]}
-        futureList.append(session.get(url, headers=headers, params=params))
-    for future in as_completed(futureList):
-        #create the dictionary with the id, name, type, hp, and image url
-        try:
-            card_hp = future.result().json()["data"][0]["hp"]
-        except (KeyError, TypeError):
-            card_hp = 0
-        try:
-            card_text = future.result().json()["data"][0]["flavorText"]
-        except (KeyError, TypeError):
-            card_text = ""
-        card_name = future.result().json()["data"][0]["name"]
-        card_id = future.result().json()["data"][0]["id"]
-        image_url = future.result().json()["data"][0]["images"]["small"]
-        responseList.append({
-            "id": card_id,
-            "flavorText": card_text,
-            "hp": card_hp,
-            "name": card_name,
-            "image": image_url
-        })
-
-    return(responseList)
-
-def search_movies(query, max_results=10):
-    search = tmdb.Search()
-    response = search.movie(query=query)
-    results = []
-    for movie in response['results'][:max_results]:
-        results.append({
-            'name': movie.get('title'),
-            'release_date': movie.get('release_date'),
-            'overview': movie.get('overview'),
-            'image': f"https://image.tmdb.org/t/p/w500{movie['poster_path']}" if movie.get('poster_path') else None,
-            'id': movie.get('id')
-        })
-    return results
-
-def search_internetarchive(creators: str = "", title: str = "", max_results: int = 10):
-    """Search Internet Archive for audio items filtered to Vinyl or CD formats.
-
-    creators: comma-separated list of creators to search (OR'd together)
-    title: title or comma-separated titles to search (OR'd together)
-    max_results: maximum number of results to return (default 10)
-    Returns a list of dicts with keys: identifier, title, creator, thumbnail, format
-    """
-    query_parts = []
-    if creators:
-        parts = []
-        for c in creators.split(","):
-            s = c.strip()
-            if s:
-                parts.append(f'"{s}"')
-        creators_escaped = " OR ".join(parts)
-        query_parts.append(f'creator:({creators_escaped})')
-    if title:
-        parts = []
-        for t in title.split(","):
-            s = t.strip()
-            if s:
-                parts.append(f'"{s}"')
-        title_escaped = " OR ".join(parts)
-        query_parts.append(f'title:({title_escaped})')
-
-    # Always limit to audio mediatype
-    query_parts.append('mediatype:(audio)')
-
-    query = " AND ".join(query_parts)
-
-    search_results = internetarchive.search_items(
-        query,
-        fields=['identifier', 'title', 'creator', 'format'],
-    )
-
-    results = []
-    for result in search_results:
-        identifier = result.get('identifier')
-        name = result.get('title', '')
-        creator = result.get('creator', '')
-        fmt = result.get('format', '')
-        thumb_url = f"https://archive.org/download/{identifier}/__ia_thumb.jpg" if identifier else None
-        results.append({
-            'id': identifier,
-            'name': name,
-            'creator': creator,
-            'image': thumb_url,
-            'format': fmt,
-        })
-
-    return results
-
-def search_minifigs_rebrickable(query, max_results: int = 10):
-    """Search Rebrickable for minifigs matching `query` (query can be part of any attribute present in the json, such as name or minifig_id).
-
-    Returns a list of dicts with keys: name, minifig_id,  image_url
-
-    """
-    rebrick.init(REBRICK_API_KEY)
-    try:
-        resp = rebrick.lego.get_minifigs(query)
-        data = json.loads(resp.read())
-    except Exception:
-        return []
-
-    items = []
-    if isinstance(data, dict):
-        items = data.get('results')
-  
-
-    results = []
-    for item in items[:max_results]:
-        results.append({
-            'name': item.get('name'),
-            'minifig_id': item.get('set_num'),
-            'image_url': item.get('set_img_url'),
-        })
-
-    return results
-
-def search_sets_rebrickable(query, max_results: int = 10):
-    """Search Rebrickable for sets matching `query`.
-
-    Returns a list of dicts with keys: name, set_id, image_url, num_parts, year
-    """
-    rebrick.init(REBRICK_API_KEY)
-    try:
-        resp = rebrick.lego.get_sets(query)
-        data = json.loads(resp.read())
-    except Exception:
-        return []
-
-    items = []
-    
-    if isinstance(data, dict):
-        items = data.get('results') 
-
-    results = []
-    for item in items[:max_results]:
-        results.append({
-            'name': item.get('name'),
-            'set_id': item.get('set_num'),
-            'image_url': item.get('set_img_url'),
-            'num_parts': item.get('num_parts'),
-            'year': item.get('year'),
-        })
-
-    return results
-
+###################################### [Searching Functions] ######################################
 def search_algolia(query: str, index_name: str, max_results: int = 10):
     """Search an Algolia index for items matching `query`.
     
@@ -970,7 +800,7 @@ def search_algolia(query: str, index_name: str, max_results: int = 10):
         st.error(f"Algolia search failed: {e}")
         return []
 
-def test_upc_api(upc_code: str):
+def upc_api(upc_code: str):
     headers = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -1092,10 +922,10 @@ def _load_image(uploaded_file: st.runtime.uploaded_file_manager.UploadedFile) ->
 	data = uploaded_file.getvalue()
 	return Image.open(io.BytesIO(data)).convert("RGB")
 
+def get_user_image_names() -> list[str]:
+    user_id = st.session_state.user_info['localId']
+    db = get_firestore_client()
 
-
-
-def get_user_image_names(user_id: str, db) -> list[str]:
     docs = (
         db.collection("Users")
         .document(user_id)
