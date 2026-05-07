@@ -33,7 +33,7 @@ else:
     if backEnd.CURR_COLL == "":
         st.switch_page(gfuncs.home_page)
 
-    # local variables
+    # page variables
     user_id = st.session_state.user_info["localId"]
     user_data_dict = backEnd.get_user_data(user_id)
     views = backEnd.collection_views(backEnd.CURR_COLL)

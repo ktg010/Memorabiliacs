@@ -32,14 +32,16 @@ if 'user_info' not in st.session_state:
 ## Logged in --------------------------------------------------------------------------------------
 ## -------------------------------------------------------------------------------------------------
 else:
-
-    # Specifies the config file that will be read from and written to
+    # page varialbes
     conf_file = os.path.join(os.path.dirname(__file__), '..',  '.streamlit', 'config.toml')
-    #conf_file = ".streamlit/config.toml"
-    user_data_dict = backEnd.get_user_data(st.session_state.user_info["localId"])
     user_id = st.session_state.user_info["localId"]
+    user_data_dict = backEnd.get_user_data(user_id)
+
+    # page initialization
+    st_yled.init()
     gfuncs.apply_global_css()
     gfuncs.apply_background_image(user_data_dict["backgroundImageURL"], user_data_dict["backgroundImageFlag"], user_data_dict["gradientBool"])
+
     # Creates header with Home and Logout options
     # This is separate from the usual page initialization because settings 
     # does not need a link to settings and we instead want to logout from settings
@@ -54,11 +56,9 @@ else:
                 st.switch_page("pages/login.py")
 
 
+    ### Main Page Display ###
     st_yled.title(_("Settings"), text_alignment="center")
-
     st.set_page_config(layout="wide")
-    st_yled.init()
-
 
     # Language selector
     with st.container(horizontal_alignment="left", vertical_alignment="top"):
