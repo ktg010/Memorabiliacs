@@ -394,8 +394,30 @@ def apply_collectionpage_css():
             </style>
             """, unsafe_allow_html=True)
 
-def apply_settingspage_css():
-    pass
+def apply_loginpage_css():
+    # apply the same frosted overlay shadow as homepage, no session state defined yet so use config file value
+    bg = st.get_option("theme.backgroundColor")
+    st.markdown(f"""
+        <style>
+        .stApp {{
+        background-image: url(https://gamewardbound.com/wp-content/uploads/2020/11/ikea-kallax-shelves-complete-second-shelf.jpg);
+        background-size: cover;
+        }}
+        .stApp > header {{
+            background-color: transparent;
+        }}
+        .stVerticalBlock:has(p) {{
+            background-color: color-mix(in srgb, {bg} 40%, transparent 60%) !important;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 15px;
+            padding: 20px;
+        }}
+        p {{
+            font-size: large !important;
+        }}
+        </style>
+    """, unsafe_allow_html=True)
 
 def apply_collectionpage_icon_animation(key:str):
     st.html(
