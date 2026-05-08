@@ -1,12 +1,8 @@
-import internetarchive
 import streamlit as st
 import tmdbsimple as tmdb
-import rebrick
 import json
-from fastapi import FastAPI, Query, Path
-from requests_futures.sessions import FuturesSession
+from fastapi import FastAPI
 import requests
-from concurrent.futures import as_completed
 from algoliasearch.search.client import SearchClientSync
 from algoliasearch.search.models.search_params_object import SearchParamsObject
 from google.cloud import firestore
